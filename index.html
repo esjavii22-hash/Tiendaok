@@ -456,7 +456,7 @@ function cardHTML(p, i) {
   return `
     <div class="card">
       <div class="card-img">
-        ${p.foto?`<img src="${p.foto}" alt="${p.nombre}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:'' }
+        ${p.foto?`<img src="${p.foto}" alt="${p.nombre}" loading="lazy" onclick="openLightbox('${p.foto}','${p.nombre}')" style="cursor:zoom-in" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:'' }
         <div class="emoji-ph" ${p.foto?'style="display:none"':''}>${p.emoji}</div>
         <div class="badge-wrap">
           ${p.novedad?'<span class="badge badge-new">Nuevo</span>':''}
