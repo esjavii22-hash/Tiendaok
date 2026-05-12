@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dsok.importado — Indumentaria Urbana Premium</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #f5f4f0;
+    --gray: #1a1a1a;
+    --gray2: #2a2a2a;
+    --muted: #888;
+    --wsp: #25D366;
+    --accent: #e8ff00;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--black); color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 15px; min-height: 100vh; }
+
+  /* HEADER */
+  header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; border-bottom: 1px solid var(--gray2); position: sticky; top: 0; background: var(--black); z-index: 100; }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 2px; color: var(--white); }
+  .logo span { color: var(--accent); }
+  .cart-btn { display: flex; align-items: center; gap: 8px; background: var(--white); color: var(--black); border: none; padding: 8px 16px; border-radius: 100px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+  .cart-badge { background: var(--accent); color: var(--black); border-radius: 50%; width: 20px; height: 20px; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+
+  /* INFO BAR */
+  .infobar { display: flex; gap: 1.5rem; padding: 0.6rem 1.25rem; background: var(--gray); font-size: 12px; color: var(--muted); overflow-x: auto; }
+  .infobar span { white-space: nowrap; display: flex; align-items: center; gap: 5px; }
+  .infobar strong { color: var(--white); }
+
+  /* CATEGORIES */
+  .cats { display: flex; gap: 8px; padding: 1rem 1.25rem 0.75rem; overflow-x: auto; scrollbar-width: none; }
+  .cats::-webkit-scrollbar { display: none; }
+  .cat { padding: 6px 18px; border-radius: 100px; border: 1px solid var(--gray2); font-size: 13px; cursor: pointer; white-space: nowrap; color: var(--muted); background: transparent; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+  .cat:hover { border-color: var(--white); color: var(--white); }
+  .cat.active { background: var(--accent); color: var(--black); border-color: var(--accent); font-weight: 500; }
+
+  /* LOADING */
+  .loading { text-align: center; padding: 3rem; color: var(--muted); font-size: 14px; }
+  .loading-dot { display: inline-block; animation: pulse 1.2s infinite; }
+  .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes pulse { 0%,80%,100%{opacity:.3} 40%{opacity:1} }
+
+  /* GRID */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1px; padding: 0; border-top: 1px solid var(--gray2); }
+  .card { background: var(--black); border-right: 1px solid var(--gray2); border-bottom: 1px solid var(--gray2); overflow: hidden; transition: background 0.2s; }
+  .card:hover { background: var(--gray); }
+  .card-img { width: 100%; aspect-ratio: 1; overflow: hidden; position: relative; background: var(--gray); }
+  .card-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s; }
+  .card:hover .card-img img { transform: scale(1.04); }
+  .card-img .emoji-placeholder { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 48px; }
+  .card-body { padding: 10px 12px 12px; }
+  .card-cat { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 3px; }
+  .card-name { font-size: 13px; font-weight: 500; color: var(--white); margin-bottom: 4px; line-height: 1.3; }
+  .card-price { font-size: 14px; color: var(--accent); font-weight: 500; margin-bottom: 10px; }
+  .card-controls { display: flex; gap: 6px; }
+  .talle-sel { flex: 1; background: var(--gray2); color: var(--white); border: none; border-radius: 6px; padding: 6px 8px; font-size: 12px; font-family: 'DM Sans', sans-serif; cursor: pointer; }
+  .add-btn { background: var(--white); color: var(--black); border: none; border-radius: 6px; padding: 6px 10px; font-size: 12px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; white-space: nowrap; transition: background 0.15s; }
+  .add-btn:hover { background: var(--accent); }
+  .add-btn:active { transform: scale(0.96); }
+
+  /* EMPTY */
+  .empty { grid-column: 1/-1; padding: 3rem; text-align: center; color: var(--muted); font-size: 14px; }
+
+  /* CART DRAWER */
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; }
+  .overlay.open { display: block; }
+  .drawer { position: fixed; right: 0; top: 0; bottom: 0; width: min(380px, 100vw); background: var(--gray); z-index: 201; display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.3s ease; }
+  .drawer.open { transform: translateX(0); }
+  .drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem; border-bottom: 1px solid var(--gray2); }
+  .drawer-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; }
+  .close-btn { background: none; border: none; color: var(--muted); font-size: 22px; cursor: pointer; line-height: 1; }
+  .drawer-items { flex: 1; overflow-y: auto; padding: 1rem 1.25rem; }
+  .empty-cart { text-align: center; color: var(--muted); font-size: 14px; padding: 2rem 0; }
+  .cart-item { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--gray2); align-items: flex-start; }
+  .ci-img { width: 56px; height: 56px; border-radius: 6px; overflow: hidden; background: var(--gray2); flex-shrink: 0; }
+  .ci-img img { width: 100%; height: 100%; object-fit: cover; }
+  .ci-img .ci-emoji { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 24px; }
+  .ci-info { flex: 1; }
+  .ci-name { font-size: 13px; font-weight: 500; color: var(--white); margin-bottom: 2px; }
+  .ci-sub { font-size: 12px; color: var(--muted); }
+  .ci-price { font-size: 13px; color: var(--accent); font-weight: 500; margin-top: 2px; }
+  .ci-remove { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px; line-height: 1; padding: 0 2px; }
+  .ci-remove:hover { color: #ff5555; }
+  .drawer-footer { padding: 1.25rem; border-top: 1px solid var(--gray2); }
+  .total-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 14px; color: var(--muted); }
+  .total-row.main { font-size: 17px; font-weight: 500; color: var(--white); margin-bottom: 16px; }
+  .wsp-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 14px; background: var(--wsp); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: opacity 0.2s; }
+  .wsp-btn:hover { opacity: 0.9; }
+  .wsp-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .wsp-note { font-size: 11px; color: var(--muted); text-align: center; margin-top: 8px; }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--accent); color: var(--black); padding: 8px 18px; border-radius: 100px; font-size: 13px; font-weight: 500; z-index: 300; transition: transform 0.3s ease; pointer-events: none; white-space: nowrap; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* FOOTER */
+  footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-size: 12px; border-top: 1px solid var(--gray2); margin-top: 2rem; }
+
+  @media (max-width: 480px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .infobar { gap: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">dsok<span>.</span>importado</div>
+  <button class="cart-btn" onclick="toggleDrawer()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+    Carrito
+    <span class="cart-badge" id="cart-count">0</span>
+  </button>
+</header>
+
+<div class="infobar">
+  <span>🔐 <strong>Abonás al recibir</strong></span>
+  <span>🚚 <strong>Envío $8.500</strong> — CABA / GBA / La Plata</span>
+  <span>📅 Repartos <strong>Lu · Mi · Vi · Sa</strong> de 14 a 20hs</span>
+  <span>✅ <strong>+10.000 ventas enviadas</strong></span>
+</div>
+
+<div class="cats" id="cats"></div>
+
+<div id="loading" class="loading">
+  Cargando productos<span class="loading-dot">.</span><span class="loading-dot">.</span><span class="loading-dot">.</span>
+</div>
+
+<div class="grid" id="grid" style="display:none"></div>
+
+<footer>
+  dsok.importado &copy; 2026 · Indumentaria urbana premium · Buenos Aires
+</footer>
+
+<!-- Overlay + Drawer -->
+<div class="overlay" id="overlay" onclick="toggleDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <span class="drawer-title">Tu pedido</span>
+    <button class="close-btn" onclick="toggleDrawer()">✕</button>
+  </div>
+  <div class="drawer-items" id="drawer-items">
+    <p class="empty-cart">No agregaste productos aún.</p>
+  </div>
+  <div class="drawer-footer">
+    <div class="total-row"><span>Subtotal</span><span id="subtotal">$0</span></div>
+    <div class="total-row"><span>Envío</span><span>$8.500</span></div>
+    <div class="total-row main"><span>Total estimado</span><span id="total-main">$8.500</span></div>
+    <button class="wsp-btn" id="wsp-btn" onclick="enviarWsp()" disabled>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Pedir por WhatsApp
+    </button>
+    <p class="wsp-note">Te contactamos para coordinar la entrega</p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// =====================================================
+// CONFIGURACIÓN — SOLO EDITÁ ESTAS LÍNEAS
+// =====================================================
+const WSP_NUMBER = '5491153138847'; // Tu número de WhatsApp
+const SHEET_ID = 'TU_GOOGLE_SHEET_ID_ACA'; // Lo reemplazás con tu Sheet ID
+const SHEET_NAME = 'Productos'; // Nombre de la hoja en tu Sheet
+// =====================================================
+
+// URL pública del Google Sheet (formato JSON)
+const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
+
+let productos = [];
+let carrito = [];
+let catActual = 'todos';
+
+// Parsear Google Sheets JSON
+async function cargarProductos() {
+  try {
+    const res = await fetch(SHEET_URL);
+    const text = await res.text();
+    const json = JSON.parse(text.substring(47).slice(0, -2));
+    const rows = json.table.rows;
+
+    productos = rows.map(row => ({
+      nombre: row.c[0]?.v || '',
+      precio: Number(row.c[1]?.v) || 0,
+      categoria: (row.c[2]?.v || 'otros').toLowerCase(),
+      talles: (row.c[3]?.v || 'Único').split(',').map(t => t.trim()),
+      foto: row.c[4]?.v || '',
+      emoji: row.c[5]?.v || '👕',
+    })).filter(p => p.nombre);
+
+  } catch (e) {
+    // Si no hay Sheet configurado, usá datos de ejemplo
+    productos = [
+      { nombre:'Joggin super baggy Gris', precio:34999, categoria:'joggins', talles:['S','M','L','XL','XXL'], foto:'', emoji:'👖' },
+      { nombre:'Joggin super baggy Negro', precio:34999, categoria:'joggins', talles:['S','M','L','XL','XXL'], foto:'', emoji:'👖' },
+      { nombre:'Joggin baggy 2026 Negro', precio:34999, categoria:'joggins', talles:['S','M','L','XL','XXL'], foto:'', emoji:'👖' },
+      { nombre:'Joggin baggy cierre Negro', precio:34999, categoria:'joggins', talles:['S','M','L','XL','XXL'], foto:'', emoji:'👖' },
+      { nombre:'Joggin baggy cierre Gris', precio:34999, categoria:'joggins', talles:['S','M','L','XL','XXL'], foto:'', emoji:'👖' },
+      { nombre:'Buzo AIR Negro', precio:30000, categoria:'buzos', talles:['S','M','L','XL','XXL'], foto:'', emoji:'🧥' },
+      { nombre:'Buzo AIR Gris', precio:30000, categoria:'buzos', talles:['S','M','L','XL','XXL'], foto:'', emoji:'🧥' },
+      { nombre:'Buzo CK Blanco', precio:30000, categoria:'buzos', talles:['S','M','L','XL','XXL'], foto:'', emoji:'🧥' },
+      { nombre:'Buzo Diesel Negro', precio:30000, categoria:'buzos', talles:['S','M','L','XL','XXL'], foto:'', emoji:'🧥' },
+      { nombre:'Remera Jordan negra', precio:16999, categoria:'remeras', talles:['S','M','L','XL','XXL'], foto:'', emoji:'👕' },
+      { nombre:'Remera AIR 23 negra', precio:16999, categoria:'remeras', talles:['S','M','L','XL','XXL'], foto:'', emoji:'👕' },
+      { nombre:'Remera AIR blanca', precio:16999, categoria:'remeras', talles:['S','M','L','XL','XXL'], foto:'', emoji:'👕' },
+      { nombre:'Conjunto Nocta negro', precio:65000, categoria:'conjuntos', talles:['S','M','L','XL','XXL'], foto:'', emoji:'🧥' },
+      { nombre:'Conjunto Nocta blanco', precio:65000, categoria:'conjuntos', talles:['S','M','L','XL','XXL'], foto:'', emoji:'🧥' },
+      { nombre:'Calza Termica', precio:16999, categoria:'otros', talles:['S','M','L','XL','XXL'], foto:'', emoji:'🧦' },
+      { nombre:'Medias promo x3 negra', precio:9000, categoria:'otros', talles:['Único'], foto:'', emoji:'🧦' },
+    ];
+  }
+
+  renderCats();
+  renderGrid();
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('grid').style.display = 'grid';
+}
+
+function getCats() {
+  const cats = [...new Set(productos.map(p => p.categoria))];
+  return cats;
+}
+
+function renderCats() {
+  const cats = getCats();
+  const el = document.getElementById('cats');
+  el.innerHTML = `<button class="cat active" onclick="filtrar('todos', this)">Todos</button>` +
+    cats.map(c => `<button class="cat" onclick="filtrar('${c}', this)">${c.charAt(0).toUpperCase()+c.slice(1)}</button>`).join('');
+}
+
+function filtrar(cat, btn) {
+  catActual = cat;
+  document.querySelectorAll('.cat').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGrid();
+}
+
+function renderGrid() {
+  const filtrados = catActual === 'todos' ? productos : productos.filter(p => p.categoria === catActual);
+  const grid = document.getElementById('grid');
+  if (!filtrados.length) {
+    grid.innerHTML = '<div class="empty">No hay productos en esta categoría.</div>';
+    return;
+  }
+  grid.innerHTML = filtrados.map((p, i) => `
+    <div class="card">
+      <div class="card-img">
+        ${p.foto
+          ? `<img src="${p.foto}" alt="${p.nombre}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+          : ''}
+        <div class="emoji-placeholder" ${p.foto ? 'style="display:none"' : ''}>${p.emoji}</div>
+      </div>
+      <div class="card-body">
+        <p class="card-cat">${p.categoria}</p>
+        <p class="card-name">${p.nombre}</p>
+        <p class="card-price">$${p.precio.toLocaleString('es-AR')}</p>
+        <div class="card-controls">
+          <select class="talle-sel" id="talle-${i}">
+            ${p.talles.map(t => `<option>${t}</option>`).join('')}
+          </select>
+          <button class="add-btn" onclick="agregar(${i})">+ Agregar</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function agregar(idxEnFiltrado) {
+  const filtrados = catActual === 'todos' ? productos : productos.filter(p => p.categoria === catActual);
+  const p = filtrados[idxEnFiltrado];
+  const talle = document.getElementById('talle-' + idxEnFiltrado).value;
+  carrito.push({ ...p, talle, uid: Date.now() + Math.random() });
+  actualizarUI();
+  mostrarToast(`${p.nombre} agregado`);
+}
+
+function quitar(uid) {
+  carrito = carrito.filter(i => i.uid !== uid);
+  actualizarUI();
+}
+
+function actualizarUI() {
+  const count = carrito.length;
+  document.getElementById('cart-count').textContent = count;
+  const subtotal = carrito.reduce((s, i) => s + i.precio, 0);
+  const total = subtotal + 8500;
+  document.getElementById('subtotal').textContent = '$' + subtotal.toLocaleString('es-AR');
+  document.getElementById('total-main').textContent = '$' + total.toLocaleString('es-AR');
+  const btn = document.getElementById('wsp-btn');
+  btn.disabled = count === 0;
+
+  const el = document.getElementById('drawer-items');
+  if (!count) {
+    el.innerHTML = '<p class="empty-cart">No agregaste productos aún.</p>';
+    return;
+  }
+  el.innerHTML = carrito.map(item => `
+    <div class="cart-item">
+      <div class="ci-img">
+        ${item.foto
+          ? `<img src="${item.foto}" alt="${item.nombre}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="ci-emoji" style="display:none">${item.emoji}</div>`
+          : `<div class="ci-emoji">${item.emoji}</div>`}
+      </div>
+      <div class="ci-info">
+        <p class="ci-name">${item.nombre}</p>
+        <p class="ci-sub">Talle: ${item.talle}</p>
+        <p class="ci-price">$${item.precio.toLocaleString('es-AR')}</p>
+      </div>
+      <button class="ci-remove" onclick="quitar(${item.uid})">✕</button>
+    </div>
+  `).join('');
+}
+
+function toggleDrawer() {
+  document.getElementById('drawer').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+
+function enviarWsp() {
+  if (!carrito.length) return;
+  const subtotal = carrito.reduce((s, i) => s + i.precio, 0);
+  let msg = '¡Hola! Quiero hacer un pedido 🛒\n\n';
+  carrito.forEach(item => {
+    msg += `• ${item.nombre}\n  Talle: ${item.talle} — $${item.precio.toLocaleString('es-AR')}\n`;
+  });
+  msg += `\n💰 Subtotal: $${subtotal.toLocaleString('es-AR')}`;
+  msg += `\n🚚 Envío: $8.500`;
+  msg += `\n\n¿Podés confirmarme disponibilidad y coordinar la entrega?`;
+  window.open(`https://wa.me/${WSP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function mostrarToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+cargarProductos();
+</script>
+</body>
+</html>
