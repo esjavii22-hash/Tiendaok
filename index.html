@@ -910,19 +910,19 @@ async function confirmarPedido() {
   } catch(e) { console.warn('Error guardando pedido:', e); }
 
   // Armar mensaje WhatsApp
-  let msg = `¡Hola! Quiero confirmar mi pedido 🛒\n\n`;
-  msg += `👤 *${nombre}*\n`;
-  msg += `📸 ${instagram}\n`;
-  msg += `📱 ${telefono}\n\n`;
-  msg += `📦 *Productos:*\n`;
-  carrito.forEach(item=>{ msg+=`• ${item.nombre} — Talle: ${item.talle} — $${item.precio.toLocaleString('es-AR')}\n`; });
-  msg += `\n🚚 Zona: ${zona}\n`;
-  msg += `📍 ${direccion}, ${localidad}\n`;
-  if (aclaraciones) msg += `📝 ${aclaraciones}\n`;
-  msg += `\n💰 Subtotal: $${sub.toLocaleString('es-AR')}\n`;
-  msg += `🚚 Envío: $${envio.toLocaleString('es-AR')}\n`;
-  msg += `💵 *Total: $${total.toLocaleString('es-AR')}*\n`;
-  msg += `\n🔐 Abono al recibir`;
+   let msg = `Hola! Quiero confirmar mi pedido\n\n`;
+  msg += `Nombre: *${nombre}*\n`;
+  msg += `Instagram: ${instagram}\n`;
+  msg += `Telefono: ${telefono}\n\n`;
+  msg += `*Productos:*\n`;
+  carrito.forEach(item=>{ msg+=`- ${item.nombre} | Talle: ${item.talle} | $${item.precio.toLocaleString('es-AR')}\n`; });
+  msg += `\nZona: ${zona}\n`;
+  msg += `Direccion: ${direccion}, ${localidad}\n`;
+  if (aclaraciones) msg += `Aclaracion: ${aclaraciones}\n`;
+  msg += `\nSubtotal: $${sub.toLocaleString('es-AR')}\n`;
+  msg += `Envio: $${envio.toLocaleString('es-AR')}\n`;
+  msg += `*Total: $${total.toLocaleString('es-AR')}*\n`;
+  msg += `\nAbona al recibir`;
 
   window.open(`https://wa.me/${WSP}?text=${encodeURIComponent(msg)}`, '_blank');
 
