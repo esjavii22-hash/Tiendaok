@@ -7,12 +7,28 @@
 <meta name="description" content="El pedido se confirma por WhatsApp · Sin pago online · 100% seguro">
 <meta property="og:title" content="Indumentaria Urbana Premium">
 <meta property="og:description" content="El pedido se confirma por WhatsApp · Sin pago online · 100% seguro">
-<meta property="og:image" content="https://dsok-urbano.com/preview.jpg">
 <meta property="og:url" content="https://dsok-urbano.com">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="dsok.importado">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://dsok-urbano.com/preview.jpg">
+
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1632295294690951');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1632295294690951&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -346,8 +362,6 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
   </div>
 </div>
 
-
-
 <div style="background:#141900; border-bottom: 1px solid #2a3300; padding: 0.6rem 1.25rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
   <span style="font-size:14px">💬</span>
   <span style="font-size: 12px; color: #a8cc00; font-weight: 500;">El pedido se confirma por WhatsApp · Sin pago online · 100% seguro</span>
@@ -382,7 +396,6 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
   </div>
 
   <div class="drawer-body">
-    <!-- PASO 1: CARRITO -->
     <div class="drawer-items" id="drawer-items">
       <div class="empty-cart">
         <div class="empty-cart-icon">🛒</div>
@@ -391,15 +404,12 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
       </div>
     </div>
 
-    <!-- PASO 2: FORMULARIO -->
     <div class="envio-form" id="envio-form">
       <p class="form-title">📍 Datos de envío</p>
-
       <div class="form-group">
         <label class="form-label">Nombre completo <span class="form-required">*</span></label>
         <input class="form-input" id="f-nombre" type="text" placeholder="Ej: Juan García">
       </div>
-
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">@Instagram <span class="form-required">*</span></label>
@@ -410,7 +420,6 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
           <input class="form-input" id="f-telefono" type="tel" placeholder="5491100000000">
         </div>
       </div>
-
       <div class="form-group">
         <label class="form-label">Zona de envío <span class="form-required">*</span></label>
         <select class="form-select" id="f-zona">
@@ -422,24 +431,20 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
           <option value="La Plata ($9.000)">La Plata ($9.000)</option>
         </select>
       </div>
-
       <div class="form-group">
         <label class="form-label">Dirección <span class="form-required">*</span></label>
         <input class="form-input" id="f-direccion" type="text" placeholder="Calle, número, entre calles y timbre">
       </div>
-
       <div class="form-group">
         <label class="form-label">Barrio / Localidad <span class="form-required">*</span></label>
         <input class="form-input" id="f-localidad" type="text" placeholder="Ej: Palermo, Quilmes...">
       </div>
-
       <div class="form-group">
         <label class="form-label">Aclaraciones</label>
         <input class="form-input" id="f-aclaraciones" type="text" placeholder="Opcional: piso, departamento, referencias...">
       </div>
     </div>
 
-    <!-- ENVIANDO -->
     <div class="enviando" id="enviando">
       <div style="font-size:48px;margin-bottom:1rem">📦</div>
       <p class="enviando-title">Registrando pedido...</p>
@@ -469,7 +474,6 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
     <p class="wsp-note">Tu pedido quedará registrado automáticamente 📊</p>
   </div>
 </div>
-
 
 <!-- UPSELL POPUP -->
 <div class="upsell-overlay" id="upsell-overlay">
@@ -553,20 +557,12 @@ function parseTalles(v) {
 }
 
 const CAT_ICONS = {
-  'todos': '✦',
-  'joggins': '👖',
-  'buzos': '🧥',
-  'remeras': '👕',
-  'medias': '🧦',
-  'conjuntos': '🤝',
+  'todos': '✦', 'joggins': '👖', 'buzos': '🧥',
+  'remeras': '👕', 'medias': '🧦', 'conjuntos': '🤝',
 };
 const CAT_SHORT = {
-  'todos': 'Todos',
-  'joggins': 'Joggins',
-  'buzos': 'Buzos',
-  'remeras': 'Remeras',
-  'medias': 'Medias',
-  'conjuntos': 'Conjuntos',
+  'todos': 'Todos', 'joggins': 'Joggins', 'buzos': 'Buzos',
+  'remeras': 'Remeras', 'medias': 'Medias', 'conjuntos': 'Conjuntos',
 };
 
 function renderCats() {
@@ -660,6 +656,7 @@ function agregar(i, nombre, precio, foto, emoji, talleFixed) {
   carrito.push({ nombre, precio, foto, emoji, talle, uid: Date.now()+Math.random() });
   actualizarUI();
   toast('✓ '+nombre+' agregado');
+  if(typeof fbq!=='undefined') fbq('track','AddToCart',{content_name:nombre,value:precio,currency:'ARS'});
 }
 
 function quitar(uid) {
@@ -709,11 +706,7 @@ function actualizarUI() {
 
 function irAEnvio() {
   const recomendados = todos.filter(p => p.agregar && p.stock);
-  if (recomendados.length > 0) {
-    mostrarUpsell(recomendados);
-  } else {
-    irAEnvioReal();
-  }
+  if (recomendados.length > 0) { mostrarUpsell(recomendados); } else { irAEnvioReal(); }
 }
 
 function irAEnvioReal() {
@@ -726,6 +719,10 @@ function irAEnvioReal() {
   document.getElementById('drawer-title').textContent = 'Datos de envío';
   document.getElementById('step1').classList.remove('active');
   document.getElementById('step2').classList.add('active');
+  if(typeof fbq!=='undefined'){
+    const sub=carrito.reduce((s,i)=>s+i.precio,0);
+    fbq('track','InitiateCheckout',{value:sub,currency:'ARS',num_items:carrito.length});
+  }
 }
 
 function mostrarUpsell(prods) {
@@ -758,6 +755,7 @@ function agregarDesdeUpsell(i) {
   carrito.push({ nombre: p.nombre, precio: p.precio, foto: p.foto, emoji: p.emoji, talle, uid: Date.now()+Math.random() });
   actualizarUI();
   toast('✓ '+p.nombre+' agregado');
+  if(typeof fbq!=='undefined') fbq('track','AddToCart',{content_name:p.nombre,value:p.precio,currency:'ARS'});
   const btn = document.getElementById('ubtn'+i);
   if (btn) { btn.textContent = '✓'; btn.style.background = '#25D366'; btn.style.color = 'white'; btn.disabled = true; }
 }
@@ -782,17 +780,12 @@ function volverCarrito() {
 
 function validarForm() {
   const campos = ['f-nombre','f-instagram','f-telefono','f-zona','f-direccion','f-localidad'];
-  for (const id of campos) {
-    if (!document.getElementById(id).value.trim()) return false;
-  }
+  for (const id of campos) { if (!document.getElementById(id).value.trim()) return false; }
   return true;
 }
 
 async function confirmarPedido() {
-  if (!validarForm()) {
-    toast('⚠️ Completá todos los campos obligatorios');
-    return;
-  }
+  if (!validarForm()) { toast('⚠️ Completá todos los campos obligatorios'); return; }
 
   const nombre = document.getElementById('f-nombre').value.trim();
   const instagram = document.getElementById('f-instagram').value.trim();
@@ -806,17 +799,17 @@ async function confirmarPedido() {
   const total = sub + envio;
   const productosStr = carrito.map(i=>`${i.nombre} (Talle ${i.talle})`).join(' | ');
 
-  // Mostrar enviando
+  // Meta Pixel: Purchase
+  if(typeof fbq!=='undefined') fbq('track','Purchase',{value:total,currency:'ARS',num_items:carrito.length});
+
   document.getElementById('envio-form').classList.remove('visible');
   document.getElementById('enviando').classList.add('visible');
   document.getElementById('btn-volver').style.display = 'none';
   document.getElementById('wsp-btn').style.display = 'none';
 
-  // Guardar en Sheet
   try {
     await fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
+      method: 'POST', mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         nombre, instagram, telefono, zona, direccion, localidad, aclaraciones,
@@ -828,24 +821,15 @@ async function confirmarPedido() {
     });
   } catch(e) { console.warn('Error guardando pedido:', e); }
 
-  // Armar mensaje WhatsApp
   let msg = `¡Hola! Quiero confirmar mi pedido 🛒\n\n`;
-  msg += `👤 *${nombre}*\n`;
-  msg += `📸 ${instagram}\n`;
-  msg += `📱 ${telefono}\n\n`;
-  msg += `📦 *Productos:*\n`;
+  msg += `👤 *${nombre}*\n📸 ${instagram}\n📱 ${telefono}\n\n📦 *Productos:*\n`;
   carrito.forEach(item=>{ msg+=`• ${item.nombre} — Talle: ${item.talle} — $${item.precio.toLocaleString('es-AR')}\n`; });
-  msg += `\n🚚 Zona: ${zona}\n`;
-  msg += `📍 ${direccion}, ${localidad}\n`;
+  msg += `\n🚚 Zona: ${zona}\n📍 ${direccion}, ${localidad}\n`;
   if (aclaraciones) msg += `📝 ${aclaraciones}\n`;
-  msg += `\n💰 Subtotal: $${sub.toLocaleString('es-AR')}\n`;
-  msg += `🚚 Envío: $${envio.toLocaleString('es-AR')}\n`;
-  msg += `💵 *Total: $${total.toLocaleString('es-AR')}*\n`;
-  msg += `\n🔐 Abono al recibir`;
+  msg += `\n💰 Subtotal: $${sub.toLocaleString('es-AR')}\n🚚 Envío: $${envio.toLocaleString('es-AR')}\n💵 *Total: $${total.toLocaleString('es-AR')}*\n\n🔐 Abono al recibir`;
 
   window.open(`https://wa.me/${WSP}?text=${encodeURIComponent(msg)}`, '_blank');
 
-  // Reset
   setTimeout(() => {
     carrito = [];
     toggleDrawer();
@@ -869,7 +853,6 @@ function toast(msg) {
   setTimeout(()=>t.classList.remove('show'), 2200);
 }
 
-
 function openLightbox(src, alt) {
   document.getElementById('lightbox-img').src = src;
   document.getElementById('lightbox-img').alt = alt;
@@ -883,7 +866,6 @@ function closeLightbox() {
 }
 
 document.addEventListener('keydown', e => { if(e.key === 'Escape') closeLightbox(); });
-
 document.addEventListener('click', function(e) {
   if (e.target.classList.contains('foto-clickeable')) {
     const src = e.target.getAttribute('data-src');
@@ -893,10 +875,7 @@ document.addEventListener('click', function(e) {
 });
 
 function cap(s) { return s.charAt(0).toUpperCase()+s.slice(1); }
-
-// Actualizar envío cuando cambia zona
 document.getElementById('f-zona')?.addEventListener('change', actualizarUI);
-
 init();
 </script>
 </body>
