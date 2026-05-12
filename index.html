@@ -273,6 +273,35 @@ header {
 @keyframes fadeIn { from{opacity:0} to{opacity:1} }
 .card-img { cursor: zoom-in; }
 
+/* UPSELL POPUP */
+.upsell-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 400; align-items: flex-end; justify-content: center; }
+.upsell-overlay.open { display: flex; }
+.upsell-panel {
+  background: #0f0f0f; width: 100%; max-width: 480px;
+  border-radius: 20px 20px 0 0; border-top: 1px solid var(--gray2);
+  padding: 1.25rem; max-height: 80vh; display: flex; flex-direction: column;
+  animation: slideUp 0.3s ease;
+}
+@keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+.upsell-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+.upsell-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; color: var(--white); }
+.upsell-sub { font-size: 12px; color: var(--muted); margin-bottom: 1rem; }
+.upsell-close { background: var(--gray2); border: none; color: var(--white); width: 30px; height: 30px; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.upsell-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; overflow-y: auto; padding-bottom: 0.5rem; }
+.upsell-card { background: var(--gray2); border: 1px solid var(--gray3); border-radius: 12px; overflow: hidden; }
+.upsell-img { width: 100%; aspect-ratio: 1; overflow: hidden; background: var(--gray3); }
+.upsell-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.upsell-img .upsell-emoji { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 32px; }
+.upsell-body { padding: 8px 10px 10px; }
+.upsell-name { font-size: 12px; font-weight: 500; color: var(--white); margin-bottom: 3px; line-height: 1.3; }
+.upsell-price { font-size: 13px; color: var(--accent); font-weight: 500; margin-bottom: 8px; }
+.upsell-controls { display: flex; gap: 5px; }
+.upsell-sel { flex: 1; background: var(--gray3); color: var(--white); border: none; border-radius: 6px; padding: 5px 6px; font-size: 11px; font-family: 'DM Sans', sans-serif; cursor: pointer; }
+.upsell-add { background: var(--accent); color: var(--black); border: none; border-radius: 6px; padding: 5px 8px; font-size: 11px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.upsell-add:active { transform: scale(0.95); }
+.upsell-skip { width: 100%; margin-top: 10px; padding: 12px; background: transparent; color: var(--muted); border: 1px solid var(--gray3); border-radius: 12px; font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+.upsell-skip:hover { border-color: var(--white); color: var(--white); }
+
 .toast {
   position: fixed; bottom: 1.5rem; left: 50%;
   transform: translateX(-50%) translateY(80px);
@@ -426,6 +455,19 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
 </div>
 
 
+<!-- UPSELL POPUP -->
+<div class="upsell-overlay" id="upsell-overlay">
+  <div class="upsell-panel">
+    <div class="upsell-hdr">
+      <span class="upsell-title">🔥 ¿Agregás algo más?</span>
+      <button class="upsell-close" onclick="cerrarUpsell()">✕</button>
+    </div>
+    <p class="upsell-sub">Antes de confirmar, mirá estos productos</p>
+    <div class="upsell-grid" id="upsell-grid"></div>
+    <button class="upsell-skip" onclick="cerrarUpsell()">No, continuar con mi pedido →</button>
+  </div>
+</div>
+
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
   <button class="lightbox-close" onclick="closeLightbox()">✕</button>
@@ -471,6 +513,7 @@ async function init() {
       stock:       (r.c[9]?.v||'si').toString().toLowerCase().trim() === 'si',
       destacado:   (r.c[10]?.v||'no').toString().toLowerCase().trim() === 'si',
       novedad:     (r.c[11]?.v||'no').toString().toLowerCase().trim() === 'si',
+      agregar:     (r.c[12]?.v||'no').toString().toLowerCase().trim() === 'si',
     })).filter(p => p.nombre);
   } catch(e) { console.warn('Error Sheet:', e); todos = []; }
   document.getElementById('loading').style.display = 'none';
@@ -649,6 +692,15 @@ function actualizarUI() {
 }
 
 function irAEnvio() {
+  const recomendados = todos.filter(p => p.agregar && p.stock);
+  if (recomendados.length > 0) {
+    mostrarUpsell(recomendados);
+  } else {
+    irAEnvioReal();
+  }
+}
+
+function irAEnvioReal() {
   paso = 2;
   document.getElementById('drawer-items').style.display = 'none';
   document.getElementById('envio-form').classList.add('visible');
@@ -658,6 +710,46 @@ function irAEnvio() {
   document.getElementById('drawer-title').textContent = 'Datos de envío';
   document.getElementById('step1').classList.remove('active');
   document.getElementById('step2').classList.add('active');
+}
+
+function mostrarUpsell(prods) {
+  const grid = document.getElementById('upsell-grid');
+  grid.innerHTML = prods.map((p, i) => {
+    const sinTalle = p.talles.length===1 && p.talles[0].toLowerCase()==='único';
+    return `<div class="upsell-card">
+      <div class="upsell-img">
+        ${p.foto ? `<img src="${p.foto}" alt="${p.nombre}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="upsell-emoji" style="display:none">${p.emoji}</div>` : `<div class="upsell-emoji">${p.emoji}</div>`}
+      </div>
+      <div class="upsell-body">
+        <p class="upsell-name">${p.nombre}</p>
+        <p class="upsell-price">$${p.precio.toLocaleString('es-AR')}</p>
+        <div class="upsell-controls">
+          ${sinTalle ? '' : `<select class="upsell-sel" id="us${i}">${p.talles.map(t=>`<option>${t}</option>`).join('')}</select>`}
+          <button class="upsell-add" onclick="agregarDesdeUpsell(${i})">+ Agregar</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('upsell-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  window._upsellProds = prods;
+}
+
+function agregarDesdeUpsell(i) {
+  const p = window._upsellProds[i];
+  const sinTalle = p.talles.length===1 && p.talles[0].toLowerCase()==='único';
+  const talle = sinTalle ? 'Único' : (document.getElementById('us'+i)?.value || p.talles[0]);
+  carrito.push({ nombre: p.nombre, precio: p.precio, foto: p.foto, emoji: p.emoji, talle, uid: Date.now()+Math.random() });
+  actualizarUI();
+  toast('✓ '+p.nombre+' agregado');
+  const btn = document.querySelector(`#upsell-grid .upsell-card:nth-child(${i+1}) .upsell-add`);
+  if (btn) { btn.textContent = '✓'; btn.style.background = '#25D366'; btn.style.color = 'white'; btn.disabled = true; }
+}
+
+function cerrarUpsell() {
+  document.getElementById('upsell-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  irAEnvioReal();
 }
 
 function volverCarrito() {
