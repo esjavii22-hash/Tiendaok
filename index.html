@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,12 +8,9 @@
 <meta name="description" content="El pedido se confirma por WhatsApp · Sin pago online · 100% seguro">
 <meta property="og:title" content="Indumentaria Urbana Premium">
 <meta property="og:description" content="El pedido se confirma por WhatsApp · Sin pago online · 100% seguro">
-<meta property="og:image" content="https://dsok-urbano.com/preview.jpg">
 <meta property="og:url" content="https://dsok-urbano.com">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="dsok.importado">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://dsok-urbano.com/preview.jpg">
 
   <!-- Meta Pixel Code -->
 <script>
@@ -60,9 +58,9 @@ header {
 .logo { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 3px; }
 .logo em { color: var(--accent); font-style: normal; }
 .cart-btn {
-  display: flex; align-items: center; gap: 6px;
+  display: flex; align-items: center; gap: 8px;
   background: var(--accent); color: var(--black); border: none;
-  padding: 7px 13px; border-radius: 100px; font-size: 13px;
+  padding: 8px 16px; border-radius: 100px; font-size: 13px;
   font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif;
 }
 .cart-badge {
@@ -87,27 +85,18 @@ header {
 .pill { display: flex; align-items: center; gap: 5px; background: var(--gray2); border: 1px solid var(--gray3); border-radius: 100px; padding: 5px 11px; font-size: 12px; }
 .pill-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
 
-.cats-bar { background: var(--black); padding: 0.5rem 1rem; border-bottom: 1px solid var(--gray2); position: sticky; top: 53px; z-index: 90; }
-.cats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+.cats-bar { border-bottom: 1px solid var(--gray2); background: var(--black); position: sticky; top: 53px; z-index: 90; }
+.cats { display: flex; overflow-x: auto; scrollbar-width: none; }
+.cats::-webkit-scrollbar { display: none; }
 .cat {
-  background: var(--gray2); border: 1px solid var(--gray3);
-  border-radius: 8px; padding: 5px 6px;
-  cursor: pointer; font-family: 'DM Sans', sans-serif;
-  transition: all 0.2s;
-  display: flex; align-items: center; gap: 5px;
+  padding: 0.7rem 1.1rem; border: none; border-right: 1px solid var(--gray2);
+  font-size: 13px; cursor: pointer; white-space: nowrap; color: var(--muted);
+  background: transparent; font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s; position: relative;
 }
-.cat:hover { border-color: var(--muted); }
-.cat.active { border-color: var(--accent); background: #141900; }
-.cat-circle {
-  width: 24px; height: 24px; border-radius: 50%;
-  background: var(--gray3); display: flex; align-items: center;
-  justify-content: center; font-size: 12px; transition: background 0.2s; flex-shrink: 0;
-}
-.cat.active .cat-circle { background: var(--accent); }
-.cat-name { font-size: 11px; color: var(--muted); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cat.active .cat-name { color: var(--accent); }
-.cat-count { font-size: 10px; color: var(--gray3); margin-left: auto; flex-shrink: 0; }
-.cat.active .cat-count { color: #8a9900; }
+.cat:hover { color: var(--white); background: var(--gray); }
+.cat.active { color: var(--accent); background: var(--gray); }
+.cat.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--accent); }
 .filters-bar { display: flex; gap: 8px; padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--gray2); overflow-x: auto; scrollbar-width: none; align-items: center; }
 .filters-bar::-webkit-scrollbar { display: none; }
 .filter-label { font-size: 11px; color: var(--muted); white-space: nowrap; }
@@ -151,74 +140,32 @@ header {
 .empty-grid { grid-column: 1/-1; padding: 3rem; text-align: center; color: var(--muted); font-size: 14px; }
 
 /* DRAWER */
-.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; backdrop-filter: blur(4px); }
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; }
 .overlay.open { display: block; }
 .drawer {
-  position: fixed; right: 0; top: 0; bottom: 0; width: min(480px,100vw);
-  background: #0f0f0f; z-index: 201; display: flex; flex-direction: column;
-  transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
-  border-left: 1px solid var(--gray2);
+  position: fixed; right: 0; top: 0; bottom: 0; width: min(420px,100vw);
+  background: var(--gray); z-index: 201; display: flex; flex-direction: column;
+  transform: translateX(100%); transition: transform 0.3s ease;
 }
 .drawer.open { transform: translateX(0); }
-.drawer-hdr {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--gray2);
-  background: var(--black);
-}
-.drawer-title-wrap { display: flex; align-items: center; gap: 10px; }
-.drawer-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 2px; }
-.drawer-title-count {
-  background: var(--accent); color: var(--black);
-  border-radius: 100px; padding: 2px 10px;
-  font-size: 12px; font-weight: 700;
-}
-.close-btn {
-  background: var(--gray2); border: none; color: var(--white);
-  width: 32px; height: 32px; border-radius: 50%; font-size: 16px;
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: background 0.2s;
-}
-.close-btn:hover { background: var(--gray3); }
-.drawer-body { flex: 1; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--gray3) transparent; }
+.drawer-hdr { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem; border-bottom: 1px solid var(--gray2); }
+.drawer-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; }
+.close-btn { background: none; border: none; color: var(--muted); font-size: 22px; cursor: pointer; }
+.drawer-body { flex: 1; overflow-y: auto; }
 
 /* PASO 1 — CARRITO */
-.drawer-items { padding: 1rem 1.5rem; }
-.empty-cart {
-  text-align: center; color: var(--muted); font-size: 14px;
-  padding: 4rem 2rem; display: flex; flex-direction: column; align-items: center; gap: 12px;
-}
-.empty-cart-icon { font-size: 52px; opacity: 0.4; }
-.empty-cart-txt { font-size: 15px; color: var(--muted); }
-.empty-cart-sub { font-size: 12px; color: var(--gray3); }
-
-.ci {
-  display: flex; gap: 14px; padding: 14px 0;
-  border-bottom: 1px solid var(--gray2); align-items: center;
-  animation: slideIn 0.25s ease;
-}
-@keyframes slideIn { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
-.ci-img {
-  width: 80px; height: 80px; border-radius: 10px;
-  overflow: hidden; background: var(--gray2); flex-shrink: 0;
-  border: 1px solid var(--gray3);
-}
+.drawer-items { padding: 1rem 1.25rem; }
+.empty-cart { text-align: center; color: var(--muted); font-size: 14px; padding: 2rem 0; }
+.ci { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--gray2); }
+.ci-img { width: 56px; height: 56px; border-radius: 6px; overflow: hidden; background: var(--gray2); flex-shrink: 0; }
 .ci-img img { width: 100%; height: 100%; object-fit: cover; }
-.ci-emoji { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 28px; }
-.ci-info { flex: 1; min-width: 0; }
-.ci-name { font-size: 14px; font-weight: 500; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ci-talle {
-  display: inline-block; background: var(--gray2); border: 1px solid var(--gray3);
-  border-radius: 6px; padding: 2px 8px; font-size: 11px; color: var(--muted); margin-bottom: 6px;
-}
-.ci-price { font-size: 16px; color: var(--accent); font-weight: 500; }
-.ci-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
-.ci-rm {
-  background: var(--gray2); border: none; color: var(--muted);
-  cursor: pointer; width: 28px; height: 28px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px; transition: all 0.2s;
-}
-.ci-rm:hover { background: #ff4444; color: white; }
+.ci-emoji { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 22px; }
+.ci-info { flex: 1; }
+.ci-name { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+.ci-sub { font-size: 11px; color: var(--muted); }
+.ci-price { font-size: 13px; color: var(--accent); font-weight: 500; margin-top: 2px; }
+.ci-rm { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px; line-height: 1; }
+.ci-rm:hover { color: #ff5555; }
 
 /* PASO 2 — FORMULARIO ENVIO */
 .envio-form { padding: 1rem 1.25rem; display: none; }
@@ -245,51 +192,26 @@ header {
 .form-required { color: #ff4444; margin-left: 2px; }
 
 /* FOOTER DRAWER */
-.drawer-ftr {
-  padding: 1.25rem 1.5rem; border-top: 1px solid var(--gray2);
-  flex-shrink: 0; background: var(--black);
-}
-.totales-box {
-  background: var(--gray); border-radius: 12px;
-  padding: 14px 16px; margin-bottom: 14px;
-  border: 1px solid var(--gray2);
-}
-.total-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
-.total-main {
-  display: flex; justify-content: space-between; align-items: center;
-  padding-top: 10px; margin-top: 6px; border-top: 1px solid var(--gray2);
-}
-.total-main-label { font-size: 15px; font-weight: 500; color: var(--white); }
-.total-main-value { font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: var(--accent); letter-spacing: 1px; }
+.drawer-ftr { padding: 1.25rem; border-top: 1px solid var(--gray2); flex-shrink: 0; }
+.total-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 5px; }
+.total-main { font-size: 17px; font-weight: 500; color: var(--white); margin-bottom: 14px; display: flex; justify-content: space-between; }
 .btn-continuar {
-  width: 100%; padding: 15px; background: var(--accent); color: var(--black);
-  border: none; border-radius: 12px; font-size: 15px; font-weight: 700;
+  width: 100%; padding: 13px; background: var(--accent); color: var(--black);
+  border: none; border-radius: 10px; font-size: 15px; font-weight: 500;
   cursor: pointer; font-family: 'DM Sans', sans-serif; margin-bottom: 8px;
-  letter-spacing: 0.5px; transition: transform 0.15s, background 0.2s;
 }
-.btn-continuar:hover { background: #c4ef00; }
-.btn-continuar:active { transform: scale(0.98); }
-.btn-continuar:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
-.btn-volver {
-  width: 100%; padding: 11px; background: transparent; color: var(--muted);
-  border: 1px solid var(--gray3); border-radius: 12px; font-size: 13px;
-  cursor: pointer; font-family: 'DM Sans', sans-serif; display: none; margin-bottom: 8px;
-  transition: all 0.2s;
-}
-.btn-volver:hover { border-color: var(--white); color: var(--white); }
+.btn-continuar:disabled { opacity: 0.35; cursor: not-allowed; }
+.btn-volver { width: 100%; padding: 10px; background: transparent; color: var(--muted); border: 1px solid var(--gray3); border-radius: 10px; font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif; display: none; margin-bottom: 8px; }
 .wsp-btn {
-  display: none; align-items: center; justify-content: center; gap: 10px;
-  width: 100%; padding: 15px; background: var(--wsp); color: white;
-  border: none; border-radius: 12px; font-size: 15px; font-weight: 600;
-  cursor: pointer; font-family: 'DM Sans', sans-serif;
-  transition: transform 0.15s, opacity 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 13px; background: var(--wsp); color: white;
+  border: none; border-radius: 10px; font-size: 15px; font-weight: 500;
+  cursor: pointer; font-family: 'DM Sans', sans-serif; display: none;
 }
-.wsp-btn:hover { opacity: 0.92; }
-.wsp-btn:active { transform: scale(0.98); }
 .wsp-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 .wsp-note { font-size: 11px; color: var(--muted); text-align: center; margin-top: 8px; }
-.step-indicator { display: flex; gap: 6px; margin-bottom: 14px; }
-.step { flex: 1; height: 3px; border-radius: 2px; background: var(--gray3); transition: background 0.3s; }
+.step-indicator { display: flex; gap: 6px; margin-bottom: 12px; }
+.step { flex: 1; height: 3px; border-radius: 2px; background: var(--gray3); }
 .step.active { background: var(--accent); }
 
 /* ENVIANDO */
@@ -307,6 +229,7 @@ header {
 @keyframes fadeIn { from{opacity:0} to{opacity:1} }
 .card-img { cursor: zoom-in; }
 
+
 /* UPSELL POPUP */
 .upsell-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 400; align-items: flex-end; justify-content: center; }
 .upsell-overlay.open { display: flex; }
@@ -322,11 +245,7 @@ header {
 .upsell-sub { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
 .upsell-close { background: var(--gray2); border: none; color: var(--white); width: 28px; height: 28px; border-radius: 50%; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .upsell-list { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; padding-bottom: 0.75rem; flex: 1; }
-.upsell-card {
-  background: var(--gray2); border: 1px solid var(--gray3);
-  border-radius: 10px; display: flex; gap: 10px;
-  padding: 8px; align-items: center;
-}
+.upsell-card { background: var(--gray2); border: 1px solid var(--gray3); border-radius: 10px; display: flex; gap: 10px; padding: 8px; align-items: center; }
 .upsell-img { width: 64px; height: 64px; border-radius: 8px; overflow: hidden; background: var(--gray3); flex-shrink: 0; }
 .upsell-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .upsell-emoji { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 24px; }
@@ -337,8 +256,6 @@ header {
 .upsell-sel { background: var(--black); color: var(--white); border: 1px solid var(--gray3); border-radius: 6px; padding: 4px 6px; font-size: 11px; font-family: 'DM Sans', sans-serif; cursor: pointer; max-width: 80px; }
 .upsell-add { background: var(--accent); color: var(--black); border: none; border-radius: 6px; padding: 5px 10px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.15s; flex-shrink: 0; }
 .upsell-add:active { transform: scale(0.95); }
-.upsell-skip { width: 100%; margin-top: 10px; padding: 12px; background: transparent; color: var(--muted); border: 1px solid var(--gray3); border-radius: 12px; font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
-.upsell-skip:hover { border-color: var(--white); color: var(--white); }
 
 .toast {
   position: fixed; bottom: 1.5rem; left: 50%;
@@ -406,7 +323,7 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
     </div>
     <div style="background:var(--gray2); border:1px solid var(--gray3); border-radius:10px; padding:10px 12px; min-width:160px; max-width:180px; flex-shrink:0;">
       <span style="color:#d4ff00; font-size:11px;">★★★★★</span>
-      <p style="font-size:11px; color:#aaa; line-height:1.4; margin:5px 0 6px;">"Excelente calidad🔥"</p>
+      <p style="font-size:11px; color:#aaa; line-height:1.4; margin:5px 0 6px;">"Pagás al recibir, eso me convenció. Excelente"</p>
       <p style="font-size:10px; color:var(--muted);">@lucas.2k · La Plata</p>
     </div>
     <div style="background:var(--gray2); border:1px solid var(--gray3); border-radius:10px; padding:10px 12px; min-width:160px; max-width:180px; flex-shrink:0;">
@@ -417,7 +334,7 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
     <div style="background:var(--gray2); border:1px solid var(--gray3); border-radius:10px; padding:10px 12px; min-width:160px; max-width:180px; flex-shrink:0;">
       <span style="color:#d4ff00; font-size:11px;">★★★★★</span>
       <p style="font-size:11px; color:#aaa; line-height:1.4; margin:5px 0 6px;">"Súper rápido el envío, ya recomendé a todos"</p>
-      <p style="font-size:10px; color:var(--muted);">@tomas.rivas·Norte</p>
+      <p style="font-size:10px; color:var(--muted);">@tomas.rivas · GBA Norte</p>
     </div>
   </div>
 </div>
@@ -434,8 +351,8 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
 <div class="filters-bar">
   <span class="filter-label">Ver:</span>
   <button class="filter-btn active" onclick="filtrarExtra('todos',this)">Todos</button>
-  <button class="filter-btn" onclick="filtrarExtra('destacado',this)">⭐ Top</button>
-  <button class="filter-btn" onclick="filtrarExtra('novedad',this)">🆕 Nuevo</button>
+  <button class="filter-btn" onclick="filtrarExtra('destacado',this)">⭐ Destacados</button>
+  <button class="filter-btn" onclick="filtrarExtra('novedad',this)">🆕 Novedades</button>
 </div>
 
 <div id="loading" class="loading">
@@ -448,21 +365,14 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
 <div class="overlay" id="overlay" onclick="toggleDrawer()"></div>
 <div class="drawer" id="drawer">
   <div class="drawer-hdr">
-    <div class="drawer-title-wrap">
-      <span class="drawer-title" id="drawer-title">Tu pedido</span>
-      <span class="drawer-title-count" id="drawer-title-count" style="display:none"></span>
-    </div>
+    <span class="drawer-title" id="drawer-title">Tu pedido</span>
     <button class="close-btn" onclick="toggleDrawer()">✕</button>
   </div>
 
   <div class="drawer-body">
     <!-- PASO 1: CARRITO -->
     <div class="drawer-items" id="drawer-items">
-      <div class="empty-cart">
-        <div class="empty-cart-icon">🛒</div>
-        <p class="empty-cart-txt">Tu carrito está vacío</p>
-        <p class="empty-cart-sub">Agregá productos para continuar</p>
-      </div>
+      <p class="empty-cart">No agregaste productos aún.</p>
     </div>
 
     <!-- PASO 2: FORMULARIO -->
@@ -526,14 +436,9 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
       <div class="step active" id="step1"></div>
       <div class="step" id="step2"></div>
     </div>
-    <div class="totales-box">
-      <div class="total-row"><span>Subtotal</span><span id="subtotal">$0</span></div>
-      <div class="total-row"><span>Envío estimado</span><span id="envio-txt">$8.500</span></div>
-      <div class="total-main">
-        <span class="total-main-label">Total</span>
-        <span class="total-main-value" id="total-main">$8.500</span>
-      </div>
-    </div>
+    <div class="total-row"><span>Subtotal</span><span id="subtotal">$0</span></div>
+    <div class="total-row"><span>Envío</span><span id="envio-txt">$8.500</span></div>
+    <div class="total-main"><span>Total</span><span id="total-main">$8.500</span></div>
     <button class="btn-volver" id="btn-volver" onclick="volverCarrito()">← Volver al carrito</button>
     <button class="btn-continuar" id="btn-continuar" onclick="irAEnvio()" disabled>Continuar con el envío →</button>
     <button class="wsp-btn" id="wsp-btn" onclick="confirmarPedido()">
@@ -545,6 +450,7 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
 </div>
 
 
+
 <!-- UPSELL POPUP -->
 <div class="upsell-overlay" id="upsell-overlay">
   <div class="upsell-panel">
@@ -554,7 +460,7 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
     </div>
     <p class="upsell-sub">Antes de confirmar, mirá estos productos</p>
     <div class="upsell-list" id="upsell-grid"></div>
-    <button class="upsell-skip" onclick="cerrarUpsell()" style="width:100%;padding:11px;margin:8px 0 12px;background:transparent;color:var(--muted);border:1px solid var(--gray3);border-radius:10px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;">Continuar →</button>
+    <button onclick="cerrarUpsell()" style="width:100%;padding:11px;margin:8px 0 12px;background:transparent;color:var(--muted);border:1px solid var(--gray3);border-radius:10px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;">Continuar →</button>
   </div>
 </div>
 
@@ -626,36 +532,13 @@ function parseTalles(v) {
   return v.split(/[|,]/).map(t=>t.trim()).filter(Boolean);
 }
 
-const CAT_ICONS = {
-  'todos': '✦',
-  'joggins': '👖',
-  'buzos': '🧥',
-  'remeras': '👕',
-  'medias': '🧦',
-  'conjuntos': '🤝',
-};
-const CAT_SHORT = {
-  'todos': 'Todos',
-  'joggins': 'Joggins',
-  'buzos': 'Buzos',
-  'remeras': 'Remeras',
-  'medias': 'Medias',
-  'conjuntos': 'Conjuntos',
-};
-
 function renderCats() {
   const usadas = [...new Set(todos.map(p=>p.categoria))];
   const ordenadas = ['todos', ...CAT_ORDER.filter(c=>usadas.includes(c)), ...usadas.filter(c=>!CAT_ORDER.includes(c))];
   document.getElementById('cats').innerHTML = ordenadas.map(c => {
     const cant = c==='todos' ? todos.length : todos.filter(p=>p.categoria===c).length;
-    const icon = CAT_ICONS[c] || '📦';
-    const name = CAT_SHORT[c] || cap(c);
-    const iconStyle = c==='todos' ? 'font-size:10px;color:#080808' : 'font-size:12px';
-    return `<button class="cat ${c==='todos'?'active':''}" onclick="selCat('${c}',this)">
-      <div class="cat-circle"><span style="${iconStyle}">${icon}</span></div>
-      <span class="cat-name">${name}</span>
-      <span class="cat-count">${cant}</span>
-    </button>`;
+    const label = c==='todos' ? '✦ Todos' : (CAT_LABELS[c] || cap(c));
+    return `<button class="cat ${c==='todos'?'active':''}" onclick="selCat('${c}',this)">${label} <span style="font-size:10px;color:var(--muted);margin-left:2px">${cant}</span></button>`;
   }).join('');
 }
 
@@ -757,13 +640,7 @@ function actualizarUI() {
   document.getElementById('btn-continuar').disabled = !carrito.length;
 
   const el = document.getElementById('drawer-items');
-  const countBadge = document.getElementById('drawer-title-count');
-  if (carrito.length) { countBadge.style.display='inline'; countBadge.textContent=carrito.length+' items'; }
-  else { countBadge.style.display='none'; }
-  if (!carrito.length) {
-    el.innerHTML='<div class="empty-cart"><div class="empty-cart-icon">🛒</div><p class="empty-cart-txt">Tu carrito está vacío</p><p class="empty-cart-sub">Agregá productos para continuar</p></div>';
-    return;
-  }
+  if (!carrito.length) { el.innerHTML='<p class="empty-cart">No agregaste productos aún.</p>'; return; }
   el.innerHTML = carrito.map(item=>`
     <div class="ci">
       <div class="ci-img">
@@ -773,25 +650,14 @@ function actualizarUI() {
       </div>
       <div class="ci-info">
         <p class="ci-name">${item.nombre}</p>
-        <span class="ci-talle">Talle ${item.talle}</span>
+        <p class="ci-sub">Talle: ${item.talle}</p>
         <p class="ci-price">$${item.precio.toLocaleString('es-AR')}</p>
       </div>
-      <div class="ci-actions">
-        <button class="ci-rm" onclick="quitar(${item.uid})" title="Quitar">✕</button>
-      </div>
+      <button class="ci-rm" onclick="quitar(${item.uid})">✕</button>
     </div>`).join('');
 }
 
 function irAEnvio() {
-  const recomendados = todos.filter(p => p.agregar && p.stock);
-  if (recomendados.length > 0) {
-    mostrarUpsell(recomendados);
-  } else {
-    irAEnvioReal();
-  }
-}
-
-function irAEnvioReal() {
   paso = 2;
   document.getElementById('drawer-items').style.display = 'none';
   document.getElementById('envio-form').classList.add('visible');
@@ -805,46 +671,6 @@ function irAEnvioReal() {
     const sub=carrito.reduce((s,i)=>s+i.precio,0);
     fbq('track','InitiateCheckout',{value:sub,currency:'ARS',num_items:carrito.length});
   }
-}
-
-function mostrarUpsell(prods) {
-  const grid = document.getElementById('upsell-grid');
-  grid.innerHTML = prods.map((p, i) => {
-    const sinTalle = p.talles.length===1 && p.talles[0].toLowerCase()==='único';
-    return `<div class="upsell-card">
-      <div class="upsell-img">
-        ${p.foto ? `<img src="${p.foto}" alt="${p.nombre}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="upsell-emoji" style="display:none">${p.emoji}</div>` : `<div class="upsell-emoji">${p.emoji}</div>`}
-      </div>
-      <div class="upsell-info">
-        <p class="upsell-name">${p.nombre}</p>
-        <p class="upsell-price">$${p.precio.toLocaleString('es-AR')}</p>
-        <div class="upsell-controls">
-          ${sinTalle ? '' : `<select class="upsell-sel" id="us${i}">${p.talles.map(t=>`<option>${t}</option>`).join('')}</select>`}
-          <button class="upsell-add" id="ubtn${i}" onclick="agregarDesdeUpsell(${i})">+ Agregar</button>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-  document.getElementById('upsell-overlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  window._upsellProds = prods;
-}
-
-function agregarDesdeUpsell(i) {
-  const p = window._upsellProds[i];
-  const sinTalle = p.talles.length===1 && p.talles[0].toLowerCase()==='único';
-  const talle = sinTalle ? 'Único' : (document.getElementById('us'+i)?.value || p.talles[0]);
-  carrito.push({ nombre: p.nombre, precio: p.precio, foto: p.foto, emoji: p.emoji, talle, uid: Date.now()+Math.random() });
-  actualizarUI();
-  toast('✓ '+p.nombre+' agregado');
-  const btn = document.getElementById('ubtn'+i);
-  if (btn) { btn.textContent = '✓'; btn.style.background = '#25D366'; btn.style.color = 'white'; btn.disabled = true; }
-}
-
-function cerrarUpsell() {
-  document.getElementById('upsell-overlay').classList.remove('open');
-  document.body.style.overflow = '';
-  irAEnvioReal();
 }
 
 function volverCarrito() {
@@ -887,7 +713,6 @@ async function confirmarPedido() {
 
   // Mostrar enviando
   if(typeof fbq!=='undefined') fbq('track','Purchase',{value:total,currency:'ARS',num_items:carrito.length});
-
   document.getElementById('envio-form').classList.remove('visible');
   document.getElementById('enviando').classList.add('visible');
   document.getElementById('btn-volver').style.display = 'none';
@@ -909,7 +734,8 @@ async function confirmarPedido() {
     });
   } catch(e) { console.warn('Error guardando pedido:', e); }
 
-   let msg = `¡Hola! Quiero confirmar mi pedido 🛒\n\n`;
+  // Armar mensaje WhatsApp
+  let msg = `¡Hola! Quiero confirmar mi pedido 🛒\n\n`;
   msg += `👤 *${nombre}*\n`;
   msg += `📸 ${instagram}\n`;
   msg += `📱 ${telefono}\n\n`;
