@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -187,6 +188,15 @@ header {
 .enviando-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--accent); margin-bottom: 0.5rem; }
 .enviando-sub { font-size: 13px; color: var(--muted); }
 
+/* LIGHTBOX */
+.lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.93); z-index: 500; align-items: center; justify-content: center; cursor: zoom-out; animation: fadeIn 0.2s ease; }
+.lightbox.open { display: flex; }
+.lightbox-img { max-width: 92vw; max-height: 88vh; object-fit: contain; border-radius: 8px; cursor: default; }
+.lightbox-close { position: absolute; top: 1rem; right: 1.25rem; font-size: 30px; color: var(--white); cursor: pointer; background: none; border: none; line-height: 1; opacity: 0.7; }
+.lightbox-close:hover { opacity: 1; }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+.card-img { cursor: zoom-in; }
+
 .toast {
   position: fixed; bottom: 1.5rem; left: 50%;
   transform: translateX(-50%) translateY(80px);
@@ -325,6 +335,13 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
     </button>
     <p class="wsp-note">Tu pedido quedará registrado automáticamente 📊</p>
   </div>
+</div>
+
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img class="lightbox-img" id="lightbox-img" src="" alt="" onclick="event.stopPropagation()">
 </div>
 
 <div class="toast" id="toast"></div>
@@ -624,6 +641,21 @@ function toast(msg) {
   t.textContent = msg; t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'), 2200);
 }
+
+
+function openLightbox(src, alt) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox-img').alt = alt;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeLightbox(); });
 
 function cap(s) { return s.charAt(0).toUpperCase()+s.slice(1); }
 
