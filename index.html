@@ -456,7 +456,7 @@ function cardHTML(p, i) {
   return `
     <div class="card">
       <div class="card-img">
-        ${p.foto?`<img src="${p.foto}" alt="${p.nombre}" loading="lazy" onclick="openLightbox('${p.foto}','${p.nombre}')" style="cursor:zoom-in" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:'' }
+        ${p.foto?`<img src="${p.foto}" alt="${p.nombre}" loading="lazy" data-src="${p.foto}" data-alt="${p.nombre}" class="foto-clickeable" style="cursor:zoom-in" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:'' }
         <div class="emoji-ph" ${p.foto?'style="display:none"':''}>${p.emoji}</div>
         <div class="badge-wrap">
           ${p.novedad?'<span class="badge badge-new">Nuevo</span>':''}
@@ -655,6 +655,14 @@ function closeLightbox() {
 }
 
 document.addEventListener('keydown', e => { if(e.key === 'Escape') closeLightbox(); });
+
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('foto-clickeable')) {
+    const src = e.target.getAttribute('data-src');
+    const alt = e.target.getAttribute('data-alt');
+    if (src) openLightbox(src, alt);
+  }
+});
 
 function cap(s) { return s.charAt(0).toUpperCase()+s.slice(1); }
 
