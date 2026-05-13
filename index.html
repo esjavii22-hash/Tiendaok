@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -14,6 +13,32 @@
 <meta property="og:site_name" content="dsok.importado">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://dsok-urbano.com/preview.jpg">
+  <!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1632295294690951');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1632295294690951&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+  <!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0MX5QHWMP3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-0MX5QHWMP3');
+</script>
+<!-- End Google Analytics -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -107,6 +132,7 @@ header {
 .badge { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 3px 7px; border-radius: 4px; }
 .badge-new { background: var(--accent); color: var(--black); }
 .badge-hot { background: #ff4444; color: white; }
+.badge-urgencia { background: #ff4444; color: white; }
 .badge-out { background: var(--gray3); color: var(--muted); }
 .card-body { padding: 10px 12px 14px; border-right: 1px solid var(--gray2); border-bottom: 1px solid var(--gray2); }
 .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 3px; }
@@ -314,6 +340,27 @@ header {
 .upsell-skip { width: 100%; margin-top: 10px; padding: 12px; background: transparent; color: var(--muted); border: 1px solid var(--gray3); border-radius: 12px; font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
 .upsell-skip:hover { border-color: var(--white); color: var(--white); }
 
+
+/* BOTON FLOTANTE CARRITO */
+.float-cart {
+  position: fixed; bottom: 1.2rem; left: 50%;
+  transform: translateX(-50%) translateY(120px);
+  background: var(--accent); color: var(--black);
+  border: none; border-radius: 100px;
+  padding: 12px 20px; font-size: 14px; font-weight: 700;
+  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  display: flex; align-items: center; gap: 10px;
+  z-index: 150; transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  white-space: nowrap; box-shadow: 0 4px 20px rgba(212,255,0,0.3);
+}
+.float-cart.visible { transform: translateX(-50%) translateY(0); }
+.float-cart-badge {
+  background: var(--black); color: var(--accent);
+  border-radius: 50%; width: 22px; height: 22px;
+  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+
 .toast {
   position: fixed; bottom: 1.5rem; left: 50%;
   transform: translateX(-50%) translateY(80px);
@@ -330,20 +377,30 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
 
 <header>
   <div class="logo">dsok<em>.</em>importado</div>
-  <button class="cart-btn" onclick="toggleDrawer()">
-    🛒 Carrito <span class="cart-badge" id="cart-count">0</span>
-  </button>
+  <div style="display:flex; gap:8px; align-items:center;">
+    <a href="https://wa.me/541124531618" style="display:flex; align-items:center; gap:5px; background:#25D366; color:white; padding:7px 13px; border-radius:100px; font-size:12px; font-weight:600; text-decoration:none; font-family:'DM Sans',sans-serif;">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Contacto
+    </a>
+    <button class="cart-btn" onclick="toggleDrawer()">
+      🛒 <span class="cart-badge" id="cart-count">0</span>
+    </button>
+  </div>
 </header>
 
-<div class="hero">
-  <p class="hero-tag">✦ Indumentaria urbana premium</p>
-  <h1 class="hero-title">Estilo que <span>llega</span><br>a tu puerta</h1>
-  <p class="hero-sub">+10.000 ventas enviadas · Pagás al recibir · CABA y GBA</p>
-  <div class="pills">
-    <span class="pill"><span class="pill-dot"></span>Abonás al recibir 🔐</span>
-    <span class="pill"><span class="pill-dot"></span>Envío $8.500</span>
-    <span class="pill"><span class="pill-dot"></span>Lu · Mi · Vi · Sa 14 a 20hs</span>
-    <span class="pill"><span class="pill-dot"></span>CABA / GBA / La Plata</span>
+<div class="hero" style="padding:0; position:relative; min-height:220px; overflow:hidden;">
+  <img src="https://www.jotform.com/uploads/gestionpedidos1/form_files/img_8346_3168bc844f819a360b8b0af14a85719e.jpeg" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0.45; display:block;">
+  <div style="position:absolute; inset:0; background:rgba(8,8,8,0.55);"></div>
+  <div style="position:relative; z-index:1; padding:1.75rem 1.25rem 1.25rem;">
+    <p class="hero-tag">✦ Indumentaria urbana premium</p>
+    <h1 class="hero-title">Estilo que <span>llega</span><br>a tu puerta</h1>
+    <p class="hero-sub">+10.000 ventas enviadas · Pagás al recibir · CABA y GBA</p>
+    <div class="pills">
+      <span class="pill"><span class="pill-dot"></span>Abonás al recibir 🔐</span>
+      <span class="pill"><span class="pill-dot"></span>Envío $8.500</span>
+      <span class="pill"><span class="pill-dot"></span>Lu · Mi · Vi · Sa 14 a 20hs</span>
+      <span class="pill"><span class="pill-dot"></span>CABA / GBA / La Plata</span>
+    </div>
   </div>
 </div>
 
@@ -352,6 +409,46 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
 <div style="background:#141900; border-bottom: 1px solid #2a3300; padding: 0.6rem 1.25rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
   <span style="font-size:14px">💬</span>
   <span style="font-size: 12px; color: #a8cc00; font-weight: 500;">El pedido se confirma por WhatsApp · Sin pago online · 100% seguro</span>
+</div>
+
+
+<div style="padding:1rem 1.25rem; border-bottom:1px solid var(--gray2); background:#0d0d0d; overflow:hidden;">
+  <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+    <span style="color:#d4ff00; font-size:14px;">★★★★★</span>
+    <span style="font-size:13px; color:#d4ff00; font-weight:600;">4.9</span>
+    <span style="font-size:12px; color:var(--muted);">· +500 clientes satisfechos</span>
+  </div>
+  <div style="display:flex; gap:10px; overflow-x:auto; scrollbar-width:none; padding-bottom:4px;">
+    <div style="background:var(--gray2); border:1px solid var(--gray3); border-radius:10px; padding:10px 12px; min-width:160px; max-width:180px; flex-shrink:0;">
+      <span style="color:#d4ff00; font-size:11px;">★★★★★</span>
+      <p style="font-size:11px; color:#aaa; line-height:1.4; margin:5px 0 6px;">"Llegó rapidísimo y la calidad es increíble"</p>
+      <p style="font-size:10px; color:var(--muted);">@matias.ok · CABA</p>
+    </div>
+    <div style="background:var(--gray2); border:1px solid var(--gray3); border-radius:10px; padding:10px 12px; min-width:160px; max-width:180px; flex-shrink:0;">
+      <span style="color:#d4ff00; font-size:11px;">★★★★★</span>
+      <p style="font-size:11px; color:#aaa; line-height:1.4; margin:5px 0 6px;">"Re cómodo el joggin, ya pedí el segundo"</p>
+      <p style="font-size:10px; color:var(--muted);">@sofi.fit · GBA Sur</p>
+    </div>
+    <div style="background:var(--gray2); border:1px solid var(--gray3); border-radius:10px; padding:10px 12px; min-width:160px; max-width:180px; flex-shrink:0;">
+      <span style="color:#d4ff00; font-size:11px;">★★★★★</span>
+      <p style="font-size:11px; color:#aaa; line-height:1.4; margin:5px 0 6px;">"Pagás al recibir, eso me convenció"</p>
+      <p style="font-size:10px; color:var(--muted);">@lucas.2k · La Plata</p>
+    </div>
+    <div style="background:var(--gray2); border:1px solid var(--gray3); border-radius:10px; padding:10px 12px; min-width:160px; max-width:180px; flex-shrink:0;">
+      <span style="color:#d4ff00; font-size:11px;">★★★★★</span>
+      <p style="font-size:11px; color:#aaa; line-height:1.4; margin:5px 0 6px;">"El buzo de Nike es una joya, gracias"</p>
+      <p style="font-size:10px; color:var(--muted);">@caro.mendez22 · CABA</p>
+    </div>
+    <div style="background:var(--gray2); border:1px solid var(--gray3); border-radius:10px; padding:10px 12px; min-width:160px; max-width:180px; flex-shrink:0;">
+      <span style="color:#d4ff00; font-size:11px;">★★★★★</span>
+      <p style="font-size:11px; color:#aaa; line-height:1.4; margin:5px 0 6px;">"Super rapido el envio, ya recomende a todos"</p>
+      <p style="font-size:10px; color:var(--muted);">@tomas.rivas · GBA Norte</p>
+    </div>
+  </div>
+</div>
+<div style="background:#141900; border-bottom:1px solid #2a3300; padding:0.6rem 1.25rem; display:flex; align-items:center; justify-content:center; gap:8px;">
+  <span style="font-size:14px">💬</span>
+  <span style="font-size:12px; color:#a8cc00; font-weight:500;">El pedido se confirma por WhatsApp · Sin pago online · 100% seguro</span>
 </div>
 
 <div class="cats-bar">
@@ -485,6 +582,14 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
   </div>
 </div>
 
+
+<!-- BOTON FLOTANTE CARRITO -->
+<button class="float-cart" id="float-cart" onclick="toggleDrawer()">
+  🛒 Ver carrito
+  <span class="float-cart-badge" id="float-cart-count">0</span>
+  <span id="float-cart-total" style="font-size:13px;"></span>
+</button>
+
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
   <button class="lightbox-close" onclick="closeLightbox()">✕</button>
@@ -494,7 +599,7 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
 <div class="toast" id="toast"></div>
 
 <script>
-const WSP = '5491153138847';
+const WSP = '541124531618';
 const SHEET_ID = '1Oa2SeUxRyidl6kZMzDxG-MIK5oBdK9lvmNo3BIqS8dc';
 const SHEET_NAME = 'Productos';
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwhByLmKeG6Pk0XkAHqOffxDaIfLf7vVMI6eM-9hfW834uQvVQ-QM8glvVnJ754JxG2fw/exec';
@@ -531,6 +636,7 @@ async function init() {
       destacado:   (r.c[10]?.v||'no').toString().toLowerCase().trim() === 'si',
       novedad:     (r.c[11]?.v||'no').toString().toLowerCase().trim() === 'si',
       agregar:     (r.c[12]?.v||'no').toString().toLowerCase().trim() === 'si',
+      urgencia:    r.c[13]?.v ? String(r.c[13].v).trim() : '',
     })).filter(p => p.nombre);
   } catch(e) { console.warn('Error Sheet:', e); todos = []; }
   document.getElementById('loading').style.display = 'none';
@@ -634,6 +740,7 @@ function cardHTML(p, i) {
           ${p.novedad?'<span class="badge badge-new">Nuevo</span>':''}
           ${p.destacado&&!p.novedad?'<span class="badge badge-hot">🔥 Top</span>':''}
           ${agotado?'<span class="badge badge-out">Sin stock</span>':''}
+          ${p.urgencia&&!agotado?`<span class="badge badge-urgencia">ULTIMAS ${p.urgencia}</span>`:''}
         </div>
       </div>
       <div class="card-body">
@@ -661,6 +768,7 @@ function agregar(i, nombre, precio, foto, emoji, talleFixed) {
   carrito.push({ nombre, precio, foto, emoji, talle, uid: Date.now()+Math.random() });
   actualizarUI();
   toast('✓ '+nombre+' agregado');
+  if(typeof fbq!=='undefined') fbq('track','AddToCart',{content_name:nombre,value:precio,currency:'ARS'});
 }
 
 function quitar(uid) {
@@ -681,6 +789,18 @@ function actualizarUI() {
   document.getElementById('envio-txt').textContent = '$'+envio.toLocaleString('es-AR');
   document.getElementById('total-main').textContent = '$'+(sub+envio).toLocaleString('es-AR');
   document.getElementById('btn-continuar').disabled = !carrito.length;
+
+  const fc = document.getElementById('float-cart');
+  if (fc) {
+    if (carrito.length > 0) {
+      fc.classList.add('visible');
+      document.getElementById('float-cart-count').textContent = carrito.length;
+      const sub2 = carrito.reduce((s,i)=>s+i.precio,0);
+      document.getElementById('float-cart-total').textContent = ' $'+sub2.toLocaleString('es-AR');
+    } else {
+      fc.classList.remove('visible');
+    }
+  }
 
   const el = document.getElementById('drawer-items');
   const countBadge = document.getElementById('drawer-title-count');
@@ -727,6 +847,7 @@ function irAEnvioReal() {
   document.getElementById('drawer-title').textContent = 'Datos de envío';
   document.getElementById('step1').classList.remove('active');
   document.getElementById('step2').classList.add('active');
+  if(typeof fbq!=='undefined'){const sub=carrito.reduce((s,i)=>s+i.precio,0);fbq('track','InitiateCheckout',{value:sub,currency:'ARS',num_items:carrito.length});}
 }
 
 function mostrarUpsell(prods) {
@@ -808,6 +929,7 @@ async function confirmarPedido() {
   const productosStr = carrito.map(i=>`${i.nombre} (Talle ${i.talle})`).join(' | ');
 
   // Mostrar enviando
+  if(typeof fbq!=='undefined') fbq('track','Purchase',{value:total,currency:'ARS',num_items:carrito.length});
   document.getElementById('envio-form').classList.remove('visible');
   document.getElementById('enviando').classList.add('visible');
   document.getElementById('btn-volver').style.display = 'none';
