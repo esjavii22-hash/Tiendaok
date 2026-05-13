@@ -1,43 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Indumentaria Urbana Premium</title>
-<meta name="description" content="El pedido se confirma por WhatsApp · Sin pago online · 100% seguro">
-<meta property="og:title" content="Indumentaria Urbana Premium">
-<meta property="og:description" content="El pedido se confirma por WhatsApp · Sin pago online · 100% seguro">
-<meta property="og:url" content="https://dsok-urbano.com">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="dsok.importado">
-
-  <!-- Meta Pixel Code -->
-<script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1632295294690951');
-fbq('track', 'PageView');
-</script>
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=1632295294690951&ev=PageView&noscript=1"
-/></noscript>
-<!-- End Meta Pixel Code -->
-  <!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0MX5QHWMP3"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-0MX5QHWMP3');
-</script>
-<!-- End Google Analytics -->
+<title>dsok.importado — Indumentaria Urbana Premium</title>
+<meta name="description" content="Ropa urbana premium. Joggins, buzos, remeras y conjuntos. Pagás al recibir. Envíos CABA y GBA.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -122,6 +89,7 @@ header {
 .badge { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 3px 7px; border-radius: 4px; }
 .badge-new { background: var(--accent); color: var(--black); }
 .badge-hot { background: #ff4444; color: white; }
+.badge-urgencia { background: #ff4444; color: white; }
 .badge-out { background: var(--gray3); color: var(--muted); }
 .card-body { padding: 10px 12px 14px; border-right: 1px solid var(--gray2); border-bottom: 1px solid var(--gray2); }
 .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 3px; }
@@ -230,32 +198,25 @@ header {
 .card-img { cursor: zoom-in; }
 
 
-/* UPSELL POPUP */
-.upsell-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 400; align-items: flex-end; justify-content: center; }
-.upsell-overlay.open { display: flex; }
-.upsell-panel {
-  background: #0f0f0f; width: 100%; max-width: 480px;
-  border-radius: 20px 20px 0 0; border-top: 1px solid var(--gray2);
-  padding: 1rem 1rem 0; max-height: 75vh; display: flex; flex-direction: column;
-  animation: slideUp 0.3s ease;
+/* BOTÓN FLOTANTE CARRITO */
+.float-cart {
+  position: fixed; bottom: 1.2rem; left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--accent); color: var(--black);
+  border: none; border-radius: 100px;
+  padding: 12px 20px; font-size: 14px; font-weight: 700;
+  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  display: flex; align-items: center; gap: 10px;
+  z-index: 150; transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  white-space: nowrap; box-shadow: 0 4px 20px rgba(212,255,0,0.3);
 }
-@keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
-.upsell-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; }
-.upsell-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; color: var(--white); }
-.upsell-sub { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
-.upsell-close { background: var(--gray2); border: none; color: var(--white); width: 28px; height: 28px; border-radius: 50%; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.upsell-list { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; padding-bottom: 0.75rem; flex: 1; }
-.upsell-card { background: var(--gray2); border: 1px solid var(--gray3); border-radius: 10px; display: flex; gap: 10px; padding: 8px; align-items: center; }
-.upsell-img { width: 64px; height: 64px; border-radius: 8px; overflow: hidden; background: var(--gray3); flex-shrink: 0; }
-.upsell-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.upsell-emoji { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 24px; }
-.upsell-info { flex: 1; min-width: 0; }
-.upsell-name { font-size: 12px; font-weight: 500; color: var(--white); margin-bottom: 2px; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.upsell-price { font-size: 13px; color: var(--accent); font-weight: 700; margin-bottom: 6px; }
-.upsell-controls { display: flex; gap: 5px; align-items: center; }
-.upsell-sel { background: var(--black); color: var(--white); border: 1px solid var(--gray3); border-radius: 6px; padding: 4px 6px; font-size: 11px; font-family: 'DM Sans', sans-serif; cursor: pointer; max-width: 80px; }
-.upsell-add { background: var(--accent); color: var(--black); border: none; border-radius: 6px; padding: 5px 10px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.15s; flex-shrink: 0; }
-.upsell-add:active { transform: scale(0.95); }
+.float-cart.visible { transform: translateX(-50%) translateY(0); }
+.float-cart-badge {
+  background: var(--black); color: var(--accent);
+  border-radius: 50%; width: 22px; height: 22px;
+  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
 
 .toast {
   position: fixed; bottom: 1.5rem; left: 50%;
@@ -273,76 +234,24 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
 
 <header>
   <div class="logo">dsok<em>.</em>importado</div>
-  <div style="display:flex; gap:8px; align-items:center;">
-    <a href="https://wa.me/541124531618" style="display:flex; align-items:center; gap:5px; background:#25D366; color:white; border:none; padding:7px 13px; border-radius:100px; font-size:12px; font-weight:600; text-decoration:none; font-family:'DM Sans',sans-serif;">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-      Contacto
-    </a>
-    <button class="cart-btn" onclick="toggleDrawer()">
-      🛒 <span class="cart-badge" id="cart-count">0</span>
-    </button>
-  </div>
+  <button class="cart-btn" onclick="toggleDrawer()">
+    🛒 Carrito <span class="cart-badge" id="cart-count">0</span>
+  </button>
 </header>
 
-<div class="hero" style="padding:0; position:relative; min-height:220px; overflow:hidden;">
-  <img src="https://www.jotform.com/uploads/gestionpedidos1/form_files/img_8346_3168bc844f819a360b8b0af14a85719e.jpeg"
-    style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0.45; display:block;">
-  <div style="position:absolute; inset:0; background:rgba(8,8,8,0.55);"></div>
-  <div style="position:relative; z-index:1; padding:1.75rem 1.25rem 1.25rem;">
-    <p class="hero-tag">✦ Indumentaria urbana premium</p>
-    <h1 class="hero-title">Estilo que <span>llega</span><br>a tu puerta</h1>
-    <p class="hero-sub">+10.000 ventas enviadas · Pagás al recibir · CABA y GBA</p>
-    <div class="pills">
-      <span class="pill"><span class="pill-dot"></span>Abonás al recibir 🔐</span>
-      <span class="pill"><span class="pill-dot"></span>Envío $8.500</span>
-      <span class="pill"><span class="pill-dot"></span>Lu · Mi · Vi · Sa 14 a 20hs</span>
-      <span class="pill"><span class="pill-dot"></span>CABA / GBA / La Plata</span>
-    </div>
+<div class="hero">
+  <p class="hero-tag">✦ Indumentaria urbana premium</p>
+  <h1 class="hero-title">Estilo que <span>llega</span><br>a tu puerta</h1>
+  <p class="hero-sub">+10.000 ventas enviadas · Pagás al recibir · CABA y GBA</p>
+  <div class="pills">
+    <span class="pill"><span class="pill-dot"></span>Abonás al recibir 🔐</span>
+    <span class="pill"><span class="pill-dot"></span>Envío $8.500</span>
+    <span class="pill"><span class="pill-dot"></span>Lu · Mi · Vi · Sa 14 a 20hs</span>
+    <span class="pill"><span class="pill-dot"></span>CABA / GBA / La Plata</span>
   </div>
 </div>
 
 
-
-
-<div style="padding:1rem 1.25rem; border-bottom:1px solid var(--gray2); background:#0d0d0d; overflow:hidden;">
-  <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
-    <span style="color:#d4ff00; font-size:14px; letter-spacing:1px;">★★★★★</span>
-    <span style="font-size:13px; color:#d4ff00; font-weight:600;">4.9</span>
-    <span style="font-size:12px; color:var(--muted);">· +500 clientes satisfechos</span>
-  </div>
-  <div style="display:flex; gap:10px; overflow-x:auto; scrollbar-width:none; padding-bottom:4px;">
-    <div style="background:var(--gray2); border:1px solid var(--gray3); border-radius:10px; padding:10px 12px; min-width:160px; max-width:180px; flex-shrink:0;">
-      <span style="color:#d4ff00; font-size:11px;">★★★★★</span>
-      <p style="font-size:11px; color:#aaa; line-height:1.4; margin:5px 0 6px;">"Llegó rapidísimo y la calidad es increíble 🔥"</p>
-      <p style="font-size:10px; color:var(--muted);">@matias.ok · CABA</p>
-    </div>
-    <div style="background:var(--gray2); border:1px solid var(--gray3); border-radius:10px; padding:10px 12px; min-width:160px; max-width:180px; flex-shrink:0;">
-      <span style="color:#d4ff00; font-size:11px;">★★★★★</span>
-      <p style="font-size:11px; color:#aaa; line-height:1.4; margin:5px 0 6px;">"Re cómodo el joggin, ya pedí el segundo 👌"</p>
-      <p style="font-size:10px; color:var(--muted);">@sofi.fit · GBA Sur</p>
-    </div>
-    <div style="background:var(--gray2); border:1px solid var(--gray3); border-radius:10px; padding:10px 12px; min-width:160px; max-width:180px; flex-shrink:0;">
-      <span style="color:#d4ff00; font-size:11px;">★★★★★</span>
-      <p style="font-size:11px; color:#aaa; line-height:1.4; margin:5px 0 6px;">"Pagás al recibir, eso me convenció. Excelente"</p>
-      <p style="font-size:10px; color:var(--muted);">@lucas.2k · La Plata</p>
-    </div>
-    <div style="background:var(--gray2); border:1px solid var(--gray3); border-radius:10px; padding:10px 12px; min-width:160px; max-width:180px; flex-shrink:0;">
-      <span style="color:#d4ff00; font-size:11px;">★★★★★</span>
-      <p style="font-size:11px; color:#aaa; line-height:1.4; margin:5px 0 6px;">"El buzo de Nike es una joya, gracias 🙌"</p>
-      <p style="font-size:10px; color:var(--muted);">@caro.mendez22 · CABA</p>
-    </div>
-    <div style="background:var(--gray2); border:1px solid var(--gray3); border-radius:10px; padding:10px 12px; min-width:160px; max-width:180px; flex-shrink:0;">
-      <span style="color:#d4ff00; font-size:11px;">★★★★★</span>
-      <p style="font-size:11px; color:#aaa; line-height:1.4; margin:5px 0 6px;">"Súper rápido el envío, ya recomendé a todos"</p>
-      <p style="font-size:10px; color:var(--muted);">@tomas.rivas · GBA Norte</p>
-    </div>
-  </div>
-</div>
-
-<div style="background:#141900; border-bottom: 1px solid #2a3300; padding: 0.6rem 1.25rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
-  <span style="font-size:14px">💬</span>
-  <span style="font-size: 12px; color: #a8cc00; font-weight: 500;">El pedido se confirma por WhatsApp · Sin pago online · 100% seguro</span>
-</div>
 
 <div class="cats-bar">
   <div class="cats" id="cats"></div>
@@ -451,18 +360,12 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
 
 
 
-<!-- UPSELL POPUP -->
-<div class="upsell-overlay" id="upsell-overlay">
-  <div class="upsell-panel">
-    <div class="upsell-hdr">
-      <span class="upsell-title">🔥 ¿Agregás algo más?</span>
-      <button class="upsell-close" onclick="cerrarUpsell()">✕</button>
-    </div>
-    <p class="upsell-sub">Antes de confirmar, mirá estos productos</p>
-    <div class="upsell-list" id="upsell-grid"></div>
-    <button onclick="cerrarUpsell()" style="width:100%;padding:11px;margin:8px 0 12px;background:transparent;color:var(--muted);border:1px solid var(--gray3);border-radius:10px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;">Continuar →</button>
-  </div>
-</div>
+<!-- BOTÓN FLOTANTE CARRITO -->
+<button class="float-cart" id="float-cart" onclick="toggleDrawer()">
+  🛒 Ver carrito
+  <span class="float-cart-badge" id="float-cart-count">0</span>
+  <span id="float-cart-total" style="font-size:13px;"></span>
+</button>
 
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
@@ -473,7 +376,7 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
 <div class="toast" id="toast"></div>
 
 <script>
-const WSP = '541124531618';
+const WSP = '5491153138847';
 const SHEET_ID = '1Oa2SeUxRyidl6kZMzDxG-MIK5oBdK9lvmNo3BIqS8dc';
 const SHEET_NAME = 'Productos';
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwhByLmKeG6Pk0XkAHqOffxDaIfLf7vVMI6eM-9hfW834uQvVQ-QM8glvVnJ754JxG2fw/exec';
@@ -510,6 +413,7 @@ async function init() {
       destacado:   (r.c[10]?.v||'no').toString().toLowerCase().trim() === 'si',
       novedad:     (r.c[11]?.v||'no').toString().toLowerCase().trim() === 'si',
       agregar:     (r.c[12]?.v||'no').toString().toLowerCase().trim() === 'si',
+      urgencia:    r.c[13]?.v ? String(r.c[13].v).trim() : '',
     })).filter(p => p.nombre);
   } catch(e) { console.warn('Error Sheet:', e); todos = []; }
   document.getElementById('loading').style.display = 'none';
@@ -590,6 +494,7 @@ function cardHTML(p, i) {
           ${p.novedad?'<span class="badge badge-new">Nuevo</span>':''}
           ${p.destacado&&!p.novedad?'<span class="badge badge-hot">🔥 Top</span>':''}
           ${agotado?'<span class="badge badge-out">Sin stock</span>':''}
+          ${p.urgencia&&!agotado?`<span class="badge badge-urgencia">ÚLTIMAS ${p.urgencia}</span>`:''}
         </div>
       </div>
       <div class="card-body">
@@ -617,7 +522,6 @@ function agregar(i, nombre, precio, foto, emoji, talleFixed) {
   carrito.push({ nombre, precio, foto, emoji, talle, uid: Date.now()+Math.random() });
   actualizarUI();
   toast('✓ '+nombre+' agregado');
-  if(typeof fbq!=='undefined') fbq('track','AddToCart',{content_name:nombre,value:precio,currency:'ARS'});
 }
 
 function quitar(uid) {
@@ -639,6 +543,19 @@ function actualizarUI() {
   document.getElementById('total-main').textContent = '$'+(sub+envio).toLocaleString('es-AR');
   document.getElementById('btn-continuar').disabled = !carrito.length;
 
+  // Botón flotante
+  const fc = document.getElementById('float-cart');
+  const sub2 = carrito.reduce((s,i)=>s+i.precio,0);
+  if (fc) {
+    if (carrito.length > 0) {
+      fc.classList.add('visible');
+      document.getElementById('float-cart-count').textContent = carrito.length;
+      document.getElementById('float-cart-total').textContent = '$'+sub2.toLocaleString('es-AR');
+    } else {
+      fc.classList.remove('visible');
+    }
+  }
+
   const el = document.getElementById('drawer-items');
   if (!carrito.length) { el.innerHTML='<p class="empty-cart">No agregaste productos aún.</p>'; return; }
   el.innerHTML = carrito.map(item=>`
@@ -658,6 +575,11 @@ function actualizarUI() {
 }
 
 function irAEnvio() {
+  const recomendados = todos.filter(p => p.agregar && p.stock);
+  if (recomendados.length > 0) { mostrarUpsell(recomendados); } else { irAEnvioReal(); }
+}
+
+function irAEnvioReal() {
   paso = 2;
   document.getElementById('drawer-items').style.display = 'none';
   document.getElementById('envio-form').classList.add('visible');
@@ -671,6 +593,47 @@ function irAEnvio() {
     const sub=carrito.reduce((s,i)=>s+i.precio,0);
     fbq('track','InitiateCheckout',{value:sub,currency:'ARS',num_items:carrito.length});
   }
+}
+
+function mostrarUpsell(prods) {
+  const grid = document.getElementById('upsell-grid');
+  grid.innerHTML = prods.map((p, i) => {
+    const sinTalle = p.talles.length===1 && p.talles[0].toLowerCase()==='único';
+    return `<div class="upsell-card">
+      <div class="upsell-img">
+        ${p.foto ? `<img src="${p.foto}" alt="${p.nombre}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="upsell-emoji" style="display:none">${p.emoji}</div>` : `<div class="upsell-emoji">${p.emoji}</div>`}
+      </div>
+      <div class="upsell-info">
+        <p class="upsell-name">${p.nombre}</p>
+        <p class="upsell-price">$${p.precio.toLocaleString('es-AR')}</p>
+        <div class="upsell-controls">
+          ${sinTalle ? '' : `<select class="upsell-sel" id="us${i}">${p.talles.map(t=>`<option>${t}</option>`).join('')}</select>`}
+          <button class="upsell-add" id="ubtn${i}" onclick="agregarDesdeUpsell(${i})">+ Agregar</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('upsell-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  window._upsellProds = prods;
+}
+
+function agregarDesdeUpsell(i) {
+  const p = window._upsellProds[i];
+  const sinTalle = p.talles.length===1 && p.talles[0].toLowerCase()==='único';
+  const talle = sinTalle ? 'Único' : (document.getElementById('us'+i)?.value || p.talles[0]);
+  carrito.push({ nombre: p.nombre, precio: p.precio, foto: p.foto, emoji: p.emoji, talle, uid: Date.now()+Math.random() });
+  actualizarUI();
+  toast('✓ '+p.nombre+' agregado');
+  if(typeof fbq!=='undefined') fbq('track','AddToCart',{content_name:p.nombre,value:p.precio,currency:'ARS'});
+  const btn = document.getElementById('ubtn'+i);
+  if (btn) { btn.textContent = '✓'; btn.style.background = '#25D366'; btn.style.color = 'white'; btn.disabled = true; }
+}
+
+function cerrarUpsell() {
+  document.getElementById('upsell-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  irAEnvioReal();
 }
 
 function volverCarrito() {
@@ -712,7 +675,6 @@ async function confirmarPedido() {
   const productosStr = carrito.map(i=>`${i.nombre} (Talle ${i.talle})`).join(' | ');
 
   // Mostrar enviando
-  if(typeof fbq!=='undefined') fbq('track','Purchase',{value:total,currency:'ARS',num_items:carrito.length});
   document.getElementById('envio-form').classList.remove('visible');
   document.getElementById('enviando').classList.add('visible');
   document.getElementById('btn-volver').style.display = 'none';
