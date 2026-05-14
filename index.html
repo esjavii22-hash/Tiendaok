@@ -460,6 +460,7 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
   <button class="filter-btn active" onclick="filtrarExtra('todos',this)">Todos</button>
   <button class="filter-btn" onclick="filtrarExtra('destacado',this)">⭐ Top</button>
   <button class="filter-btn" onclick="filtrarExtra('novedad',this)">🆕 Nuevo</button>
+  <button class="filter-btn" onclick="abrirTalles()" style="margin-left:auto; border-color:#2a3300; color:#a8cc00;">📏 Talles</button>
 </div>
 
 <div id="loading" class="loading">
@@ -467,6 +468,89 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
 </div>
 <div id="contenido" style="display:none"></div>
 <footer>dsok.importado © 2026 · Indumentaria urbana premium · Buenos Aires</footer>
+
+<!-- GUIA TALLES -->
+<div class="upsell-overlay" id="talles-overlay">
+  <div class="upsell-panel" style="max-height:85vh">
+    <div class="upsell-hdr">
+      <div>
+        <span class="upsell-title">📏 GUIA DE TALLES</span>
+        <p style="font-size:9px;color:var(--muted);margin-top:2px">Medidas de la prenda en cm</p>
+      </div>
+      <button class="upsell-close" onclick="cerrarTalles()">✕</button>
+    </div>
+    <div style="overflow-y:auto;padding-bottom:1rem">
+      <div style="display:flex;padding:10px 0;gap:14px;align-items:flex-start">
+        <div style="flex-shrink:0;width:90px">
+          <svg viewBox="0 0 90 155" width="90" height="155" xmlns="http://www.w3.org/2000/svg">
+            <line x1="15" y1="4" x2="75" y2="4" stroke="#d4ff00" stroke-width="1.5"/>
+            <polyline points="18,1 15,4 18,7" fill="none" stroke="#d4ff00" stroke-width="1.5"/>
+            <polyline points="72,1 75,4 72,7" fill="none" stroke="#d4ff00" stroke-width="1.5"/>
+            <rect x="36" y="0" width="18" height="8" rx="4" fill="#d4ff00"/>
+            <text x="45" y="6.5" text-anchor="middle" font-size="6.5" font-weight="bold" fill="#080808">B</text>
+            <rect x="15" y="10" width="60" height="10" rx="3" fill="#222" stroke="#d4ff00" stroke-width="1.2"/>
+            <line x1="40" y1="10" x2="38" y2="20" stroke="#666" stroke-width="0.8"/>
+            <line x1="50" y1="10" x2="52" y2="20" stroke="#666" stroke-width="0.8"/>
+            <path d="M15,20 Q13,30 12,42 L78,42 Q77,30 75,20 Z" fill="#1c1c1c" stroke="#333" stroke-width="0.8"/>
+            <path d="M12,42 Q10,70 11,120 Q11,128 14,130 L42,130 Q44,128 44,120 L44,42 Z" fill="#1c1c1c" stroke="#333" stroke-width="0.8"/>
+            <path d="M46,42 L46,120 Q46,128 48,130 L76,130 Q79,128 79,120 Q80,70 78,42 Z" fill="#1c1c1c" stroke="#333" stroke-width="0.8"/>
+            <line x1="28" y1="55" x2="26" y2="123" stroke="#282828" stroke-width="0.8"/>
+            <line x1="62" y1="55" x2="64" y2="123" stroke="#282828" stroke-width="0.8"/>
+            <line x1="4" y1="10" x2="4" y2="130" stroke="#a8cc00" stroke-width="1.5"/>
+            <polyline points="1,13 4,10 7,13" fill="none" stroke="#a8cc00" stroke-width="1.5"/>
+            <polyline points="1,127 4,130 7,127" fill="none" stroke="#a8cc00" stroke-width="1.5"/>
+            <rect x="0" y="63" width="8" height="12" rx="4" fill="#a8cc00"/>
+            <text x="4" y="71.5" text-anchor="middle" font-size="6.5" font-weight="bold" fill="#080808">A</text>
+          </svg>
+          <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px">
+            <div style="display:flex;align-items:center;gap:5px">
+              <div style="background:#a8cc00;border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:#080808">A</div>
+              <span style="font-size:8px;color:#666">Largo prenda</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:5px">
+              <div style="background:#d4ff00;border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:#080808">B</div>
+              <span style="font-size:8px;color:#666">Cintura</span>
+            </div>
+          </div>
+        </div>
+        <div style="flex:1">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;background:#1e1e1e;border-radius:6px 6px 0 0;padding:6px 8px;margin-bottom:1px">
+            <span style="font-size:9px;color:#888;font-weight:600">TALLE</span>
+            <span style="font-size:9px;color:#a8cc00;font-weight:600;text-align:center">A cm</span>
+            <span style="font-size:9px;color:#d4ff00;font-weight:600;text-align:center">B cm</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:8px;border-bottom:1px solid #181818;background:#0d0d0d">
+            <span style="font-size:11px;color:#f2f1ed;font-weight:700">S — 38</span>
+            <span style="font-size:11px;color:#777;text-align:center">100</span>
+            <span style="font-size:11px;color:#777;text-align:center">29</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:8px;border-bottom:1px solid #181818">
+            <span style="font-size:11px;color:#f2f1ed;font-weight:700">M — 40</span>
+            <span style="font-size:11px;color:#777;text-align:center">102</span>
+            <span style="font-size:11px;color:#777;text-align:center">31</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:8px;border-bottom:1px solid #181818;background:#0d0d0d">
+            <span style="font-size:11px;color:#f2f1ed;font-weight:700">L — 42</span>
+            <span style="font-size:11px;color:#777;text-align:center">103</span>
+            <span style="font-size:11px;color:#777;text-align:center">33</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:8px;border-bottom:1px solid #181818">
+            <span style="font-size:11px;color:#f2f1ed;font-weight:700">XL — 44</span>
+            <span style="font-size:11px;color:#777;text-align:center">104</span>
+            <span style="font-size:11px;color:#777;text-align:center">34</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:8px;background:#0d0d0d;border-radius:0 0 6px 6px">
+            <span style="font-size:11px;color:#f2f1ed;font-weight:700">XXL — 46</span>
+            <span style="font-size:11px;color:#777;text-align:center">104</span>
+            <span style="font-size:11px;color:#777;text-align:center">36</span>
+          </div>
+          <p style="font-size:7px;color:#333;margin-top:5px">* Puede variar +/-1cm segun modelo</p>
+        </div>
+      </div>
+    </div>
+    <button onclick="cerrarTalles()" class="upsell-skip">Cerrar</button>
+  </div>
+</div>
 
 <!-- DRAWER -->
 <div class="overlay" id="overlay" onclick="toggleDrawer()"></div>
@@ -1025,6 +1109,15 @@ document.addEventListener('click', function(e) {
     if (src) openLightbox(src, alt);
   }
 });
+
+function abrirTalles() {
+  document.getElementById('talles-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function cerrarTalles() {
+  document.getElementById('talles-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
 
 function cap(s) { return s.charAt(0).toUpperCase()+s.slice(1); }
 (function() {
