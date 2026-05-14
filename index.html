@@ -937,7 +937,7 @@ async function confirmarPedido() {
   const productosStr = carrito.map(i=>`${i.nombre} (Talle ${i.talle})`).join(' | ');
 
   // Mostrar enviando
-  if(typeof fbq!=='undefined') fbq('track','Purchase',{value:total,currency:'ARS',num_items:carrito.length});
+  if(typeof fbq!=='undefined') fbq('track','Purchase',{value:total,currency:'ARS',num_items:carrito.length,content_ids:carrito.map(i=>i.nombre),content_type:'product'});
   document.getElementById('envio-form').classList.remove('visible');
   document.getElementById('enviando').classList.add('visible');
   document.getElementById('btn-volver').style.display = 'none';
