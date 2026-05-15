@@ -1192,7 +1192,7 @@ function cap(s) { return s.charAt(0).toUpperCase()+s.slice(1); }
       return { min, max: Math.max(min+1, Math.round(max * factorDia)) };
     } else {
       // Tarde/noche: hasta 47
-      const min = 14, max = 47;
+      const min = 31, max = 58;
       return { min, max: Math.max(min+1, Math.round(max * factorDia)) };
     }
   }
