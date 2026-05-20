@@ -142,6 +142,25 @@ header {
 .hc-card-price {
   font-size: 13px; color: var(--accent); font-weight: 500;
 }
+.hc-card-controls {
+  display: flex; gap: 5px; margin-top: 8px; align-items: center;
+}
+.hc-talle-sel {
+  width: 52px; flex-shrink: 0;
+  background: var(--gray3); color: var(--white);
+  border: 1px solid #3a3a3a; border-radius: 6px;
+  padding: 6px 4px; font-size: 11px;
+  font-family: 'DM Sans', sans-serif;
+}
+.hc-wsp-btn {
+  flex: 1; background: var(--wsp); color: #fff;
+  border: none; border-radius: 6px;
+  padding: 7px 5px; font-size: 10px; font-weight: 700;
+  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  white-space: nowrap; letter-spacing: 0.2px;
+  transition: opacity 0.15s;
+}
+.hc-wsp-btn:hover { opacity: 0.88; }
 .hc-nav {
   display: flex; align-items: center; gap: 8px;
   padding: 10px 14px 4px;
@@ -214,7 +233,7 @@ header {
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 1px; border-top: 1px solid var(--gray2); }
 .card { background: var(--black); position: relative; transition: background 0.2s; }
 .card:hover { background: var(--gray); }
-.card-img { width: 100%; aspect-ratio: 1; overflow: hidden; background: var(--gray2); position: relative; }
+.card-img { width: 100%; aspect-ratio: 3/4; overflow: hidden; background: var(--gray2); position: relative; }
 .card-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s; }
 .card:hover .card-img img { transform: scale(1.06); }
 .card-img .emoji-ph { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 44px; }
@@ -233,10 +252,10 @@ header {
 .card-desc { font-size: 11px; color: var(--muted); margin-bottom: 8px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .card-price { font-size: 16px; color: var(--accent); font-weight: 500; margin-bottom: 10px; }
 .card-controls { display: flex; gap: 6px; }
-.talle-sel { flex: 1; background: var(--gray2); color: var(--white); border: 1px solid var(--gray3); border-radius: 6px; padding: 6px 8px; font-size: 12px; font-family: 'DM Sans', sans-serif; cursor: pointer; }
-.add-btn { background: var(--white); color: var(--black); border: none; border-radius: 6px; padding: 6px 10px; font-size: 12px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; white-space: nowrap; transition: background 0.15s; }
-.add-btn:hover { background: var(--accent); }
-.add-btn:disabled { background: var(--gray3); color: var(--muted); cursor: not-allowed; }
+.talle-sel { width: 60px; flex-shrink: 0; background: var(--gray2); color: var(--white); border: 1px solid var(--gray3); border-radius: 6px; padding: 6px 6px; font-size: 12px; font-family: 'DM Sans', sans-serif; cursor: pointer; }
+.add-btn { background: var(--wsp); color: #fff; border: none; border-radius: 6px; padding: 7px 8px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'DM Sans', sans-serif; white-space: nowrap; transition: opacity 0.15s; letter-spacing: 0.2px; }
+.add-btn:hover { opacity: 0.88; }
+.add-btn:disabled { background: var(--gray3); color: var(--muted); cursor: not-allowed; opacity: 1; }
 .sin-talle .add-btn { flex: 1; }
 .empty-grid { grid-column: 1/-1; padding: 3rem; text-align: center; color: var(--muted); font-size: 14px; }
 
@@ -973,7 +992,7 @@ function cardHTML(p, i) {
           ${sinTalle?'':`<select class="talle-sel" id="t${i}">${p.talles.map(t=>`<option>${t}</option>`).join('')}</select>`}
           <button class="add-btn" ${agotado?'disabled':''}
             onclick="agregar(${i},'${p.nombre.replace(/'/g,"\\'")}',${p.precio},'${p.foto}','${p.emoji}','${sinTalle?'Único':''}')">
-            ${agotado?'Sin stock':'+ Agregar'}
+            ${agotado?'Sin stock':'💬 Pedir x WSP'}
           </button>
         </div>
       </div>
@@ -982,6 +1001,8 @@ function cardHTML(p, i) {
 
 function agregar(i, nombre, precio, foto, emoji, talleFixed) {
   const talle = talleFixed || document.getElementById('t'+i)?.value || 'Único';
+  const msg = 'Hola! Quiero pedir:\n\n*' + nombre + '*\nTalle: ' + talle + '\nPrecio: $' + precio.toLocaleString('es-AR') + '\n\n¿Está disponible?';
+  window.open('https://wa.me/' + WSP + '?text=' + encodeURIComponent(msg), '_blank');
   carrito.push({ nombre, precio, foto, emoji, talle, uid: Date.now()+Math.random() });
   actualizarUI();
   toast('✓ '+nombre+' agregado');
@@ -1338,16 +1359,16 @@ init();
 var hcOffset=0,hcCardW=148,hcMaxOffset=0,hcDragging=false,hcStartX=0,hcDeltaX=0;
 
 function initCarousel(){
-  var prods=todos.filter(function(p){return p.carrusel&&p.foto;});
+  var prods=todos.filter(function(p){return p.carrusel;});
   var track=document.getElementById('hcTrack');
   if(!track)return;
   track.innerHTML='';
 
   if(!prods.length){
-    // fallback: usar destacados
-    prods=todos.filter(function(p){return p.destacado&&p.foto;}).slice(0,8);
+    prods=todos.filter(function(p){return p.destacado;}).slice(0,8);
   }
   if(!prods.length)return;
+  hcProds=prods;
 
   prods.forEach(function(p,i){
     var card=document.createElement('div');
@@ -1358,12 +1379,18 @@ function initCarousel(){
     var imgHtml=p.foto
       ?'<img src="'+p.foto+'" loading="'+(i===0?'eager':'lazy')+'" onerror="this.style.display=\'none\'">'
       :'<span class="hc-card-img-ph">'+p.emoji+'</span>';
+    var tallesHtml='';
+    if(p.talles&&p.talles.length>1){
+      tallesHtml='<select class="hc-talle-sel" id="ht'+i+'">'+p.talles.map(function(t){return'<option>'+t+'</option>';}).join('')+'</select>';
+    }
+    var btnWsp=p.stock!==false?'<button class="hc-wsp-btn" onclick="hcPedir('+i+')">💬 Pedir x WSP</button>':'<button class="hc-wsp-btn" disabled style="opacity:.4">Sin stock</button>';
     card.innerHTML='<div class="hc-card-img">'+imgHtml+'</div>'
       +'<div class="hc-card-body">'
         +badgeHtml
         +'<div class="hc-card-cat">'+(p.emoji?p.emoji+' ':'')+((p.categoria||'').toUpperCase())+'</div>'
         +'<div class="hc-card-name">'+p.nombre+'</div>'
         +(p.precio?'<div class="hc-card-price">$'+p.precio.toLocaleString('es-AR')+'</div>':'')
+        +'<div class="hc-card-controls">'+tallesHtml+btnWsp+'</div>'
       +'</div>';
     track.appendChild(card);
   });
@@ -1412,6 +1439,19 @@ function hcPause(){
   clearInterval(hcTimer);
   // retoma solo después de 5s sin interacción
   setTimeout(hcAutoPlay, 5000);
+}
+
+var hcProds=[];
+function hcPedir(i){
+  var p=hcProds[i];
+  if(!p)return;
+  var talle=document.getElementById('ht'+i)?document.getElementById('ht'+i).value:'Único';
+  var msg='Hola! Quiero pedir:\n\n'
+    +'*'+p.nombre+'*\n'
+    +'Talle: '+talle+'\n'
+    +'Precio: $'+p.precio.toLocaleString('es-AR')+'\n\n'
+    +'¿Está disponible?';
+  window.open('https://wa.me/'+WSP+'?text='+encodeURIComponent(msg),'_blank');
 }
 
 function hcTouchInit(){
