@@ -1356,7 +1356,7 @@ function initCarousel(){
     if(p.destacado) badgeHtml='<span class="hc-card-badge">DESTACADO</span>';
     else if(p.novedad) badgeHtml='<span class="hc-card-badge new">NOVEDAD</span>';
     var imgHtml=p.foto
-      ?'<img src="'+p.foto+'" loading="'+(i===0?'eager':'lazy')+'" onerror="this.parentNode.innerHTML='<span class=hc-card-img-ph>'+p.emoji+'</span>'">'
+      ?'<img src="'+p.foto+'" loading="'+(i===0?'eager':'lazy')+'" onerror="this.style.display=\'none\'">'
       :'<span class="hc-card-img-ph">'+p.emoji+'</span>';
     card.innerHTML='<div class="hc-card-img">'+imgHtml+'</div>'
       +'<div class="hc-card-body">'
