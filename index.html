@@ -68,22 +68,113 @@ header {
   width: 20px; height: 20px; font-size: 11px; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
 }
-.hero {
-  padding: 2rem 1.25rem 1.75rem; border-bottom: 1px solid var(--gray2);
-  background: var(--gray); position: relative; overflow: hidden;
+/* CARRUSEL HERO */
+.hero-carousel {
+  position: relative; overflow: hidden;
+  height: clamp(260px, 55vw, 380px);
+  border-bottom: 1px solid var(--gray2);
+  background: var(--gray);
 }
-.hero::after {
-  content: 'DSOK'; position: absolute; right: -10px; top: -15px;
-  font-family: 'Bebas Neue', sans-serif; font-size: 120px;
-  color: rgba(212,255,0,0.04); pointer-events: none; line-height: 1;
+.hc-track {
+  display: flex; height: 100%;
+  transition: transform 0.55s cubic-bezier(0.4,0,0.2,1);
+  will-change: transform;
 }
+.hc-slide {
+  min-width: 100%; height: 100%;
+  position: relative; overflow: hidden; flex-shrink: 0;
+}
+.hc-slide img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center top;
+  display: block;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+.hc-slide .hc-ph {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 80px; background: var(--gray);
+}
+.hc-gradient {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(8,8,8,0.95) 0%,
+    rgba(8,8,8,0.45) 45%,
+    rgba(8,8,8,0.1) 100%
+  );
+  pointer-events: none;
+}
+.hc-content {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 1rem 1.25rem 1.1rem;
+  z-index: 2;
+}
+.hc-tag {
+  font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 3px;
+  opacity: 0; transform: translateY(6px);
+  transition: opacity 0.4s 0.1s, transform 0.4s 0.1s;
+}
+.hc-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(26px, 7.5vw, 42px);
+  letter-spacing: 2px; line-height: 1.05;
+  color: var(--white); margin-bottom: 5px;
+  opacity: 0; transform: translateY(8px);
+  transition: opacity 0.4s 0.18s, transform 0.4s 0.18s;
+}
+.hc-price {
+  font-size: 15px; color: var(--accent); font-weight: 500;
+  margin-bottom: 10px;
+  opacity: 0; transform: translateY(6px);
+  transition: opacity 0.4s 0.25s, transform 0.4s 0.25s;
+}
+.hc-pills {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  opacity: 0; transform: translateY(5px);
+  transition: opacity 0.4s 0.32s, transform 0.4s 0.32s;
+}
+.hc-slide.active .hc-tag,
+.hc-slide.active .hc-title,
+.hc-slide.active .hc-price,
+.hc-slide.active .hc-pills {
+  opacity: 1; transform: translateY(0);
+}
+.pill { display: flex; align-items: center; gap: 5px; background: rgba(20,20,20,0.85); border: 1px solid var(--gray3); border-radius: 100px; padding: 5px 11px; font-size: 12px; backdrop-filter: blur(4px); }
+.pill-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+/* dots */
+.hc-dots {
+  position: absolute; bottom: 12px; right: 14px;
+  display: flex; gap: 5px; z-index: 3;
+}
+.hc-dot {
+  height: 4px; border-radius: 2px;
+  background: rgba(242,241,237,0.25);
+  transition: width 0.35s, background 0.35s;
+  width: 14px;
+}
+.hc-dot.active { background: var(--accent); width: 22px; }
+/* touch hint — fades after first swipe */
+.hc-swipe-hint {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  z-index: 4; display: flex; align-items: center; gap: 6px;
+  background: rgba(8,8,8,0.7); border: 1px solid rgba(212,255,0,0.2);
+  border-radius: 100px; padding: 6px 14px;
+  font-size: 11px; color: rgba(212,255,0,0.7);
+  pointer-events: none;
+  animation: hintFade 2.5s 1.5s forwards;
+}
+@keyframes hintFade { 0%{opacity:1} 80%{opacity:1} 100%{opacity:0; display:none;} }
+
+/* legacy hero class kept for compatibility */
 .hero-tag { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 0.4rem; }
 .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(32px,7vw,52px); letter-spacing: 2px; line-height: 1; margin-bottom: 0.6rem; }
 .hero-title span { color: var(--accent); }
 .hero-sub { font-size: 13px; color: var(--muted); margin-bottom: 1.25rem; line-height: 1.6; }
 .pills { display: flex; flex-wrap: wrap; gap: 7px; }
-.pill { display: flex; align-items: center; gap: 5px; background: var(--gray2); border: 1px solid var(--gray3); border-radius: 100px; padding: 5px 11px; font-size: 12px; }
-.pill-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
 
 .cats-bar { background: var(--black); padding: 0.5rem 1rem; border-bottom: 1px solid var(--gray2); position: sticky; top: 53px; z-index: 90; }
 .cats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
@@ -396,18 +487,24 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
   </div>
 </header>
 
-<div class="hero" style="padding:0; position:relative; min-height:220px; overflow:hidden;">
-  <img src="https://www.jotform.com/uploads/gestionpedidos1/form_files/img_8346_3168bc844f819a360b8b0af14a85719e.jpeg" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0.45; display:block;">
-  <div style="position:absolute; inset:0; background:rgba(8,8,8,0.55);"></div>
-  <div style="position:relative; z-index:1; padding:1.75rem 1.25rem 1.25rem;">
-    <p class="hero-tag">DSOK.IMPORTADO</p>
-    <h1 class="hero-title">LO QUE USÁS<br><span>SE NOTA.</span></h1>
-    <p class="hero-sub">Stock limitado · Sin pago online · CABA y GBA</p>
-    <div class="pills">
-      <span class="pill"><span class="pill-dot"></span>Sin adelanto 🔐</span>
-      <span class="pill"><span class="pill-dot"></span>Envío $8.500</span>
+<div class="hero-carousel" id="heroCarousel">
+  <div class="hc-track" id="hcTrack">
+    <div class="hc-slide active" style="background:var(--gray);">
+      <img src="https://www.jotform.com/uploads/gestionpedidos1/form_files/img_8346_3168bc844f819a360b8b0af14a85719e.jpeg" loading="eager">
+      <div class="hc-gradient"></div>
+      <div class="hc-content">
+        <div class="hc-tag">DSOK.IMPORTADO</div>
+        <div class="hc-title">LO QUE USÁS<br><span style="color:var(--accent)">SE NOTA.</span></div>
+        <div class="hc-price"></div>
+        <div class="hc-pills">
+          <span class="pill"><span class="pill-dot"></span>Sin adelanto 🔐</span>
+          <span class="pill"><span class="pill-dot"></span>Envío $8.500</span>
+        </div>
+      </div>
     </div>
   </div>
+  <div class="hc-dots" id="hcDots"><div class="hc-dot active"></div></div>
+  <div class="hc-swipe-hint">← deslizá →</div>
 </div>
 
 <div style="overflow:hidden; padding:4px 0; background:#050505; border-bottom:1px solid #111;">
@@ -746,10 +843,12 @@ async function init() {
       novedad:     (r.c[11]?.v||'no').toString().toLowerCase().trim() === 'si',
       agregar:     (r.c[12]?.v||'no').toString().toLowerCase().trim() === 'si',
       urgencia:    r.c[13]?.v ? String(r.c[13].v).trim() : '',
+      carrusel:    (r.c[14]?.v||'no').toString().toLowerCase().trim() === 'si',
     })).filter(p => p.nombre);
   } catch(e) { console.warn('Error Sheet:', e); todos = []; }
   document.getElementById('loading').style.display = 'none';
   document.getElementById('contenido').style.display = 'block';
+  initCarousel();
   renderCats();
   renderProductos();
 }
@@ -1227,3 +1326,76 @@ init();
 </script>
 </body>
 </html>
+
+<script>
+/* CARRUSEL HERO */
+var hcIndex=0,hcSlides=[],hcTimer=null,hcDragging=false,hcStartX=0,hcDeltaX=0;
+
+function initCarousel(){
+  var prods=todos.filter(function(p){return p.carrusel&&p.foto;});
+  if(!prods.length)return;
+  var track=document.getElementById('hcTrack');
+  var dotsWrap=document.getElementById('hcDots');
+  track.innerHTML='';
+  dotsWrap.innerHTML='';
+  prods.forEach(function(p,i){
+    var slide=document.createElement('div');
+    slide.className='hc-slide'+(i===0?' active':'');
+    var catLabel=(p.emoji?p.emoji+' ':'')+((p.categoria||'').toUpperCase());
+    var priceHtml=p.precio?'<div class="hc-price">$'+p.precio.toLocaleString('es-AR')+'</div>':'';
+    slide.innerHTML='<img src="'+p.foto+'" loading="'+(i===0?'eager':'lazy')+'" onerror="this.style.display=\'none\'">'
+      +'<div class="hc-gradient"></div>'
+      +'<div class="hc-content">'
+        +'<div class="hc-tag">'+catLabel+'</div>'
+        +'<div class="hc-title">'+p.nombre.toUpperCase()+'</div>'
+        +priceHtml
+        +'<div class="hc-pills">'
+          +'<span class="pill"><span class="pill-dot"></span>Sin adelanto 🔐</span>'
+          +'<span class="pill"><span class="pill-dot"></span>Envío $8.500</span>'
+        +'</div>'
+      +'</div>';
+    track.appendChild(slide);
+    var dot=document.createElement('div');
+    dot.className='hc-dot'+(i===0?' active':'');
+    dotsWrap.appendChild(dot);
+  });
+  hcSlides=track.querySelectorAll('.hc-slide');
+  hcIndex=0;
+  hcAutoPlay();
+  hcTouch();
+}
+
+function hcGoTo(n){
+  if(!hcSlides.length)return;
+  hcSlides[hcIndex].classList.remove('active');
+  var dots=document.querySelectorAll('.hc-dot');
+  if(dots[hcIndex])dots[hcIndex].classList.remove('active');
+  hcIndex=(n+hcSlides.length)%hcSlides.length;
+  document.getElementById('hcTrack').style.transform='translateX(-'+hcIndex*100+'%)';
+  hcSlides[hcIndex].classList.add('active');
+  if(dots[hcIndex])dots[hcIndex].classList.add('active');
+}
+
+function hcAutoPlay(){
+  clearInterval(hcTimer);
+  hcTimer=setInterval(function(){hcGoTo(hcIndex+1);},3800);
+}
+
+function hcTouch(){
+  var el=document.getElementById('heroCarousel');
+  el.addEventListener('touchstart',function(e){
+    hcStartX=e.touches[0].clientX;
+    hcDragging=true;
+    clearInterval(hcTimer);
+  },{passive:true});
+  el.addEventListener('touchmove',function(e){
+    if(!hcDragging)return;
+    hcDeltaX=e.touches[0].clientX-hcStartX;
+  },{passive:true});
+  el.addEventListener('touchend',function(){
+    if(Math.abs(hcDeltaX)>40)hcGoTo(hcIndex+(hcDeltaX<0?1:-1));
+    hcDragging=false;hcDeltaX=0;
+    hcAutoPlay();
+  });
+}
+</script>
