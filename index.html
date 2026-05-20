@@ -849,7 +849,7 @@ async function init() {
       novedad:     (r.c[11]?.v||'no').toString().toLowerCase().trim() === 'si',
       agregar:     (r.c[12]?.v||'no').toString().toLowerCase().trim() === 'si',
       urgencia:    r.c[13]?.v ? String(r.c[13].v).trim() : '',
-      carrusel:    !!(r.c[14]?.v && r.c[14].v.toString().toLowerCase().trim() === 'si'),
+      carrusel:    (r.c[14]?.v||'no').toString().toLowerCase().trim() === 'si',
     })).filter(p => p.nombre);
   } catch(e) { console.warn('Error Sheet:', e); todos = []; }
   document.getElementById('loading').style.display = 'none';
@@ -1338,8 +1338,7 @@ init();
 var hcOffset=0,hcCardW=148,hcMaxOffset=0,hcDragging=false,hcStartX=0,hcDeltaX=0;
 
 function initCarousel(){
-  var prods=todos.filter(function(p){return p.carrusel;});
-  if(!prods.length)return;
+  var prods=todos.filter(function(p){return p.carrusel&&p.foto;});
   var track=document.getElementById('hcTrack');
   if(!track)return;
   track.innerHTML='';
