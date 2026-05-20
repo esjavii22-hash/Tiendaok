@@ -990,7 +990,7 @@ function cardHTML(p, i) {
         <p class="card-price">$${p.precio.toLocaleString('es-AR')}</p>
         <div class="card-controls ${sinTalle?'sin-talle':''}">
           ${sinTalle?'':`<select class="talle-sel" id="t${i}">${p.talles.map(t=>`<option>${t}</option>`).join('')}</select>`}
-          <button class="add-btn" ${agotado?'disabled':''}
+          <button class="add-btn" data-add-idx="${i}" ${agotado?'disabled':''}
             onclick="agregar(${i},'${p.nombre.replace(/'/g,"\\'")}',${p.precio},'${p.foto}','${p.emoji}','${sinTalle?'Único':''}')">
             ${agotado?'Sin stock':'💬 Pedir x WSP'}
           </button>
@@ -1001,11 +1001,16 @@ function cardHTML(p, i) {
 
 function agregar(i, nombre, precio, foto, emoji, talleFixed) {
   const talle = talleFixed || document.getElementById('t'+i)?.value || 'Único';
-  const msg = 'Hola! Quiero pedir:\n\n*' + nombre + '*\nTalle: ' + talle + '\nPrecio: $' + precio.toLocaleString('es-AR') + '\n\n¿Está disponible?';
-  window.open('https://wa.me/' + WSP + '?text=' + encodeURIComponent(msg), '_blank');
   carrito.push({ nombre, precio, foto, emoji, talle, uid: Date.now()+Math.random() });
   actualizarUI();
-  toast('✓ '+nombre+' agregado');
+  // mini popup encima del botón
+  const btn = document.querySelector('[data-add-idx="'+i+'"]');
+  if(btn){
+    btn.textContent = '✓ Agregado!';
+    btn.style.background = '#1a9e47';
+    setTimeout(()=>{ btn.textContent = '💬 Pedir x WSP'; btn.style.background = ''; }, 1600);
+  }
+  toast('🛒 '+nombre+' · '+talle+' — agregado al carrito');
   if(typeof fbq!=='undefined') fbq('track','AddToCart',{content_name:nombre,content_ids:[nombre],content_type:'product',value:Number(precio),currency:'ARS'});
 }
 
@@ -1383,7 +1388,7 @@ function initCarousel(){
     if(p.talles&&p.talles.length>1){
       tallesHtml='<select class="hc-talle-sel" id="ht'+i+'">'+p.talles.map(function(t){return'<option>'+t+'</option>';}).join('')+'</select>';
     }
-    var btnWsp=p.stock!==false?'<button class="hc-wsp-btn" onclick="hcPedir('+i+')">💬 Pedir x WSP</button>':'<button class="hc-wsp-btn" disabled style="opacity:.4">Sin stock</button>';
+    var btnWsp=p.stock!==false?'<button class="hc-wsp-btn" data-hc-idx="'+i+'" onclick="hcPedir('+i+')">💬 Pedir x WSP</button>':'<button class="hc-wsp-btn" disabled style="opacity:.4">Sin stock</button>';
     card.innerHTML='<div class="hc-card-img">'+imgHtml+'</div>'
       +'<div class="hc-card-body">'
         +badgeHtml
@@ -1446,12 +1451,16 @@ function hcPedir(i){
   var p=hcProds[i];
   if(!p)return;
   var talle=document.getElementById('ht'+i)?document.getElementById('ht'+i).value:'Único';
-  var msg='Hola! Quiero pedir:\n\n'
-    +'*'+p.nombre+'*\n'
-    +'Talle: '+talle+'\n'
-    +'Precio: $'+p.precio.toLocaleString('es-AR')+'\n\n'
-    +'¿Está disponible?';
-  window.open('https://wa.me/'+WSP+'?text='+encodeURIComponent(msg),'_blank');
+  carrito.push({nombre:p.nombre,precio:p.precio,foto:p.foto,emoji:p.emoji,talle:talle,uid:Date.now()+Math.random()});
+  actualizarUI();
+  var btn=document.querySelector('[data-hc-idx="'+i+'"]');
+  if(btn){
+    btn.textContent='✓ Agregado!';
+    btn.style.background='#1a9e47';
+    setTimeout(function(){btn.textContent='💬 Pedir x WSP';btn.style.background='';},1600);
+  }
+  toast('🛒 '+p.nombre+' · '+talle+' — agregado al carrito');
+  if(typeof fbq!=='undefined') fbq('track','AddToCart',{content_name:p.nombre,value:Number(p.precio),currency:'ARS'});
 }
 
 function hcTouchInit(){
