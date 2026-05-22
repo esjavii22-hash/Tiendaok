@@ -21,7 +21,7 @@ t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}(window, document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
 fbq('init', '1632295294690951');
-fbq('track', 'PageView');
+fbq('track', 'PageView', {}, {eventID: 'pv-' + Date.now()});
 </script>
 <noscript><img height="1" width="1" style="display:none"
 src="https://www.facebook.com/tr?id=1632295294690951&ev=PageView&noscript=1"
@@ -489,6 +489,35 @@ header {
 .toast.show { transform: translateX(-50%) translateY(0); }
 footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-size: 12px; border-top: 1px solid var(--gray2); margin-top: 1rem; }
 @media (max-width: 480px) { .grid { grid-template-columns: repeat(2,1fr); } }
+
+/* TRUST FOOTER */
+.tf-link { background:#141414; border:1px solid #1e1e1e; border-radius:8px; padding:10px 11px; cursor:pointer; display:flex; align-items:center; gap:7px; font-size:12px; color:#aaa; }
+.tf-link span { flex:1; }
+.tf-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.8); display:flex; align-items:flex-end; justify-content:center; z-index:200; opacity:0; pointer-events:none; transition:opacity 0.2s; }
+.tf-overlay.open { opacity:1; pointer-events:all; }
+.tf-modal { background:#0f0f0f; border:1px solid #222; border-radius:16px 16px 0 0; width:100%; max-width:480px; transform:translateY(20px); transition:transform 0.2s; max-height:75vh; display:flex; flex-direction:column; }
+.tf-overlay.open .tf-modal { transform:translateY(0); }
+.tf-handle { width:36px; height:3px; background:#2a2a2a; border-radius:2px; margin:10px auto 0; flex-shrink:0; }
+.tf-header { display:flex; align-items:center; justify-content:space-between; padding:12px 16px 8px; flex-shrink:0; border-bottom:1px solid #1a1a1a; }
+.tf-title { font-family:'Bebas Neue',sans-serif; font-size:17px; letter-spacing:1.5px; color:#f2f1ed; }
+.tf-close { width:26px; height:26px; border-radius:50%; background:#1e1e1e; border:none; color:#888; cursor:pointer; font-size:14px; font-family:'DM Sans',sans-serif; }
+.tf-body { padding:14px 16px 28px; font-size:13px; color:#777; line-height:1.7; overflow-y:auto; }
+.tf-h { font-size:10px; color:#d4ff00; font-weight:700; margin:14px 0 5px; letter-spacing:1.5px; text-transform:uppercase; }
+.tf-h:first-child { margin-top:0; }
+.tf-p { margin-bottom:8px; color:#888; }
+.tf-p strong { color:#f2f1ed; }
+.tf-grid { display:grid; grid-template-columns:1fr 1fr; gap:3px 10px; margin-bottom:8px; }
+.tf-loc { font-size:12px; color:#666; padding:2px 0; border-bottom:1px solid #141414; }
+.tf-tag { display:inline-block; border-radius:4px; padding:3px 8px; font-size:11px; margin:3px 3px 3px 0; }
+.tf-green { background:#0a1a00; border:1px solid #1a3a00; color:#6a9900; }
+.tf-red { background:#1a0000; border:1px solid #3a0000; color:#aa4444; }
+.tf-infobox { background:#0a1400; border:1px solid #1e2e00; border-radius:8px; padding:10px 12px; margin:6px 0 10px; }
+.tf-infobox p { color:#6a8800; font-size:12px; margin:0; }
+.tf-warnbox { background:#1a0800; border:1px solid #3a1500; border-radius:8px; padding:10px 12px; margin:10px 0 0; }
+.tf-warnbox p { color:#aa6633; font-size:12px; margin:0; }
+.tf-stat { background:#141414; border:1px solid #222; border-radius:8px; padding:10px; text-align:center; }
+.tf-stat-n { font-family:'Bebas Neue',sans-serif; font-size:22px; color:#d4ff00; letter-spacing:1px; }
+.tf-stat-l { font-size:10px; color:#666; }
 </style>
 </head>
 <body>
@@ -593,7 +622,154 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
   Cargando productos<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>
 </div>
 <div id="contenido" style="display:none"></div>
-<footer>dsok.importado © 2026 · Indumentaria urbana premium · Buenos Aires</footer>
+<footer id="trust-footer" style="padding:0;border-top:1px solid #1e1e1e;margin-top:1rem;">
+  <div style="background:#0d0d0d;padding:16px 14px 20px;">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:#f2f1ed;margin-bottom:3px;">DS<span style="color:#d4ff00;">OK</span>.IMPORTADO</div>
+    <div style="font-size:11px;color:#555;margin-bottom:14px;">Lo que usás, se nota.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;">
+      <div class="tf-link" onclick="tfOpen('quienes')">🏪<span>Quiénes somos</span>›</div>
+      <div class="tf-link" onclick="tfOpen('envios')">🚚<span>Envíos y zonas</span>›</div>
+      <div class="tf-link" onclick="tfOpen('cambios')">🔄<span>Cambios de talle</span>›</div>
+      <div class="tf-link" onclick="tfOpen('faq')">❓<span>Preguntas frecuentes</span>›</div>
+      <div class="tf-link" onclick="tfOpen('terminos')" style="grid-column:1/-1;">📄<span>Términos y condiciones</span>›</div>
+    </div>
+    <div style="border-top:1px solid #1a1a1a;padding-top:12px;text-align:center;">
+      <div style="font-size:10px;color:#555;">Sin pago online · Pagás al recibir · CABA · GBA · La Plata</div>
+      <div style="font-size:10px;color:#2a2a2a;margin-top:4px;">© 2026 DSOK · Todos los derechos reservados</div>
+    </div>
+  </div>
+</footer>
+
+<!-- TRUST MODALS -->
+<div class="tf-overlay" id="tf-quienes" onclick="if(event.target===this)tfClose('quienes')">
+  <div class="tf-modal">
+    <div class="tf-handle"></div>
+    <div class="tf-header"><span class="tf-title">🏪 Quiénes somos</span><button class="tf-close" onclick="tfClose('quienes')">✕</button></div>
+    <div class="tf-body">
+      <h4 class="tf-h">Nuestra historia</h4>
+      <p class="tf-p">Somos <strong>DSOK Importado</strong>, una tienda de ropa urbana especializada en joggins, buzos, remeras y conjuntos importados. Trabajamos con stock real — no vendemos lo que no tenemos.</p>
+      <h4 class="tf-h">Cómo operamos</h4>
+      <p class="tf-p">Operamos 100% online. Hacés tu pedido por WhatsApp y te lo llevamos a tu puerta en CABA, GBA y La Plata. <strong>Sin pago online, pagás cuando llega.</strong></p>
+      <h4 class="tf-h">Números que nos respaldan</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+        <div class="tf-stat"><div class="tf-stat-n">+10.000</div><div class="tf-stat-l">clientes satisfechos</div></div>
+        <div class="tf-stat"><div class="tf-stat-n">4.9 ★</div><div class="tf-stat-l">calificación promedio</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tf-overlay" id="tf-envios" onclick="if(event.target===this)tfClose('envios')">
+  <div class="tf-modal">
+    <div class="tf-handle"></div>
+    <div class="tf-header"><span class="tf-title">🚚 Envíos y zonas</span><button class="tf-close" onclick="tfClose('envios')">✕</button></div>
+    <div class="tf-body">
+      <h4 class="tf-h">Costo y pago</h4>
+      <div class="tf-infobox"><p>Envío fijo <strong style="color:#a8cc00;">$8.500</strong> a cualquier zona. Pagás en efectivo al recibir. Sin adelanto.</p></div>
+      <h4 class="tf-h">Tiempo de entrega</h4>
+      <div class="tf-infobox"><p><strong style="color:#a8cc00;">24hs hábiles</strong> a todo CABA, GBA y La Plata.</p></div>
+      <h4 class="tf-h">CABA</h4>
+      <p class="tf-p">Entregamos en los 48 barrios de la Ciudad de Buenos Aires.</p>
+      <h4 class="tf-h">GBA Norte</h4>
+      <div class="tf-grid">
+        <span class="tf-loc">San Isidro</span><span class="tf-loc">Vicente López</span>
+        <span class="tf-loc">San Martín</span><span class="tf-loc">Tigre</span>
+        <span class="tf-loc">Pilar</span><span class="tf-loc">Escobar</span>
+        <span class="tf-loc">Malvinas Argentinas</span><span class="tf-loc">José C. Paz</span>
+        <span class="tf-loc">San Miguel</span><span class="tf-loc">Tres de Febrero</span>
+      </div>
+      <h4 class="tf-h">GBA Oeste</h4>
+      <div class="tf-grid">
+        <span class="tf-loc">La Matanza</span><span class="tf-loc">Morón</span>
+        <span class="tf-loc">Ituzaingó</span><span class="tf-loc">Hurlingham</span>
+        <span class="tf-loc">Merlo</span><span class="tf-loc">Moreno</span>
+        <span class="tf-loc">General Rodríguez</span><span class="tf-loc">Marcos Paz</span>
+        <span class="tf-loc">Luján</span><span class="tf-loc">Mercedes</span>
+      </div>
+      <h4 class="tf-h">GBA Sur</h4>
+      <div class="tf-grid">
+        <span class="tf-loc">Lomas de Zamora</span><span class="tf-loc">Lanús</span>
+        <span class="tf-loc">Avellaneda</span><span class="tf-loc">Quilmes</span>
+        <span class="tf-loc">Berazategui</span><span class="tf-loc">Florencio Varela</span>
+        <span class="tf-loc">Almirante Brown</span><span class="tf-loc">Esteban Echeverría</span>
+        <span class="tf-loc">Ezeiza</span><span class="tf-loc">Cañuelas</span>
+        <span class="tf-loc">San Vicente</span><span class="tf-loc">Presidente Perón</span>
+      </div>
+      <h4 class="tf-h">La Plata y alrededores</h4>
+      <div class="tf-grid">
+        <span class="tf-loc">La Plata</span><span class="tf-loc">Ensenada</span>
+        <span class="tf-loc">Berisso</span><span class="tf-loc">Brandsen</span>
+        <span class="tf-loc">Magdalena</span><span class="tf-loc">Punta Indio</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tf-overlay" id="tf-cambios" onclick="if(event.target===this)tfClose('cambios')">
+  <div class="tf-modal">
+    <div class="tf-handle"></div>
+    <div class="tf-header"><span class="tf-title">🔄 Cambios de talle</span><button class="tf-close" onclick="tfClose('cambios')">✕</button></div>
+    <div class="tf-body">
+      <h4 class="tf-h">¿Qué aceptamos?</h4>
+      <span class="tf-tag tf-green">✓ Cambio de talle</span>
+      <span class="tf-tag tf-green">✓ Producto sin uso</span>
+      <span class="tf-tag tf-green">✓ Con etiquetas originales</span>
+      <h4 class="tf-h">¿Qué NO aceptamos?</h4>
+      <span class="tf-tag tf-red">✗ Devolución de dinero</span>
+      <span class="tf-tag tf-red">✗ Producto usado o lavado</span>
+      <span class="tf-tag tf-red">✗ Sin etiquetas</span>
+      <span class="tf-tag tf-red">✗ Pasadas las 48hs</span>
+      <h4 class="tf-h">¿Cómo hago el cambio?</h4>
+      <p class="tf-p">1. Contactanos por WhatsApp dentro de las <strong>48hs</strong> de recibido el pedido.</p>
+      <p class="tf-p">2. Mandanos foto del producto con etiquetas.</p>
+      <p class="tf-p">3. Coordinamos la devolución y el reenvío del talle correcto.</p>
+      <p class="tf-p">4. El costo del envío del cambio corre por cuenta del comprador.</p>
+      <div class="tf-warnbox"><p>⚠️ No realizamos devoluciones de dinero bajo ninguna circunstancia. Solo cambiamos por otro talle del mismo producto.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="tf-overlay" id="tf-faq" onclick="if(event.target===this)tfClose('faq')">
+  <div class="tf-modal">
+    <div class="tf-handle"></div>
+    <div class="tf-header"><span class="tf-title">❓ Preguntas frecuentes</span><button class="tf-close" onclick="tfClose('faq')">✕</button></div>
+    <div class="tf-body">
+      <h4 class="tf-h">¿Cómo hago un pedido?</h4>
+      <p class="tf-p">Elegís el producto y el talle, tocás <strong>Pedir x WSP</strong> y te llega el resumen por WhatsApp. Lo confirmamos en segundos.</p>
+      <h4 class="tf-h">¿Cuándo pago?</h4>
+      <p class="tf-p">Pagás en <strong>efectivo</strong> cuando recibís el pedido. No pedimos adelanto ni transferencia previa.</p>
+      <h4 class="tf-h">¿Las fotos son reales?</h4>
+      <p class="tf-p">Sí. Las fotos que ves son del producto real que recibís.</p>
+      <h4 class="tf-h">¿Puedo pedir más de un producto?</h4>
+      <p class="tf-p">Sí, podés agregar varios al carrito y confirmar todo junto. El envío es un único costo de $8.500 sin importar la cantidad.</p>
+      <h4 class="tf-h">¿Tienen local físico?</h4>
+      <p class="tf-p">No. Operamos 100% online con entrega a domicilio en CABA, GBA y La Plata.</p>
+      <h4 class="tf-h">¿A qué hora responden?</h4>
+      <p class="tf-p">Respondemos de <strong>lunes a sábado de 9 a 21hs</strong>. Los domingos puede demorar un poco más.</p>
+      <h4 class="tf-h">¿Coordinan el horario de entrega?</h4>
+      <p class="tf-p">Sí, coordinamos mañana o tarde por WhatsApp antes de salir. No hacemos entregas sin confirmar.</p>
+    </div>
+  </div>
+</div>
+
+<div class="tf-overlay" id="tf-terminos" onclick="if(event.target===this)tfClose('terminos')">
+  <div class="tf-modal">
+    <div class="tf-handle"></div>
+    <div class="tf-header"><span class="tf-title">📄 Términos y condiciones</span><button class="tf-close" onclick="tfClose('terminos')">✕</button></div>
+    <div class="tf-body">
+      <h4 class="tf-h">Precios y disponibilidad</h4>
+      <p class="tf-p">Los precios pueden modificarse sin previo aviso. El stock es limitado y puede agotarse entre que lo ves y confirmás por WhatsApp.</p>
+      <h4 class="tf-h">Confirmación del pedido</h4>
+      <p class="tf-p">El pedido queda confirmado únicamente cuando lo acordamos por WhatsApp. Hasta ese momento el stock no está reservado.</p>
+      <h4 class="tf-h">Entrega</h4>
+      <p class="tf-p">Los tiempos de entrega son estimativos. DSOK no se responsabiliza por demoras externas una vez despachado el pedido.</p>
+      <h4 class="tf-h">Privacidad de datos</h4>
+      <p class="tf-p">Tus datos personales son usados exclusivamente para gestionar tu pedido y no se comparten con terceros.</p>
+      <h4 class="tf-h">Devoluciones</h4>
+      <p class="tf-p">No realizamos devoluciones de dinero. Solo aceptamos cambios de talle dentro de las 48hs con producto sin uso y con etiquetas.</p>
+    </div>
+  </div>
+</div>
 
 <!-- GUIA TALLES -->
 <div class="upsell-overlay" id="talles-overlay">
@@ -1013,7 +1189,7 @@ function agregar(i, nombre, precio, foto, emoji, talleFixed) {
     setTimeout(()=>{ btn.textContent = '💬 Pedir x WSP'; btn.style.background = ''; }, 1600);
   }
   toast('🛒 '+nombre+' · '+talle+' — agregado al carrito');
-  if(typeof fbq!=='undefined') fbq('track','AddToCart',{content_name:nombre,content_ids:[nombre],content_type:'product',value:Number(precio),currency:'ARS'});
+  if(typeof fbq!=='undefined') fbq('track','AddToCart',{content_name:nombre,content_ids:[nombre],content_type:'product',value:Number(precio),currency:'ARS'},{eventID:'atc-'+nombre.replace(/\s/g,'')+'-'+Date.now()});
 }
 
 function quitar(uid) {
@@ -1106,7 +1282,7 @@ function irAEnvioReal() {
   document.getElementById('step2').classList.add('active');
   document.getElementById('wsp-confianza').style.display = 'block';
   document.getElementById('nota-pago').style.display = 'none';
-  if(typeof fbq!=='undefined'){const sub=carrito.reduce((s,i)=>s+i.precio,0);fbq('track','InitiateCheckout',{value:Number(sub),currency:'ARS',num_items:carrito.length,content_ids:carrito.map(i=>i.nombre),content_type:'product'});}
+  if(typeof fbq!=='undefined'){const sub=carrito.reduce((s,i)=>s+i.precio,0);fbq('track','InitiateCheckout',{value:Number(sub),currency:'ARS',num_items:carrito.length,content_ids:carrito.map(i=>i.nombre),content_type:'product'},{eventID:'ic-'+Date.now()});}
   // Scroll al top del drawer para ver el formulario desde arriba
   setTimeout(() => {
     document.getElementById('drawer').querySelector('.drawer-body').scrollTop = 0;
@@ -1194,7 +1370,7 @@ async function confirmarPedido() {
   const productosStr = carrito.map(i=>`${i.nombre} (Talle ${i.talle})`).join(' | ');
 
   // Mostrar enviando
-  if(typeof fbq!=='undefined') fbq('track','Purchase',{value:Number(total),currency:'ARS',num_items:carrito.length,content_ids:carrito.map(i=>i.nombre),content_type:'product'});
+  if(typeof fbq!=='undefined') fbq('track','Purchase',{value:Number(total),currency:'ARS',num_items:carrito.length,content_ids:carrito.map(i=>i.nombre),content_type:'product'},{eventID:'pur-'+Date.now()});
   document.getElementById('envio-form').classList.remove('visible');
   document.getElementById('enviando').classList.add('visible');
   document.getElementById('btn-volver').style.display = 'none';
@@ -1358,6 +1534,11 @@ document.getElementById('f-zona')?.addEventListener('change', actualizarUI);
 
 init();
 </script>
+
+<script>
+function tfOpen(id){document.getElementById('tf-'+id).classList.add('open');document.body.style.overflow='hidden';}
+function tfClose(id){document.getElementById('tf-'+id).classList.remove('open');document.body.style.overflow='';}
+</script>
 </body>
 </html>
 
@@ -1462,7 +1643,7 @@ function hcPedir(i){
     setTimeout(function(){btn.textContent='💬 Pedir x WSP';btn.style.background='';},1600);
   }
   toast('🛒 '+p.nombre+' · '+talle+' — agregado al carrito');
-  if(typeof fbq!=='undefined') fbq('track','AddToCart',{content_name:p.nombre,value:Number(p.precio),currency:'ARS'});
+  if(typeof fbq!=='undefined') fbq('track','AddToCart',{content_name:p.nombre,value:Number(p.precio),currency:'ARS'},{eventID:'atc-'+p.nombre.replace(/\s/g,'')+'-'+Date.now()});
 }
 
 function hcTouchInit(){
