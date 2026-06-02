@@ -40,7 +40,7 @@ src="https://www.facebook.com/tr?id=1632295294690951&ev=PageView&noscript=1"
 <link rel="preconnect" href="https://docs.google.com">
 <link rel="dns-prefetch" href="https://script.google.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDg7dfZ-AeeJabfxMPtWcs1ae028QIajGg&libraries=places&language=es&region=AR" async defer onload="initAutocomplete"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDg7dfZ-AeeJabfxMPtWcs1ae028QIajGg&libraries=places&language=es&region=AR&callback=initAutocomplete" async defer></script>
 <style>
 :root {
   --black: #080808; --white: #f2f1ed; --gray: #141414;
@@ -1587,12 +1587,8 @@ function initAutocomplete() {
   });
 }
 
-// Lanzar cuando Google Maps esté listo
-if (window.google?.maps?.places) {
-  initAutocomplete();
-} else {
-  window.addEventListener('load', () => setTimeout(initAutocomplete, 600));
-}
+// Lanzar cuando Google Maps esté listo (callback ya configurado en el script tag)
+// initAutocomplete se llama automáticamente via callback=initAutocomplete
 
 // Auto-avance entre campos del formulario con Enter
 ['f-nombre','f-instagram','f-telefono','f-zona','f-direccion','f-localidad'].forEach((id, i, arr) => {
