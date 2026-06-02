@@ -40,6 +40,7 @@ src="https://www.facebook.com/tr?id=1632295294690951&ev=PageView&noscript=1"
 <link rel="preconnect" href="https://docs.google.com">
 <link rel="dns-prefetch" href="https://script.google.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDg7dfZ-AeeJabfxMPtWcs1ae028QIajGg&libraries=places&language=es&region=AR" async defer onload="initAutocomplete"></script>
 <style>
 :root {
   --black: #080808; --white: #f2f1ed; --gray: #141414;
@@ -918,9 +919,15 @@ footer { padding: 2rem 1.25rem; text-align: center; color: var(--muted); font-si
         </select>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" style="position:relative">
         <label class="form-label">Dirección <span class="form-required">*</span></label>
-        <input class="form-input" id="f-direccion" type="text" placeholder="Calle, número, entre calles y timbre">
+        <input class="form-input" id="f-direccion" type="text" placeholder="Calle, número, entre calles y timbre" autocomplete="off">
+        <div id="autocomplete-list" style="
+          display:none; position:absolute; top:100%; left:0; right:0;
+          background:#1a1a1a; border:1px solid #3a3a3a; border-radius:10px;
+          z-index:999; max-height:220px; overflow-y:auto; margin-top:4px;
+          box-shadow:0 8px 24px rgba(0,0,0,0.5);
+        "></div>
       </div>
 
       <div class="form-group">
@@ -1518,6 +1525,74 @@ function cap(s) { return s.charAt(0).toUpperCase()+s.slice(1); }
 })();
 // Actualizar envío cuando cambia zona
 document.getElementById('f-zona')?.addEventListener('change', actualizarUI);
+
+// AUTOCOMPLETE DIRECCIONES — Google Places
+function initAutocomplete() {
+  const input = document.getElementById('f-direccion');
+  const list  = document.getElementById('autocomplete-list');
+  if (!input || !window.google) return;
+
+  const service = new google.maps.places.AutocompleteService();
+  const geocoder = new google.maps.Geocoder();
+  let timer;
+
+  input.addEventListener('input', function() {
+    clearTimeout(timer);
+    const val = this.value.trim();
+    if (val.length < 3) { list.style.display = 'none'; return; }
+
+    timer = setTimeout(() => {
+      service.getPlacePredictions({
+        input: val,
+        componentRestrictions: { country: 'AR' },
+        types: ['address'],
+      }, (predictions, status) => {
+        list.innerHTML = '';
+        if (status !== 'OK' || !predictions) { list.style.display = 'none'; return; }
+
+        predictions.forEach(p => {
+          const item = document.createElement('div');
+          item.textContent = p.description;
+          item.style.cssText = 'padding:11px 13px; cursor:pointer; font-size:13px; color:#f2f1ed; border-bottom:1px solid #2a2a2a; transition:background 0.15s;';
+          item.addEventListener('mouseenter', () => item.style.background = '#2e2e2e');
+          item.addEventListener('mouseleave', () => item.style.background = '');
+          item.addEventListener('mousedown', (e) => {
+            e.preventDefault(); // evitar que el input pierda foco antes del click
+            input.value = p.description;
+            list.style.display = 'none';
+
+            // Autocompletar barrio/localidad
+            geocoder.geocode({ placeId: p.place_id }, (results, s) => {
+              if (s === 'OK' && results[0]) {
+                const comps = results[0].address_components;
+                const barrio    = comps.find(c => c.types.includes('neighborhood') || c.types.includes('sublocality_level_1'));
+                const localidad = comps.find(c => c.types.includes('locality'));
+                const fLoc = document.getElementById('f-localidad');
+                if (fLoc) fLoc.value = barrio?.long_name || localidad?.long_name || '';
+              }
+            });
+          });
+          list.appendChild(item);
+        });
+        list.style.display = 'block';
+      });
+    }, 280);
+  });
+
+  // Cerrar al hacer click afuera
+  document.addEventListener('click', e => {
+    if (!input.contains(e.target) && !list.contains(e.target)) {
+      list.style.display = 'none';
+    }
+  });
+}
+
+// Lanzar cuando Google Maps esté listo
+if (window.google?.maps?.places) {
+  initAutocomplete();
+} else {
+  window.addEventListener('load', () => setTimeout(initAutocomplete, 600));
+}
 
 // Auto-avance entre campos del formulario con Enter
 ['f-nombre','f-instagram','f-telefono','f-zona','f-direccion','f-localidad'].forEach((id, i, arr) => {
