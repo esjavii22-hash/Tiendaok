@@ -1526,14 +1526,12 @@ function cap(s) { return s.charAt(0).toUpperCase()+s.slice(1); }
 // Actualizar envío cuando cambia zona
 document.getElementById('f-zona')?.addEventListener('change', actualizarUI);
 
-// AUTOCOMPLETE DIRECCIONES — Google Places
-function initAutocomplete() {
+// AUTOCOMPLETE DIRECCIONES — Google Places (nueva API)
+async function initAutocomplete() {
   const input = document.getElementById('f-direccion');
   const list  = document.getElementById('autocomplete-list');
   if (!input || !window.google) return;
 
-  const service = new google.maps.places.AutocompleteService();
-  const geocoder = new google.maps.Geocoder();
   let timer;
 
   input.addEventListener('input', function() {
@@ -1541,45 +1539,47 @@ function initAutocomplete() {
     const val = this.value.trim();
     if (val.length < 3) { list.style.display = 'none'; return; }
 
-    timer = setTimeout(() => {
-      service.getPlacePredictions({
-        input: val,
-        componentRestrictions: { country: 'AR' },
-        types: ['address'],
-      }, (predictions, status) => {
-        list.innerHTML = '';
-        if (status !== 'OK' || !predictions) { list.style.display = 'none'; return; }
+    timer = setTimeout(async () => {
+      try {
+        const { suggestions } = await google.maps.places.AutocompleteSuggestion.fetchAutocompleteSuggestions({
+          input: val,
+          includedRegionCodes: ['ar'],
+        });
 
-        predictions.forEach(p => {
+        list.innerHTML = '';
+        if (!suggestions || !suggestions.length) { list.style.display = 'none'; return; }
+
+        suggestions.forEach(s => {
+          const p = s.placePrediction;
           const item = document.createElement('div');
-          item.textContent = p.description;
+          item.textContent = p.text.toString();
           item.style.cssText = 'padding:11px 13px; cursor:pointer; font-size:13px; color:#f2f1ed; border-bottom:1px solid #2a2a2a; transition:background 0.15s;';
           item.addEventListener('mouseenter', () => item.style.background = '#2e2e2e');
           item.addEventListener('mouseleave', () => item.style.background = '');
-          item.addEventListener('mousedown', (e) => {
-            e.preventDefault(); // evitar que el input pierda foco antes del click
-            input.value = p.description;
+          item.addEventListener('mousedown', async (e) => {
+            e.preventDefault();
+            input.value = p.text.toString();
             list.style.display = 'none';
 
-            // Autocompletar barrio/localidad
-            geocoder.geocode({ placeId: p.place_id }, (results, s) => {
-              if (s === 'OK' && results[0]) {
-                const comps = results[0].address_components;
-                const barrio    = comps.find(c => c.types.includes('neighborhood') || c.types.includes('sublocality_level_1'));
-                const localidad = comps.find(c => c.types.includes('locality'));
-                const fLoc = document.getElementById('f-localidad');
-                if (fLoc) fLoc.value = barrio?.long_name || localidad?.long_name || '';
-              }
-            });
+            try {
+              const place = p.toPlace();
+              await place.fetchFields({ fields: ['addressComponents'] });
+              const comps = place.addressComponents || [];
+              const barrio    = comps.find(c => c.types.includes('neighborhood') || c.types.includes('sublocality_level_1'));
+              const localidad = comps.find(c => c.types.includes('locality'));
+              const fLoc = document.getElementById('f-localidad');
+              if (fLoc) fLoc.value = barrio?.longText || localidad?.longText || '';
+            } catch(err) {}
           });
           list.appendChild(item);
         });
         list.style.display = 'block';
-      });
+      } catch(err) {
+        list.style.display = 'none';
+      }
     }, 280);
   });
 
-  // Cerrar al hacer click afuera
   document.addEventListener('click', e => {
     if (!input.contains(e.target) && !list.contains(e.target)) {
       list.style.display = 'none';
@@ -1587,8 +1587,7 @@ function initAutocomplete() {
   });
 }
 
-// Lanzar cuando Google Maps esté listo (callback ya configurado en el script tag)
-// initAutocomplete se llama automáticamente via callback=initAutocomplete
+window.initAutocomplete = initAutocomplete;
 
 // Auto-avance entre campos del formulario con Enter
 ['f-nombre','f-instagram','f-telefono','f-zona','f-direccion','f-localidad'].forEach((id, i, arr) => {
