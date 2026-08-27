@@ -1559,6 +1559,11 @@ function agregar(i, nombre, precio, foto, emoji, talleFixed) {
   }
   toast('🛒 '+nombre+' · '+talle+' — agregado al carrito');
   if(typeof fbq!=='undefined') fbq('track','AddToCart',{content_name:nombre,content_ids:[nombre],content_type:'product',value:Number(precio),currency:'ARS'},{eventID:'atc-'+nombre.replace(/\s/g,'')+'-'+Date.now()});
+  if(typeof gtag!=='undefined') gtag('event','add_to_cart',{
+    currency:'ARS',
+    value:Number(precio),
+    items:[{item_name:nombre,item_variant:talle,price:Number(precio),quantity:1}]
+  });
 }
 
 function quitar(uid) {
@@ -1652,6 +1657,14 @@ function irAEnvioReal() {
   document.getElementById('wsp-confianza').style.display = 'block';
   document.getElementById('nota-pago').style.display = 'none';
   if(typeof fbq!=='undefined'){const sub=carrito.reduce((s,i)=>s+i.precio,0);fbq('track','InitiateCheckout',{value:Number(sub),currency:'ARS',num_items:carrito.length,content_ids:carrito.map(i=>i.nombre),content_type:'product'},{eventID:'ic-'+Date.now()});}
+  if(typeof gtag!=='undefined'){
+    const subGA=carrito.reduce((s,i)=>s+i.precio,0);
+    gtag('event','begin_checkout',{
+      currency:'ARS',
+      value:Number(subGA),
+      items:carrito.map(i=>({item_name:i.nombre,item_variant:i.talle,price:Number(i.precio),quantity:1}))
+    });
+  }
   // Scroll al top del drawer para ver el formulario desde arriba
   setTimeout(() => {
     document.getElementById('drawer').querySelector('.drawer-body').scrollTop = 0;
@@ -1741,6 +1754,13 @@ async function confirmarPedido() {
 
   // Mostrar enviando
   if(typeof fbq!=='undefined') fbq('track','Purchase',{value:Number(total),currency:'ARS',num_items:carrito.length,content_ids:carrito.map(i=>i.nombre),content_type:'product'},{eventID:'pur-'+Date.now()});
+  if(typeof gtag!=='undefined') gtag('event','purchase',{
+    transaction_id:'WSP-'+Date.now(),
+    currency:'ARS',
+    value:Number(total),
+    shipping:Number(envio),
+    items:carrito.map(i=>({item_name:i.nombre,item_variant:i.talle,price:Number(i.precio),quantity:1}))
+  });
   document.getElementById('envio-form').classList.remove('visible');
   document.getElementById('enviando').classList.add('visible');
   document.getElementById('btn-volver').style.display = 'none';
@@ -1792,9 +1812,19 @@ async function confirmarPedido() {
 }
 
 function toggleDrawer() {
-  document.getElementById('drawer').classList.toggle('open');
+  const drawerEl = document.getElementById('drawer');
+  const opening = !drawerEl.classList.contains('open');
+  drawerEl.classList.toggle('open');
   document.getElementById('overlay').classList.toggle('open');
   actualizarUI();
+  if(opening && carrito.length && typeof gtag!=='undefined'){
+    const subGA=carrito.reduce((s,i)=>s+i.precio,0);
+    gtag('event','view_cart',{
+      currency:'ARS',
+      value:Number(subGA),
+      items:carrito.map(i=>({item_name:i.nombre,item_variant:i.talle,price:Number(i.precio),quantity:1}))
+    });
+  }
 }
 
 function toast(msg) {
@@ -2096,6 +2126,11 @@ function hcPedir(i){
   }
   toast('🛒 '+p.nombre+' · '+talle+' — agregado al carrito');
   if(typeof fbq!=='undefined') fbq('track','AddToCart',{content_name:p.nombre,value:Number(p.precio),currency:'ARS'},{eventID:'atc-'+p.nombre.replace(/\s/g,'')+'-'+Date.now()});
+  if(typeof gtag!=='undefined') gtag('event','add_to_cart',{
+    currency:'ARS',
+    value:Number(p.precio),
+    items:[{item_name:p.nombre,item_variant:talle,price:Number(p.precio),quantity:1}]
+  });
 }
 
 function hcTouchInit(){
