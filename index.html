@@ -1256,6 +1256,7 @@ const WSP = '541130086629';
 const SHEET_ID = '1Oa2SeUxRyidl6kZMzDxG-MIK5oBdK9lvmNo3BIqS8dc';
 const SHEET_NAME = 'Productos';
 const LOOKS_SHEET_NAME = 'Looks'; // pestaña opcional: titulo | archivo | tipo | producto | activo | orden | link_producto
+const HERO_SHEET_NAME = 'Hero'; // pestaña opcional: imagen | activo | posicion | posicion_mobile
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwhByLmKeG6Pk0XkAHqOffxDaIfLf7vVMI6eM-9hfW834uQvVQ-QM8glvVnJ754JxG2fw/exec';
 
 const CAT_ORDER = ['joggins','buzos','remeras','medias','conjuntos'];
@@ -1267,7 +1268,7 @@ const CAT_LABELS = {
   'conjuntos': '🧥 Conjuntos',
 };
 
-let todos = [], looks = [], carrito = [], catActual = 'todos', extraFiltro = 'todos';
+let todos = [], looks = [], heroConfig = null, carrito = [], catActual = 'todos', extraFiltro = 'todos';
 let paso = 1;
 
 async function init() {
@@ -1297,7 +1298,7 @@ async function init() {
       reviews:       Number(r.c[17]?.v) || 0,
     })).filter(p => p.nombre);
   } catch(e) { console.warn('Error Sheet:', e); todos = []; }
-  await cargarLooks();
+  await Promise.all([cargarLooks(), cargarHero()]);
   prepararHero();
   document.getElementById('loading').style.display = 'none';
   document.getElementById('contenido').style.display = 'block';
@@ -1332,6 +1333,28 @@ async function cargarLooks(){
   }
 }
 
+async function cargarHero(){
+  try{
+    const url=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(HERO_SHEET_NAME)}`;
+    const res=await fetch(url);
+    const txt=await res.text();
+    const json=JSON.parse(txt.substring(47).slice(0,-2));
+
+    const filas=json.table.rows.map((r,i)=>({
+      imagen:(r.c[0]?.v||'').toString().trim(),
+      activo:(r.c[1]?.v||'si').toString().toLowerCase().trim()==='si',
+      posicion:(r.c[2]?.v||'center 22%').toString().trim(),
+      posicion_mobile:(r.c[3]?.v||'').toString().trim(),
+      orden:i
+    })).filter(x=>x.imagen&&x.activo);
+
+    heroConfig=filas[0]||null;
+  }catch(e){
+    heroConfig=null;
+    console.info('Hero no cargado (pestaña opcional):',e);
+  }
+}
+
 function renderLooks(){
   const sec=document.getElementById('looksSection');
   const track=document.getElementById('looksTrack');
@@ -1356,8 +1379,29 @@ function renderLooks(){
 function prepararHero(){
   const bg=document.getElementById('v1HeroBg');
   if(!bg)return;
+
+  // 1) Si existe una imagen activa en la pestaña Hero, tiene prioridad.
+  if(heroConfig && heroConfig.imagen){
+    bg.style.backgroundImage=`url("${heroConfig.imagen}")`;
+
+    const aplicarPosicion=()=>{
+      const esMobile=window.matchMedia('(max-width: 480px)').matches;
+      bg.style.backgroundPosition=(esMobile && heroConfig.posicion_mobile)
+        ? heroConfig.posicion_mobile
+        : (heroConfig.posicion || 'center 22%');
+    };
+
+    aplicarPosicion();
+    window.addEventListener('resize', aplicarPosicion, {passive:true});
+    return;
+  }
+
+  // 2) Fallback seguro: si Hero no existe o está vacío, usa una foto de Productos.
   const p=todos.find(x=>x.carrusel&&x.foto) || todos.find(x=>x.destacado&&x.foto) || todos.find(x=>x.foto);
-  if(p&&p.foto) bg.style.backgroundImage=`url("${p.foto}")`;
+  if(p&&p.foto){
+    bg.style.backgroundImage=`url("${p.foto}")`;
+    bg.style.backgroundPosition='center 22%';
+  }
 }
 
 function normCat(c) {
