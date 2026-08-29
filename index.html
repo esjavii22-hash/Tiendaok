@@ -758,6 +758,75 @@ button,a,select{-webkit-tap-highlight-color:transparent;touch-action:manipulatio
   .v1-look{flex-basis:44vw;}
 }
 
+
+
+/* === CHECKOUT OPTIMIZATION PACK === */
+.checkout-benefits{
+  display:none;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  padding:10px 1rem;
+  background:#0b0b0b;
+  border-bottom:1px solid #1c1c1c;
+}
+.checkout-benefit{
+  background:#111;
+  border:1px solid #252525;
+  border-radius:10px;
+  padding:8px 6px;
+  text-align:center;
+}
+.checkout-benefit b{display:block;font-size:11px;color:#f2f1ed;margin-bottom:2px}
+.checkout-benefit span{font-size:10px;color:#8f8f8f;line-height:1.2;display:block}
+.cart-helper-card{
+  display:none;
+  margin:10px 1rem 0;
+  background:#0a1400;
+  border:1px solid #233300;
+  border-radius:12px;
+  padding:12px;
+}
+.cart-helper-title{font-size:12px;font-weight:800;color:#d4ff00;margin-bottom:4px}
+.cart-helper-sub{font-size:11px;color:#9eb94e;line-height:1.35}
+.cart-summary-box{
+  display:none;
+  margin:10px 1rem 0;
+  background:#0e0e0e;
+  border:1px solid #232323;
+  border-radius:12px;
+  padding:11px 12px;
+}
+.cart-summary-line{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:#d7d7d7;padding:4px 0}
+.cart-summary-line small{color:#7c7c7c}
+.cart-summary-line.total{border-top:1px solid #222;margin-top:6px;padding-top:10px;font-size:16px;font-weight:800;color:#fff}
+.continue-shopping-btn{
+  width:100%;
+  padding:12px;
+  background:transparent;
+  color:#cfcfcf;
+  border:1px solid #303030;
+  border-radius:12px;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  margin-top:8px;
+  transition:all .2s ease;
+}
+.continue-shopping-btn:hover{border-color:#666;color:#fff}
+.form-hint{font-size:11px;color:#7f7f7f;margin-top:6px;line-height:1.35}
+.step-indicator{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.step-pill{border:1px solid #2a2a2a;background:#121212;border-radius:999px;padding:7px 9px;text-align:center;color:#6f6f6f;font-size:10px;font-weight:700}
+.step-pill.active{background:#f2f1ed;color:#080808;border-color:#f2f1ed}
+.step-pill.done{background:#0a1400;color:#a8cc00;border-color:#223300}
+@media(max-width:480px){
+  .checkout-benefits{padding:8px 1rem;gap:6px}
+  .checkout-benefit{padding:7px 5px}
+  .checkout-benefit b{font-size:10px}
+  .checkout-benefit span{font-size:9px}
+  .cart-helper-card,.cart-summary-box{margin-left:1rem;margin-right:1rem}
+}
+
 </style>
 </head>
 <body>
@@ -1118,6 +1187,16 @@ button,a,select{-webkit-tap-highlight-color:transparent;touch-action:manipulatio
       <span style="font-size:11px; color:#d4ff00;">★★★★★</span>
       <span style="font-size:11px; color:#6a8800;">4.9 · +10.000 clientes · Pagás al recibir 🔐</span>
     </div>
+    <div class="checkout-benefits" id="checkout-benefits">
+      <div class="checkout-benefit"><b>🚚 Envíos</b><span>Desde $8.500</span></div>
+      <div class="checkout-benefit"><b>💵 Pago</b><span>Pagás al recibir</span></div>
+      <div class="checkout-benefit"><b>📲 Confirmación</b><span>Por WhatsApp</span></div>
+    </div>
+    <div class="cart-helper-card" id="cart-helper-card">
+      <div class="cart-helper-title" id="cart-helper-title">✅ Producto agregado</div>
+      <div class="cart-helper-sub" id="cart-helper-sub">Revisá tu pedido y tocá continuar para cargar tus datos de envío.</div>
+    </div>
+    <div class="cart-summary-box" id="cart-summary-box"></div>
     <div class="drawer-items" id="drawer-items">
       <div class="empty-cart">
         <div class="empty-cart-icon">🛒</div>
@@ -1137,12 +1216,12 @@ button,a,select{-webkit-tap-highlight-color:transparent;touch-action:manipulatio
 
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">@Instagram <span class="form-required">*</span></label>
-          <input class="form-input" id="f-instagram" type="text" placeholder="@usuario">
+          <label class="form-label">@Instagram (opcional)</label>
+          <input class="form-input" id="f-instagram" type="text" placeholder="@usuario (opcional)">
         </div>
         <div class="form-group">
-          <label class="form-label">Teléfono <span class="form-required">*</span></label>
-          <input class="form-input" id="f-telefono" type="tel" placeholder="5491100000000">
+          <label class="form-label">Teléfono / WhatsApp <span class="form-required">*</span></label>
+          <input class="form-input" id="f-telefono" type="tel" placeholder="Ej: 54911...">
         </div>
       </div>
 
@@ -1168,10 +1247,11 @@ button,a,select{-webkit-tap-highlight-color:transparent;touch-action:manipulatio
           box-shadow:0 8px 24px rgba(0,0,0,0.5);
         "></div>
       </div>
+        <p class="form-hint">💡 Empezá a escribir tu calle y elegí la sugerencia para completar más rápido.</p>
 
       <div class="form-group">
         <label class="form-label">Barrio / Localidad <span class="form-required">*</span></label>
-        <input class="form-input" id="f-localidad" type="text" placeholder="Ej: Palermo, Quilmes...">
+        <input class="form-input" id="f-localidad" type="text" placeholder="Se completa solo al elegir dirección">
       </div>
 
       <div class="form-group">
@@ -1190,8 +1270,9 @@ button,a,select{-webkit-tap-highlight-color:transparent;touch-action:manipulatio
 
   <div class="drawer-ftr">
     <div class="step-indicator">
-      <div class="step active" id="step1"></div>
-      <div class="step" id="step2"></div>
+      <div class="step-pill active" id="step1">1. Carrito</div>
+      <div class="step-pill" id="step2">2. Datos</div>
+      <div class="step-pill" id="step3">3. WhatsApp</div>
     </div>
     <div class="totales-mini-row">
       <div>
@@ -1199,13 +1280,14 @@ button,a,select{-webkit-tap-highlight-color:transparent;touch-action:manipulatio
         <div class="totales-mini-total" id="total-main">$8.500</div>
       </div>
       <button class="btn-volver" id="btn-volver" onclick="volverCarrito()">← Volver</button>
-      <button class="btn-wsp-confirmar" id="btn-continuar" onclick="irAEnvio()" disabled>Confirmar por WhatsApp</button>
+      <button class="btn-continuar" id="btn-continuar" onclick="irAEnvio()" disabled>CONTINUAR PEDIDO →</button>
     </div>
     <p id="nota-pago" style="font-size:11px; color:#666; text-align:center; margin-bottom:6px; display:none;">Sin adelanto · Pagás cuando llega 🔐</p>
     <button class="wsp-btn" id="wsp-btn" onclick="confirmarPedido()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-      Confirmar pedido por WhatsApp
+      FINALIZAR POR WHATSAPP
     </button>
+    <button class="continue-shopping-btn" id="btn-seguir" onclick="cerrarDrawerYSeguir()">SEGUIR COMPRANDO</button>
     <div id="wsp-confianza" style="display:none; background:#0a1400; border:1px solid #1e2e00; border-radius:10px; margin-bottom:8px; padding:9px 12px;">
       <p style="font-size:10px; color:#a8cc00; font-weight:700; margin-bottom:5px;">🔐 ¿Cómo funciona?</p>
       <div style="display:flex; flex-direction:column; gap:3px;">
@@ -1226,9 +1308,9 @@ button,a,select{-webkit-tap-highlight-color:transparent;touch-action:manipulatio
       <span class="upsell-title">🔥 ¿Agregás algo más?</span>
       <button class="upsell-close" onclick="cerrarUpsell()">✕</button>
     </div>
-    <p class="upsell-sub">Antes de confirmar, mirá estos productos</p>
+    <p class="upsell-sub">Opcional: si querés, agregá algo más antes de confirmar</p>
     <div class="upsell-list" id="upsell-grid"></div>
-    <button class="upsell-skip" onclick="cerrarUpsell()" style="width:100%;padding:11px;margin:8px 0 12px;background:transparent;color:var(--muted);border:1px solid var(--gray3);border-radius:10px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;">Continuar →</button>
+    <button class="upsell-skip" onclick="cerrarUpsell()" style="width:100%;padding:11px;margin:8px 0 12px;background:transparent;color:var(--muted);border:1px solid var(--gray3);border-radius:10px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;">Seguir al envío →</button>
   </div>
 </div>
 
@@ -1537,6 +1619,41 @@ function seleccionarTalle(i, talle, btn) {
   if(btn) btn.classList.add('selected');
 }
 
+function openDrawer(){
+  const drawerEl = document.getElementById('drawer');
+  const overlayEl = document.getElementById('overlay');
+  if(!drawerEl.classList.contains('open')){
+    drawerEl.classList.add('open');
+    overlayEl.classList.add('open');
+    if(carrito.length && typeof gtag!=='undefined'){
+      const subGA=carrito.reduce((s,i)=>s+i.precio,0);
+      gtag('event','view_cart',{
+        currency:'ARS',
+        value:Number(subGA),
+        items:carrito.map(i=>({item_name:i.nombre,item_variant:i.talle,price:Number(i.precio),quantity:1}))
+      });
+    }
+  }
+}
+
+function cerrarDrawerYSeguir(){
+  const drawerEl = document.getElementById('drawer');
+  const overlayEl = document.getElementById('overlay');
+  drawerEl.classList.remove('open');
+  overlayEl.classList.remove('open');
+}
+
+function openCartAfterAdd(nombreProducto){
+  openDrawer();
+  const title = document.getElementById('cart-helper-title');
+  const sub = document.getElementById('cart-helper-sub');
+  if(title) title.textContent = '✅ '+nombreProducto+' agregado';
+  if(sub) sub.textContent = 'Revisá tu pedido y tocá “Continuar pedido” para cargar envío y confirmar por WhatsApp.';
+  setTimeout(()=>{
+    document.getElementById('btn-continuar')?.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }, 120);
+}
+
 function agregar(i, nombre, precio, foto, emoji, talleFixed) {
   const wrap = document.getElementById('talles-'+i);
   const talle = talleFixed || (wrap ? wrap.dataset.selected : '') || '';
@@ -1549,6 +1666,7 @@ function agregar(i, nombre, precio, foto, emoji, talleFixed) {
   }
   carrito.push({ nombre, precio, foto, emoji, talle, uid: Date.now()+Math.random() });
   actualizarUI();
+  openCartAfterAdd(nombre);
   const btn = document.querySelector('[data-add-idx="'+i+'"]');
   if(btn){
     btn.textContent = '✓ AGREGADO';
@@ -1580,14 +1698,26 @@ function actualizarUI() {
   const urgencia = document.getElementById('drawer-urgencia');
   const social = document.getElementById('drawer-social');
   const notaPago = document.getElementById('nota-pago');
+  const benefits = document.getElementById('checkout-benefits');
+  const helperCard = document.getElementById('cart-helper-card');
+  const summaryBox = document.getElementById('cart-summary-box');
+  const seguirBtn = document.getElementById('btn-seguir');
   if (carrito.length) {
     if(urgencia) urgencia.style.display='flex';
     if(social) social.style.display='flex';
     if(notaPago) notaPago.style.display='block';
+    if(benefits) benefits.style.display='grid';
+    if(helperCard && paso===1) helperCard.style.display='block';
+    if(summaryBox) summaryBox.style.display='block';
+    if(seguirBtn && paso===1) seguirBtn.style.display='block';
   } else {
     if(urgencia) urgencia.style.display='none';
     if(social) social.style.display='none';
     if(notaPago) notaPago.style.display='none';
+    if(benefits) benefits.style.display='none';
+    if(helperCard) helperCard.style.display='none';
+    if(summaryBox) summaryBox.style.display='none';
+    if(seguirBtn) seguirBtn.style.display='none';
   }
   document.getElementById('cart-count').textContent = carrito.length;
   const sub = carrito.reduce((s,i)=>s+i.precio,0);
@@ -1596,6 +1726,12 @@ function actualizarUI() {
   document.getElementById('envio-txt').textContent = '$'+envio.toLocaleString('es-AR');
   document.getElementById('total-main').textContent = '$'+(sub+envio).toLocaleString('es-AR');
   document.getElementById('btn-continuar').disabled = !carrito.length;
+  if(summaryBox){
+    summaryBox.innerHTML = `
+      <div class="cart-summary-line"><span>Producto${carrito.length>1?'s':''}</span><strong>$${sub.toLocaleString('es-AR')}</strong></div>
+      <div class="cart-summary-line"><span>Envío estimado <small>(según zona)</small></span><strong>$${envio.toLocaleString('es-AR')}</strong></div>
+      <div class="cart-summary-line total"><span>TOTAL</span><strong>$${(sub+envio).toLocaleString('es-AR')}</strong></div>`;
+  }
 
   const fc = document.getElementById('float-cart');
   if (fc) {
@@ -1636,9 +1772,11 @@ function actualizarUI() {
 }
 
 function irAEnvio() {
-  const recomendados = todos.filter(p => p.agregar && p.stock);
-  if (recomendados.length > 0) {
-    mostrarUpsell(recomendados);
+  const recomendados = todos.filter(p => p.agregar && p.stock && !carrito.some(c => c.nombre === p.nombre));
+  const puedeUpsell = carrito.length === 1 && recomendados.length > 0 && !window._upsellYaMostrado;
+  if (puedeUpsell) {
+    window._upsellYaMostrado = true;
+    mostrarUpsell(recomendados.slice(0,4));
   } else {
     irAEnvioReal();
   }
@@ -1653,9 +1791,14 @@ function irAEnvioReal() {
   document.getElementById('wsp-btn').style.display = 'flex';
   document.getElementById('drawer-title').textContent = 'Datos de envío';
   document.getElementById('step1').classList.remove('active');
+  document.getElementById('step1').classList.add('done');
   document.getElementById('step2').classList.add('active');
+  document.getElementById('step3').classList.remove('active');
   document.getElementById('wsp-confianza').style.display = 'block';
   document.getElementById('nota-pago').style.display = 'none';
+  document.getElementById('cart-helper-card').style.display = 'none';
+  document.getElementById('cart-summary-box').style.display = 'none';
+  document.getElementById('btn-seguir').style.display = 'none';
   if(typeof fbq!=='undefined'){const sub=carrito.reduce((s,i)=>s+i.precio,0);fbq('track','InitiateCheckout',{value:Number(sub),currency:'ARS',num_items:carrito.length,content_ids:carrito.map(i=>i.nombre),content_type:'product'},{eventID:'ic-'+Date.now()});}
   if(typeof gtag!=='undefined'){
     const subGA=carrito.reduce((s,i)=>s+i.precio,0);
@@ -1702,6 +1845,7 @@ function agregarDesdeUpsell(i) {
   if(!talle){ toast('📏 Elegí un talle antes de agregar'); return; }
   carrito.push({ nombre: p.nombre, precio: p.precio, foto: p.foto, emoji: p.emoji, talle, uid: Date.now()+Math.random() });
   actualizarUI();
+  openCartAfterAdd(p.nombre);
   toast('✓ '+p.nombre+' agregado');
   const btn = document.getElementById('ubtn'+i);
   if (btn) { btn.textContent = '✓'; btn.style.background = '#25D366'; btn.style.color = 'white'; btn.disabled = true; }
@@ -1723,11 +1867,18 @@ function volverCarrito() {
   document.getElementById('wsp-confianza').style.display = 'none';
   document.getElementById('drawer-title').textContent = 'Tu pedido';
   document.getElementById('step1').classList.add('active');
+  document.getElementById('step1').classList.remove('done');
   document.getElementById('step2').classList.remove('active');
+  document.getElementById('step3').classList.remove('active');
+  if(carrito.length){
+    document.getElementById('cart-helper-card').style.display = 'block';
+    document.getElementById('cart-summary-box').style.display = 'block';
+    document.getElementById('btn-seguir').style.display = 'block';
+  }
 }
 
 function validarForm() {
-  const campos = ['f-nombre','f-instagram','f-telefono','f-zona','f-direccion','f-localidad'];
+  const campos = ['f-nombre','f-telefono','f-zona','f-direccion','f-localidad'];
   for (const id of campos) {
     if (!document.getElementById(id).value.trim()) return false;
   }
@@ -1761,6 +1912,9 @@ async function confirmarPedido() {
     shipping:Number(envio),
     items:carrito.map(i=>({item_name:i.nombre,item_variant:i.talle,price:Number(i.precio),quantity:1}))
   });
+  document.getElementById('step2').classList.remove('active');
+  document.getElementById('step2').classList.add('done');
+  document.getElementById('step3').classList.add('active');
   document.getElementById('envio-form').classList.remove('visible');
   document.getElementById('enviando').classList.add('visible');
   document.getElementById('btn-volver').style.display = 'none';
@@ -1785,7 +1939,7 @@ async function confirmarPedido() {
   // Armar mensaje WhatsApp
   let msg = `¡Hola! Quiero confirmar mi pedido 🛒\n\n`;
   msg += `👤 *${nombre}*\n`;
-  msg += `📸 ${instagram}\n`;
+  if (instagram) msg += `📸 ${instagram}\n`;
   msg += `📱 ${telefono}\n\n`;
   msg += `📦 *Productos:*\n`;
   carrito.forEach(item=>{ msg+=`• ${item.nombre} — Talle: ${item.talle} — $${item.precio.toLocaleString('es-AR')}\n`; });
@@ -1804,6 +1958,8 @@ async function confirmarPedido() {
     carrito = [];
     toggleDrawer();
     volverCarrito();
+    document.getElementById('step2').classList.remove('done');
+    document.getElementById('step3').classList.remove('active');
     document.getElementById('enviando').classList.remove('visible');
     actualizarUI();
     ['f-nombre','f-instagram','f-telefono','f-zona','f-direccion','f-localidad','f-aclaraciones']
@@ -1956,12 +2112,16 @@ async function initAutocomplete() {
 
             try {
               const place = p.toPlace();
-              await place.fetchFields({ fields: ['addressComponents'] });
+              await place.fetchFields({ fields: ['addressComponents','formattedAddress'] });
+              input.value = place.formattedAddress || p.text.toString();
               const comps = place.addressComponents || [];
               const barrio    = comps.find(c => c.types.includes('neighborhood') || c.types.includes('sublocality_level_1'));
               const localidad = comps.find(c => c.types.includes('locality'));
               const fLoc = document.getElementById('f-localidad');
-              if (fLoc) fLoc.value = barrio?.longText || localidad?.longText || '';
+              if (fLoc) {
+                fLoc.value = barrio?.longText || localidad?.longText || '';
+                setTimeout(() => fLoc.focus(), 60);
+              }
             } catch(err) {}
           });
           list.appendChild(item);
@@ -2116,6 +2276,7 @@ function hcPedir(i){
   }
   carrito.push({nombre:p.nombre,precio:p.precio,foto:p.foto,emoji:p.emoji,talle:talle,uid:Date.now()+Math.random()});
   actualizarUI();
+  openCartAfterAdd(p.nombre);
   var btn=document.querySelector('[data-hc-idx="'+i+'"]');
   if(btn){
     btn.textContent='✓ AGREGADO';
