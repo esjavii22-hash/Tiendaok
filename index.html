@@ -833,6 +833,55 @@ button,a,select{-webkit-tap-highlight-color:transparent;touch-action:manipulatio
   .cart-helper-card,.cart-summary-box{margin-left:1rem;margin-right:1rem}
 }
 
+
+/* === FIX FINAL BOTÓN SEGUIR COMPRANDO === */
+#btn-seguir.continue-shopping-btn{
+  -webkit-appearance:none !important;
+  appearance:none !important;
+  display:block;
+  width:100% !important;
+  min-height:52px;
+  margin:10px 0 8px !important;
+  padding:14px 18px !important;
+  border:1px solid #2f2f2f !important;
+  border-radius:12px !important;
+  background:#0d0d0d !important;
+  color:#f2f1ed !important;
+  font-family:'DM Sans',sans-serif !important;
+  font-size:13px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  letter-spacing:.2px;
+  text-align:center;
+  text-transform:uppercase;
+  box-shadow:none !important;
+  outline:none !important;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+#btn-seguir.continue-shopping-btn:hover{
+  background:#141414 !important;
+  border-color:#4b4b4b !important;
+  color:#fff !important;
+}
+#btn-seguir.continue-shopping-btn:active{
+  transform:scale(.99);
+}
+#btn-seguir.continue-shopping-btn:focus{
+  outline:none !important;
+  box-shadow:none !important;
+}
+@media(max-width:480px){
+  #btn-seguir.continue-shopping-btn{
+    width:100% !important;
+    min-height:50px;
+    margin:10px 0 8px !important;
+    padding:14px 16px !important;
+    border-radius:12px !important;
+    font-size:13px !important;
+  }
+}
+
 </style>
 </head>
 <body>
