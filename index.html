@@ -814,6 +814,15 @@ button,a,select{-webkit-tap-highlight-color:transparent;touch-action:manipulatio
   transition:all .2s ease;
 }
 .continue-shopping-btn:hover{border-color:#666;color:#fff}
+.promo-lines{display:flex;flex-direction:column;gap:7px;margin-top:7px}
+.promo-line{background:#0d1900;border:1px solid #263700;border-radius:9px;padding:8px 9px}
+.promo-line.applied{background:#0b1808;border-color:#214a22}
+.promo-line-title{font-size:11px;font-weight:800;color:#d4ff00}
+.promo-line.applied .promo-line-title{color:#75e07d}
+.promo-line-sub{font-size:10px;color:#9aaf62;margin-top:3px;line-height:1.35}
+.promo-line.applied .promo-line-sub{color:#8fbd92}
+.promo-saving{font-weight:800;color:#fff}
+.discount-row{color:#8fe48f!important}
 .form-hint{font-size:11px;color:#7f7f7f;margin-top:6px;line-height:1.35}
 .step-indicator{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
 .step-pill{border:1px solid #2a2a2a;background:#121212;border-radius:999px;padding:7px 9px;text-align:center;color:#6f6f6f;font-size:10px;font-weight:700}
@@ -1193,8 +1202,9 @@ button,a,select{-webkit-tap-highlight-color:transparent;touch-action:manipulatio
       <div class="checkout-benefit"><b>📲 Confirmación</b><span>Por WhatsApp</span></div>
     </div>
     <div class="cart-helper-card" id="cart-helper-card">
-      <div class="cart-helper-title" id="cart-helper-title">✅ Producto agregado</div>
-      <div class="cart-helper-sub" id="cart-helper-sub">Revisá tu pedido y tocá continuar para cargar tus datos de envío.</div>
+      <div class="cart-helper-title" id="cart-helper-title">🔥 PROMO POR RUBRO</div>
+      <div class="cart-helper-sub" id="cart-helper-sub">Llevando 2 o más del mismo rubro obtenés 10% OFF en todos esos artículos.</div>
+      <div class="promo-lines" id="promo-lines"></div>
     </div>
     <div class="cart-summary-box" id="cart-summary-box"></div>
     <div class="drawer-items" id="drawer-items">
@@ -1603,7 +1613,7 @@ function cardHTML(p, i) {
         <div class="card-controls">
           ${tallesVisibles}
           <button class="add-btn" data-add-idx="${i}" ${agotado?'disabled':''}
-            onclick="agregar(${i},'${p.nombre.replace(/'/g,"\\'")}',${p.precio},'${p.foto}','${p.emoji}','${sinTalle?'Único':''}')">
+            onclick="agregar(${i},'${p.nombre.replace(/'/g,"\\'")}',${p.precio},'${p.foto}','${p.emoji}','${sinTalle?'Único':''}','${String(p.categoria||'').replace(/'/g,"\\'")}')">
             ${agotado?'SIN STOCK':'QUIERO ESTE →'}
           </button>
         </div>
@@ -1619,6 +1629,71 @@ function seleccionarTalle(i, talle, btn) {
   if(btn) btn.classList.add('selected');
 }
 
+const PROMO_POR_RUBRO = 0.10;
+
+function rubroLabel(cat){
+  const labels={joggins:'Joggins',buzos:'Buzos',remeras:'Remeras',medias:'Medias y Térmicas',conjuntos:'Conjuntos'};
+  return labels[cat] || (cat ? cat.charAt(0).toUpperCase()+cat.slice(1) : 'rubro');
+}
+
+function calcularTotalesCarrito(){
+  const subtotal = carrito.reduce((s,i)=>s+Number(i.precio||0),0);
+  const grupos={};
+  carrito.forEach(item=>{
+    const cat=item.categoria || 'sin_categoria';
+    if(!grupos[cat]) grupos[cat]=[];
+    grupos[cat].push(item);
+  });
+
+  let descuento=0;
+  const detalle=[];
+  Object.entries(grupos).forEach(([categoria,items])=>{
+    const subtotalRubro=items.reduce((s,i)=>s+Number(i.precio||0),0);
+    const descuentoRubro=items.length>=2 ? Math.round(subtotalRubro*PROMO_POR_RUBRO) : 0;
+    descuento += descuentoRubro;
+    detalle.push({categoria,items,subtotalRubro,descuentoRubro});
+  });
+
+  const subtotalConDescuento=subtotal-descuento;
+  const envio=getEnvio();
+  const total=subtotalConDescuento+envio;
+  return {subtotal,descuento,subtotalConDescuento,envio,total,detalle};
+}
+
+function renderPromoCarrito(){
+  const box=document.getElementById('cart-helper-card');
+  const title=document.getElementById('cart-helper-title');
+  const sub=document.getElementById('cart-helper-sub');
+  const lines=document.getElementById('promo-lines');
+  if(!box||!title||!sub||!lines) return;
+  if(!carrito.length){ box.style.display='none'; lines.innerHTML=''; return; }
+
+  const calc=calcularTotalesCarrito();
+  const aplicadas=calc.detalle.filter(g=>g.items.length>=2 && g.categoria!=='sin_categoria');
+  const faltantes=calc.detalle.filter(g=>g.items.length===1 && g.categoria!=='sin_categoria');
+
+  if(aplicadas.length){
+    title.textContent='✅ PROMO 10% APLICADA';
+    sub.textContent='El descuento se aplica automáticamente a todos los artículos de cada rubro con 2 o más unidades.';
+  }else{
+    title.textContent='🔥 LLEVÁ 2 DEL MISMO RUBRO Y AHORRÁ';
+    sub.textContent='Agregá 1 más del mismo rubro y obtené 10% OFF en ambos.';
+  }
+
+  const bloques=[];
+  aplicadas.forEach(g=>{
+    bloques.push(`<div class="promo-line applied"><div class="promo-line-title">✅ ${g.items.length} ${rubroLabel(g.categoria)} · 10% OFF</div><div class="promo-line-sub">Ahorraste <span class="promo-saving">$${g.descuentoRubro.toLocaleString('es-AR')}</span> en este rubro.</div></div>`);
+  });
+  faltantes.forEach(g=>{
+    const item=g.items[0];
+    const hipoteticoSubtotal=Number(item.precio)*2;
+    const ahorro=Math.round(hipoteticoSubtotal*PROMO_POR_RUBRO);
+    const finalDos=hipoteticoSubtotal-ahorro;
+    bloques.push(`<div class="promo-line"><div class="promo-line-title">🔥 Agregá 1 ${rubroLabel(g.categoria).replace(/s$/,'')} más</div><div class="promo-line-sub">Si elegís otro de $${Number(item.precio).toLocaleString('es-AR')}, <span class="promo-saving">ahorrás $${ahorro.toLocaleString('es-AR')}</span> y los 2 quedan en <span class="promo-saving">$${finalDos.toLocaleString('es-AR')}</span>.</div></div>`);
+  });
+  lines.innerHTML=bloques.join('');
+}
+
 function openDrawer(){
   const drawerEl = document.getElementById('drawer');
   const overlayEl = document.getElementById('overlay');
@@ -1626,11 +1701,12 @@ function openDrawer(){
     drawerEl.classList.add('open');
     overlayEl.classList.add('open');
     if(carrito.length && typeof gtag!=='undefined'){
-      const subGA=carrito.reduce((s,i)=>s+i.precio,0);
+      const calcGA=calcularTotalesCarrito();
       gtag('event','view_cart',{
         currency:'ARS',
-        value:Number(subGA),
-        items:carrito.map(i=>({item_name:i.nombre,item_variant:i.talle,price:Number(i.precio),quantity:1}))
+        value:Number(calcGA.subtotalConDescuento),
+        coupon: calcGA.descuento>0 ? 'PROMO_RUBRO_10' : undefined,
+        items:carrito.map(i=>({item_name:i.nombre,item_category:i.categoria||'',item_variant:i.talle,price:Number(i.precio),quantity:1}))
       });
     }
   }
@@ -1645,16 +1721,13 @@ function cerrarDrawerYSeguir(){
 
 function openCartAfterAdd(nombreProducto){
   openDrawer();
-  const title = document.getElementById('cart-helper-title');
-  const sub = document.getElementById('cart-helper-sub');
-  if(title) title.textContent = '✅ '+nombreProducto+' agregado';
-  if(sub) sub.textContent = 'Revisá tu pedido y tocá “Continuar pedido” para cargar envío y confirmar por WhatsApp.';
+  renderPromoCarrito();
   setTimeout(()=>{
     document.getElementById('btn-continuar')?.scrollIntoView({behavior:'smooth', block:'nearest'});
   }, 120);
 }
 
-function agregar(i, nombre, precio, foto, emoji, talleFixed) {
+function agregar(i, nombre, precio, foto, emoji, talleFixed, categoria) {
   const wrap = document.getElementById('talles-'+i);
   const talle = talleFixed || (wrap ? wrap.dataset.selected : '') || '';
   if(!talle){
@@ -1664,7 +1737,7 @@ function agregar(i, nombre, precio, foto, emoji, talleFixed) {
     }
     return;
   }
-  carrito.push({ nombre, precio, foto, emoji, talle, uid: Date.now()+Math.random() });
+  carrito.push({ nombre, precio, foto, emoji, talle, categoria: categoria || '', uid: Date.now()+Math.random() });
   actualizarUI();
   openCartAfterAdd(nombre);
   const btn = document.querySelector('[data-add-idx="'+i+'"]');
@@ -1680,7 +1753,7 @@ function agregar(i, nombre, precio, foto, emoji, talleFixed) {
   if(typeof gtag!=='undefined') gtag('event','add_to_cart',{
     currency:'ARS',
     value:Number(precio),
-    items:[{item_name:nombre,item_variant:talle,price:Number(precio),quantity:1}]
+    items:[{item_name:nombre,item_category:categoria||'',item_variant:talle,price:Number(precio),quantity:1}]
   });
 }
 
@@ -1720,17 +1793,20 @@ function actualizarUI() {
     if(seguirBtn) seguirBtn.style.display='none';
   }
   document.getElementById('cart-count').textContent = carrito.length;
-  const sub = carrito.reduce((s,i)=>s+i.precio,0);
-  const envio = getEnvio();
+  const calc = calcularTotalesCarrito();
+  const sub = calc.subtotal;
+  const envio = calc.envio;
   document.getElementById('subtotal').textContent = '$'+sub.toLocaleString('es-AR');
   document.getElementById('envio-txt').textContent = '$'+envio.toLocaleString('es-AR');
-  document.getElementById('total-main').textContent = '$'+(sub+envio).toLocaleString('es-AR');
+  document.getElementById('total-main').textContent = '$'+calc.total.toLocaleString('es-AR');
   document.getElementById('btn-continuar').disabled = !carrito.length;
+  renderPromoCarrito();
   if(summaryBox){
     summaryBox.innerHTML = `
       <div class="cart-summary-line"><span>Producto${carrito.length>1?'s':''}</span><strong>$${sub.toLocaleString('es-AR')}</strong></div>
+      ${calc.descuento>0?`<div class="cart-summary-line discount-row"><span>Promo 10% por rubro</span><strong>-$${calc.descuento.toLocaleString('es-AR')}</strong></div>`:''}
       <div class="cart-summary-line"><span>Envío estimado <small>(según zona)</small></span><strong>$${envio.toLocaleString('es-AR')}</strong></div>
-      <div class="cart-summary-line total"><span>TOTAL</span><strong>$${(sub+envio).toLocaleString('es-AR')}</strong></div>`;
+      <div class="cart-summary-line total"><span>TOTAL</span><strong>$${calc.total.toLocaleString('es-AR')}</strong></div>`;
   }
 
   const fc = document.getElementById('float-cart');
@@ -1738,7 +1814,7 @@ function actualizarUI() {
     if (carrito.length > 0) {
       fc.classList.add('visible');
       document.getElementById('float-cart-count').textContent = carrito.length;
-      const sub2 = carrito.reduce((s,i)=>s+i.precio,0);
+      const sub2 = calcularTotalesCarrito().subtotalConDescuento;
       document.getElementById('float-cart-total').textContent = ' $'+sub2.toLocaleString('es-AR');
     } else {
       fc.classList.remove('visible');
@@ -1799,13 +1875,14 @@ function irAEnvioReal() {
   document.getElementById('cart-helper-card').style.display = 'none';
   document.getElementById('cart-summary-box').style.display = 'none';
   document.getElementById('btn-seguir').style.display = 'none';
-  if(typeof fbq!=='undefined'){const sub=carrito.reduce((s,i)=>s+i.precio,0);fbq('track','InitiateCheckout',{value:Number(sub),currency:'ARS',num_items:carrito.length,content_ids:carrito.map(i=>i.nombre),content_type:'product'},{eventID:'ic-'+Date.now()});}
+  const calcCheckout=calcularTotalesCarrito();
+  if(typeof fbq!=='undefined'){fbq('track','InitiateCheckout',{value:Number(calcCheckout.subtotalConDescuento),currency:'ARS',num_items:carrito.length,content_ids:carrito.map(i=>i.nombre),content_type:'product'},{eventID:'ic-'+Date.now()});}
   if(typeof gtag!=='undefined'){
-    const subGA=carrito.reduce((s,i)=>s+i.precio,0);
     gtag('event','begin_checkout',{
       currency:'ARS',
-      value:Number(subGA),
-      items:carrito.map(i=>({item_name:i.nombre,item_variant:i.talle,price:Number(i.precio),quantity:1}))
+      value:Number(calcCheckout.subtotalConDescuento),
+      coupon: calcCheckout.descuento>0 ? 'PROMO_RUBRO_10' : undefined,
+      items:carrito.map(i=>({item_name:i.nombre,item_category:i.categoria||'',item_variant:i.talle,price:Number(i.precio),quantity:1}))
     });
   }
   // Scroll al top del drawer para ver el formulario desde arriba
@@ -1843,7 +1920,7 @@ function agregarDesdeUpsell(i) {
   const sinTalle = p.talles.length===1 && p.talles[0].toLowerCase()==='único';
   const talle = sinTalle ? 'Único' : (document.getElementById('us'+i)?.value || '');
   if(!talle){ toast('📏 Elegí un talle antes de agregar'); return; }
-  carrito.push({ nombre: p.nombre, precio: p.precio, foto: p.foto, emoji: p.emoji, talle, uid: Date.now()+Math.random() });
+  carrito.push({ nombre: p.nombre, precio: p.precio, foto: p.foto, emoji: p.emoji, talle, categoria: p.categoria || '', uid: Date.now()+Math.random() });
   actualizarUI();
   openCartAfterAdd(p.nombre);
   toast('✓ '+p.nombre+' agregado');
@@ -1898,19 +1975,23 @@ async function confirmarPedido() {
   const direccion = document.getElementById('f-direccion').value.trim();
   const localidad = document.getElementById('f-localidad').value.trim();
   const aclaraciones = document.getElementById('f-aclaraciones').value.trim();
-  const sub = carrito.reduce((s,i)=>s+i.precio,0);
-  const envio = getEnvio();
-  const total = sub + envio;
+  const calcPedido = calcularTotalesCarrito();
+  const sub = calcPedido.subtotal;
+  const descuento = calcPedido.descuento;
+  const subConDescuento = calcPedido.subtotalConDescuento;
+  const envio = calcPedido.envio;
+  const total = calcPedido.total;
   const productosStr = carrito.map(i=>`${i.nombre} (Talle ${i.talle})`).join(' | ');
 
   // Mostrar enviando
-  if(typeof fbq!=='undefined') fbq('track','Purchase',{value:Number(total),currency:'ARS',num_items:carrito.length,content_ids:carrito.map(i=>i.nombre),content_type:'product'},{eventID:'pur-'+Date.now()});
+  if(typeof fbq!=='undefined') fbq('track','Purchase',{value:Number(total),currency:'ARS',num_items:carrito.length,content_ids:carrito.map(i=>i.nombre),content_type:'product',discount:Number(descuento)},{eventID:'pur-'+Date.now()});
   if(typeof gtag!=='undefined') gtag('event','purchase',{
     transaction_id:'WSP-'+Date.now(),
     currency:'ARS',
     value:Number(total),
     shipping:Number(envio),
-    items:carrito.map(i=>({item_name:i.nombre,item_variant:i.talle,price:Number(i.precio),quantity:1}))
+    coupon: descuento>0 ? 'PROMO_RUBRO_10' : undefined,
+    items:carrito.map(i=>({item_name:i.nombre,item_category:i.categoria||'',item_variant:i.talle,price:Number(i.precio),quantity:1}))
   });
   document.getElementById('step2').classList.remove('active');
   document.getElementById('step2').classList.add('done');
@@ -1930,6 +2011,8 @@ async function confirmarPedido() {
         nombre, instagram, telefono, zona, direccion, localidad, aclaraciones,
         productos: productosStr,
         subtotal: '$'+sub.toLocaleString('es-AR'),
+        descuento: descuento>0 ? '-$'+descuento.toLocaleString('es-AR') : '$0',
+        subtotal_con_descuento: '$'+subConDescuento.toLocaleString('es-AR'),
         envio: '$'+envio.toLocaleString('es-AR'),
         total: '$'+total.toLocaleString('es-AR'),
       })
@@ -1947,6 +2030,8 @@ async function confirmarPedido() {
   msg += `📍 ${direccion}, ${localidad}\n`;
   if (aclaraciones) msg += `📝 ${aclaraciones}\n`;
   msg += `\n💰 Subtotal: $${sub.toLocaleString('es-AR')}\n`;
+  if (descuento>0) msg += `🔥 Promo 10% por rubro: -$${descuento.toLocaleString('es-AR')}\n`;
+  if (descuento>0) msg += `✅ Productos con descuento: $${subConDescuento.toLocaleString('es-AR')}\n`;
   msg += `🚚 Envío: $${envio.toLocaleString('es-AR')}\n`;
   msg += `💵 *Total: $${total.toLocaleString('es-AR')}*\n`;
   msg += `\n🔐 Abono al recibir`;
@@ -2274,7 +2359,7 @@ function hcPedir(i){
     if(wrap)wrap.animate([{transform:'translateX(0)'},{transform:'translateX(-4px)'},{transform:'translateX(4px)'},{transform:'translateX(0)'}],{duration:220});
     return;
   }
-  carrito.push({nombre:p.nombre,precio:p.precio,foto:p.foto,emoji:p.emoji,talle:talle,uid:Date.now()+Math.random()});
+  carrito.push({nombre:p.nombre,precio:p.precio,foto:p.foto,emoji:p.emoji,talle:talle,categoria:p.categoria||'',uid:Date.now()+Math.random()});
   actualizarUI();
   openCartAfterAdd(p.nombre);
   var btn=document.querySelector('[data-hc-idx="'+i+'"]');
@@ -2290,7 +2375,7 @@ function hcPedir(i){
   if(typeof gtag!=='undefined') gtag('event','add_to_cart',{
     currency:'ARS',
     value:Number(p.precio),
-    items:[{item_name:p.nombre,item_variant:talle,price:Number(p.precio),quantity:1}]
+    items:[{item_name:p.nombre,item_category:p.categoria||'',item_variant:talle,price:Number(p.precio),quantity:1}]
   });
 }
 
