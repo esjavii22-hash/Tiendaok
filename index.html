@@ -894,6 +894,58 @@ button,a,select{-webkit-tap-highlight-color:transparent;touch-action:manipulatio
   .cart-helper-card,.cart-summary-box{margin-left:1rem;margin-right:1rem}
 }
 
+.cart-summary-box{
+  display:none;
+  margin:12px 1rem 0;
+  background:#0b0b0b;
+  border:1px solid #262626;
+  border-radius:14px;
+  padding:12px 14px;
+}
+.cart-summary-line{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  font-size:13px;
+  color:#d7d7d7;
+  padding:6px 0;
+}
+.cart-summary-line small{color:#8e8e8e;font-size:11px;}
+.cart-summary-line strong{color:#f2f2f2;font-size:14px;}
+.cart-summary-line.total{
+  margin-top:4px;
+  padding-top:10px;
+  border-top:1px solid #232323;
+}
+.cart-summary-line.total span,
+.cart-summary-line.total strong{
+  font-size:15px;
+  font-weight:900;
+}
+.ci{
+  display:flex; gap:14px; padding:14px;
+  border:1px solid #262626; border-radius:16px; align-items:center;
+  animation:slideIn 0.25s ease; background:#0b0b0b; margin-bottom:10px;
+}
+.ci:last-child{margin-bottom:0;}
+.ci-img{width:84px;height:84px;border-radius:12px;}
+.ci-name{font-size:15px;font-weight:700;margin-bottom:6px;white-space:normal;overflow:visible;text-overflow:unset;line-height:1.2;}
+.ci-talle{margin-bottom:8px;}
+.ci-price{font-size:18px;color:#f2f2f2;font-weight:900;}
+.ci-actions{align-self:stretch;justify-content:space-between;}
+.ci-rm{width:34px;height:34px;border-radius:10px;background:#121212;border:1px solid #2a2a2a;font-size:16px;}
+.drawer-items{padding-top:10px;}
+#drawer-urgencia,#drawer-social{display:none !important;}
+@media(max-width:480px){
+  .drawer-items{padding-top:10px;}
+  .ci{gap:12px;padding:12px;border-radius:15px;}
+  .ci-img{width:78px;height:78px;}
+  .cart-summary-box{margin-top:10px;padding:11px 12px;}
+  .cart-summary-line{font-size:12px;}
+}
+
+
 
 /* === FIX FINAL BOTÓN SEGUIR COMPRANDO — MÁS VISIBLE === */
 #btn-seguir.continue-shopping-btn{
@@ -1318,6 +1370,13 @@ button,a,select{-webkit-tap-highlight-color:transparent;touch-action:manipulatio
       <div class="checkout-benefit"><b>💵 Pago</b><span>Pagás al recibir</span></div>
       <div class="checkout-benefit"><b>📲 Confirmación</b><span>Por WhatsApp</span></div>
     </div>
+    <div class="drawer-items" id="drawer-items">
+      <div class="empty-cart">
+        <div class="empty-cart-icon">🛒</div>
+        <p class="empty-cart-txt">Tu carrito está vacío</p>
+        <p class="empty-cart-sub">Agregá productos para continuar</p>
+      </div>
+    </div>
     <div class="cart-helper-card" id="cart-helper-card">
       <div class="cart-helper-kicker" id="cart-helper-kicker">🔥 PROMO ACTIVA</div>
       <div class="cart-helper-main">
@@ -1328,13 +1387,6 @@ button,a,select{-webkit-tap-highlight-color:transparent;touch-action:manipulatio
         <div class="cart-helper-missing" id="cart-helper-missing"></div>
         <div class="promo-progress"><div class="promo-progress-bar" id="promo-progress-bar"></div></div>
         <div class="promo-lines" id="promo-lines"></div>
-      </div>
-    </div>
-    <div class="drawer-items" id="drawer-items">
-      <div class="empty-cart">
-        <div class="empty-cart-icon">🛒</div>
-        <p class="empty-cart-txt">Tu carrito está vacío</p>
-        <p class="empty-cart-sub">Agregá productos para continuar</p>
       </div>
     </div>
     <div class="cart-summary-box" id="cart-summary-box"></div>
@@ -1965,6 +2017,7 @@ function irAProductosDesdeCarrito(){
 function openDrawer(){
   const drawerEl = document.getElementById('drawer');
   const overlayEl = document.getElementById('overlay');
+  const drawerBody = drawerEl.querySelector('.drawer-body');
   if(!drawerEl.classList.contains('open')){
     drawerEl.classList.add('open');
     overlayEl.classList.add('open');
@@ -1978,6 +2031,7 @@ function openDrawer(){
       });
     }
   }
+  if(drawerBody) drawerBody.scrollTop = 0;
 }
 
 function cerrarDrawerYSeguir(){
@@ -1992,7 +2046,10 @@ function openCartAfterAdd(nombreProducto){
   renderPromoCarrito();
   actualizarBotonAgregarMas(calcularTotalesCarrito());
   setTimeout(()=>{
-    document.getElementById('btn-continuar')?.scrollIntoView({behavior:'smooth', block:'nearest'});
+    const drawerBody = document.querySelector('#drawer .drawer-body');
+    const firstItem = document.querySelector('#drawer-items .ci');
+    if(drawerBody) drawerBody.scrollTop = 0;
+    if(firstItem) firstItem.scrollIntoView({behavior:'smooth', block:'start'});
   }, 120);
 }
 
@@ -2046,8 +2103,8 @@ function actualizarUI() {
   const seguirBtn = document.getElementById('btn-seguir');
   const addMoreBtn = document.getElementById('btn-add-more');
   if (carrito.length) {
-    if(urgencia) urgencia.style.display='flex';
-    if(social) social.style.display='flex';
+    if(urgencia) urgencia.style.display='none';
+    if(social) social.style.display='none';
     if(notaPago) notaPago.style.display='block';
     if(benefits) benefits.style.display='grid';
     if(helperCard && paso===1) helperCard.style.display='block';
@@ -2096,7 +2153,7 @@ function actualizarUI() {
 
   const el = document.getElementById('drawer-items');
   const countBadge = document.getElementById('drawer-title-count');
-  if (carrito.length) { countBadge.style.display='inline'; countBadge.textContent=carrito.length+' items'; }
+  if (carrito.length) { countBadge.style.display='inline'; countBadge.textContent=carrito.length === 1 ? '1 item' : carrito.length+' items'; }
   else { countBadge.style.display='none'; }
   if (!carrito.length) {
     el.innerHTML='<div class="empty-cart"><div class="empty-cart-icon">🛒</div><p class="empty-cart-txt">Tu carrito está vacío</p><p class="empty-cart-sub">Agregá productos para continuar</p></div>';
@@ -2226,7 +2283,7 @@ function volverCarrito() {
     document.getElementById('cart-helper-card').style.display = 'block';
     document.getElementById('cart-summary-box').style.display = 'block';
     document.getElementById('btn-add-more').style.display = 'block';
-    document.getElementById('btn-seguir').style.display = 'none';
+    document.getElementById('btn-seguir').style.display = carrito.length ? 'block' : 'none';
   }
 }
 
