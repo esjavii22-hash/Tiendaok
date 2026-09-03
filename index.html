@@ -27,8 +27,9 @@ n.queue=[];t=b.createElement(e);t.async=!0;
 t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}(window, document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1632295294690951');
-fbq('track', 'PageView', {}, {eventID: 'pv-' + Date.now()});
+window.DSOK_META_PIXEL_ID = '1632295294690951';
+fbq('init', window.DSOK_META_PIXEL_ID);
+fbq('trackSingle', window.DSOK_META_PIXEL_ID, 'PageView', {}, {eventID: 'pv-' + Date.now()});
 </script>
 <noscript><img height="1" width="1" style="display:none"
 src="https://www.facebook.com/tr?id=1632295294690951&ev=PageView&noscript=1"
@@ -1551,6 +1552,9 @@ let paso = 1;
 const DSOK_ATTR_KEY = 'dsok_paid_attribution_v1';
 const DSOK_ATTR_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 let pedidoEnProceso = false;
+const DSOK_MODO_TEST = new URLSearchParams(window.location.search).get('test') === '1';
+
+function dsokEsModoTest(){ return DSOK_MODO_TEST; }
 
 function dsokCookie(nombre){
   const partes = document.cookie ? document.cookie.split('; ') : [];
@@ -2178,7 +2182,7 @@ function agregar(i, nombre, precio, foto, emoji, talleFixed, categoria) {
     setTimeout(()=>{ btn.textContent = 'QUIERO ESTE →'; btn.style.background = ''; btn.style.color=''; btn.style.borderColor=''; }, 1600);
   }
   toast('🛒 '+nombre+' · '+talle+' — agregado al carrito');
-  if(typeof fbq!=='undefined') fbq('track','AddToCart',{content_name:nombre,content_ids:[nombre],content_type:'product',value:Number(precio),currency:'ARS'},{eventID:'atc-'+nombre.replace(/\s/g,'')+'-'+Date.now()});
+  if(typeof fbq!=='undefined') fbq('trackSingle',window.DSOK_META_PIXEL_ID,'AddToCart',{content_name:nombre,content_ids:[nombre],content_type:'product',value:Number(precio),currency:'ARS'},{eventID:'atc-'+nombre.replace(/\s/g,'')+'-'+Date.now()});
   if(typeof gtag!=='undefined') gtag('event','add_to_cart',{
     currency:'ARS',
     value:Number(precio),
@@ -2310,7 +2314,7 @@ function irAEnvioReal() {
   document.getElementById('btn-add-more').style.display = 'none';
   document.getElementById('btn-seguir').style.display = 'none';
   const calcCheckout=calcularTotalesCarrito();
-  if(typeof fbq!=='undefined'){fbq('track','InitiateCheckout',{value:Number(calcCheckout.subtotalConDescuento),currency:'ARS',num_items:carrito.length,content_ids:carrito.map(i=>i.nombre),content_type:'product'},{eventID:'ic-'+Date.now()});}
+  if(typeof fbq!=='undefined'){fbq('trackSingle',window.DSOK_META_PIXEL_ID,'InitiateCheckout',{value:Number(calcCheckout.subtotalConDescuento),currency:'ARS',num_items:carrito.length,content_ids:carrito.map(i=>i.nombre),content_type:'product'},{eventID:'ic-'+Date.now()});}
   if(typeof gtag!=='undefined'){
     gtag('event','begin_checkout',{
       currency:'ARS',
@@ -2433,37 +2437,40 @@ async function confirmarPedido() {
   const contentsMeta = carrito.map(i=>({id:i.nombre, quantity:1, item_price:Number(i.precio)}));
 
   // Para DSOK, venta = pedido generado al tocar FINALIZAR POR WHATSAPP.
-  // Meta Pixel: mismo eventID que usará CAPI para deduplicar browser + server.
-  if(typeof fbq!=='undefined'){
-    fbq('track','Purchase',{
-      value:Number(total),
-      currency:'ARS',
-      num_items:carrito.length,
-      content_ids:contentIds,
-      contents:contentsMeta,
-      content_type:'product',
-      discount:Number(descuento),
-      order_id:pedidoId
-    },{eventID:metaEventId});
-  }
+  // Si abrís la web con ?test=1, guarda el pedido de prueba pero NO contamina Meta ni GA4.
+  if(!dsokEsModoTest()){
+    // Meta Pixel manual: un solo Purchase dirigido explícitamente a este Pixel.
+    if(typeof fbq!=='undefined'){
+      fbq('trackSingle',window.DSOK_META_PIXEL_ID,'Purchase',{
+        value:Number(total),
+        currency:'ARS',
+        num_items:carrito.length,
+        content_ids:contentIds,
+        contents:contentsMeta,
+        content_type:'product',
+        discount:Number(descuento),
+        order_id:pedidoId
+      },{eventID:metaEventId});
+    }
 
-  // GA4: transaction_id idéntico al pedido de Sheet/WhatsApp/Meta.
-  if(typeof gtag!=='undefined') gtag('event','purchase',{
-    transaction_id:pedidoId,
-    currency:'ARS',
-    value:Number(total),
-    shipping:Number(envio),
-    coupon: obtenerCodigoCupon(calcPedido),
-    utm_source: attr.utm_source || '',
-    utm_medium: attr.utm_medium || '',
-    utm_campaign: attr.utm_campaign || '',
-    utm_content: attr.utm_content || '',
-    utm_term: attr.utm_term || '',
-    campaign_id: attr.campaign_id || '',
-    adset_id: attr.adset_id || '',
-    ad_id: attr.ad_id || '',
-    items:carrito.map(i=>({item_name:i.nombre,item_category:i.categoria||'',item_variant:i.talle,price:Number(i.precio),quantity:1}))
-  });
+    // GA4: transaction_id idéntico al pedido de Sheet/WhatsApp/Meta.
+    if(typeof gtag!=='undefined') gtag('event','purchase',{
+      transaction_id:pedidoId,
+      currency:'ARS',
+      value:Number(total),
+      shipping:Number(envio),
+      coupon: obtenerCodigoCupon(calcPedido),
+      utm_source: attr.utm_source || '',
+      utm_medium: attr.utm_medium || '',
+      utm_campaign: attr.utm_campaign || '',
+      utm_content: attr.utm_content || '',
+      utm_term: attr.utm_term || '',
+      campaign_id: attr.campaign_id || '',
+      adset_id: attr.adset_id || '',
+      ad_id: attr.ad_id || '',
+      items:carrito.map(i=>({item_name:i.nombre,item_category:i.categoria||'',item_variant:i.talle,price:Number(i.precio),quantity:1}))
+    });
+  }
 
   document.getElementById('step2').classList.remove('active');
   document.getElementById('step2').classList.add('done');
@@ -2477,8 +2484,9 @@ async function confirmarPedido() {
   // estos mismos datos para enviar Purchase por Conversions API si activás el token.
   const payloadPedido = {
     pedido_id: pedidoId,
-    meta_event_id: metaEventId,
-    meta_event_time: metaEventTime,
+    es_test: dsokEsModoTest() ? 'SI' : '',
+    meta_event_id: dsokEsModoTest() ? '' : metaEventId,
+    meta_event_time: dsokEsModoTest() ? '' : metaEventTime,
     nombre,
     instagram,
     telefono,
@@ -2531,6 +2539,7 @@ async function confirmarPedido() {
   // Armar mensaje WhatsApp con el mismo ID de pedido.
   let msg = `¡Hola! Quiero confirmar mi pedido 🛒\n\n`;
   msg += `🧾 *Pedido: ${pedidoId}*\n`;
+  if(dsokEsModoTest()) msg += `🧪 *PEDIDO DE PRUEBA - NO CONTABILIZAR*\n`;
   msg += `👤 *${nombre}*\n`;
   if (instagram) msg += `📸 ${instagram}\n`;
   msg += `📱 ${telefono}\n\n`;
@@ -2883,7 +2892,7 @@ function hcPedir(i){
     setTimeout(function(){btn.textContent='QUIERO ESTE →';btn.style.background='';btn.style.color='';btn.style.borderColor='';},1600);
   }
   toast('🛒 '+p.nombre+' · '+talle+' — agregado al carrito');
-  if(typeof fbq!=='undefined') fbq('track','AddToCart',{content_name:p.nombre,value:Number(p.precio),currency:'ARS'},{eventID:'atc-'+p.nombre.replace(/\s/g,'')+'-'+Date.now()});
+  if(typeof fbq!=='undefined') fbq('trackSingle',window.DSOK_META_PIXEL_ID,'AddToCart',{content_name:p.nombre,value:Number(p.precio),currency:'ARS'},{eventID:'atc-'+p.nombre.replace(/\s/g,'')+'-'+Date.now()});
   if(typeof gtag!=='undefined') gtag('event','add_to_cart',{
     currency:'ARS',
     value:Number(p.precio),
