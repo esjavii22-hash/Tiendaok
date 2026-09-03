@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<!-- DSOK Tracking Optimizado: pedido único + UTM + Meta/GA4/CAPI-ready -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Indumentaria Urbana Premium</title>
@@ -1540,6 +1541,108 @@ const CAT_LABELS = {
 let todos = [], looks = [], heroConfig = null, carrito = [], catActual = 'todos', extraFiltro = 'todos';
 let paso = 1;
 
+
+/* =========================================================
+   DSOK TRACKING v1 — atribución + pedido único + deduplicación
+   - Conserva UTM/IDs de Meta hasta 30 días
+   - Un pedido = un Purchase
+   - Mismo ID para Meta, GA4, Sheet y WhatsApp
+   ========================================================= */
+const DSOK_ATTR_KEY = 'dsok_paid_attribution_v1';
+const DSOK_ATTR_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+let pedidoEnProceso = false;
+
+function dsokCookie(nombre){
+  const partes = document.cookie ? document.cookie.split('; ') : [];
+  for (const parte of partes){
+    const idx = parte.indexOf('=');
+    const k = idx >= 0 ? parte.slice(0, idx) : parte;
+    const v = idx >= 0 ? parte.slice(idx + 1) : '';
+    if (k === nombre) return decodeURIComponent(v);
+  }
+  return '';
+}
+
+function dsokFbcDesdeFbclid(fbclid){
+  if(!fbclid) return '';
+  return `fb.1.${Date.now()}.${fbclid}`;
+}
+
+function dsokCapturarAtribucion(){
+  const p = new URLSearchParams(window.location.search);
+  const nueva = {
+    utm_source: p.get('utm_source') || '',
+    utm_medium: p.get('utm_medium') || '',
+    utm_campaign: p.get('utm_campaign') || '',
+    utm_content: p.get('utm_content') || '',
+    utm_term: p.get('utm_term') || '',
+    campaign_id: p.get('campaign_id') || '',
+    adset_id: p.get('adset_id') || '',
+    ad_id: p.get('ad_id') || '',
+    fbclid: p.get('fbclid') || '',
+    landing_url: window.location.href,
+    referrer: document.referrer || '',
+    captured_at: Date.now()
+  };
+
+  const vieneDeCampania = !!(
+    nueva.utm_source || nueva.utm_medium || nueva.utm_campaign ||
+    nueva.utm_content || nueva.utm_term || nueva.campaign_id ||
+    nueva.adset_id || nueva.ad_id || nueva.fbclid
+  );
+
+  if(vieneDeCampania){
+    try { localStorage.setItem(DSOK_ATTR_KEY, JSON.stringify(nueva)); } catch(e) {}
+    return nueva;
+  }
+
+  try {
+    const guardada = JSON.parse(localStorage.getItem(DSOK_ATTR_KEY) || 'null');
+    if(guardada && guardada.captured_at && (Date.now() - guardada.captured_at) <= DSOK_ATTR_TTL_MS){
+      return guardada;
+    }
+  } catch(e) {}
+
+  return nueva;
+}
+
+function dsokAtribucionCompleta(){
+  const a = dsokCapturarAtribucion();
+  const fbp = dsokCookie('_fbp');
+  const fbcCookie = dsokCookie('_fbc');
+  return {
+    ...a,
+    fbp,
+    fbc: fbcCookie || dsokFbcDesdeFbclid(a.fbclid),
+    page_url: window.location.href,
+    user_agent: navigator.userAgent || ''
+  };
+}
+
+function dsokPedidoId(){
+  const d = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const fecha = `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`;
+  const hora = `${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
+  let rnd = '';
+  try { rnd = crypto.randomUUID().replace(/-/g,'').slice(0,6).toUpperCase(); }
+  catch(e) { rnd = Math.random().toString(36).slice(2,8).toUpperCase(); }
+  return `DSOK-${fecha}-${hora}-${rnd}`;
+}
+
+function dsokTelefonoE164AR(valor){
+  let d = String(valor || '').replace(/\D/g,'');
+  if(!d) return '';
+  if(d.startsWith('549')) return '+' + d;
+  if(d.startsWith('54') && d.length >= 12) return '+' + d;
+  if(d.startsWith('0')) d = d.slice(1);
+  if(d.length === 10) return '+549' + d;
+  return '+' + d;
+}
+
+// Captura inicial de la procedencia apenas entra a la tienda.
+dsokCapturarAtribucion();
+
 async function init() {
   try {
     const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
@@ -2301,6 +2404,12 @@ async function confirmarPedido() {
     return;
   }
 
+  // Evita doble click / doble Purchase del mismo pedido.
+  if (pedidoEnProceso) return;
+  pedidoEnProceso = true;
+  const btnConfirmar = document.getElementById('wsp-btn');
+  if(btnConfirmar) btnConfirmar.disabled = true;
+
   const nombre = document.getElementById('f-nombre').value.trim();
   const instagram = document.getElementById('f-instagram').value.trim();
   const telefono = document.getElementById('f-telefono').value.trim();
@@ -2316,16 +2425,46 @@ async function confirmarPedido() {
   const total = calcPedido.total;
   const productosStr = carrito.map(i=>`${i.nombre} (Talle ${i.talle})`).join(' | ');
 
-  // Mostrar enviando
-  if(typeof fbq!=='undefined') fbq('track','Purchase',{value:Number(total),currency:'ARS',num_items:carrito.length,content_ids:carrito.map(i=>i.nombre),content_type:'product',discount:Number(descuento)},{eventID:'pur-'+Date.now()});
+  const pedidoId = dsokPedidoId();
+  const metaEventId = `purchase-${pedidoId}`;
+  const metaEventTime = Math.floor(Date.now()/1000);
+  const attr = dsokAtribucionCompleta();
+  const contentIds = carrito.map(i=>i.nombre);
+  const contentsMeta = carrito.map(i=>({id:i.nombre, quantity:1, item_price:Number(i.precio)}));
+
+  // Para DSOK, venta = pedido generado al tocar FINALIZAR POR WHATSAPP.
+  // Meta Pixel: mismo eventID que usará CAPI para deduplicar browser + server.
+  if(typeof fbq!=='undefined'){
+    fbq('track','Purchase',{
+      value:Number(total),
+      currency:'ARS',
+      num_items:carrito.length,
+      content_ids:contentIds,
+      contents:contentsMeta,
+      content_type:'product',
+      discount:Number(descuento),
+      order_id:pedidoId
+    },{eventID:metaEventId});
+  }
+
+  // GA4: transaction_id idéntico al pedido de Sheet/WhatsApp/Meta.
   if(typeof gtag!=='undefined') gtag('event','purchase',{
-    transaction_id:'WSP-'+Date.now(),
+    transaction_id:pedidoId,
     currency:'ARS',
     value:Number(total),
     shipping:Number(envio),
     coupon: obtenerCodigoCupon(calcPedido),
+    utm_source: attr.utm_source || '',
+    utm_medium: attr.utm_medium || '',
+    utm_campaign: attr.utm_campaign || '',
+    utm_content: attr.utm_content || '',
+    utm_term: attr.utm_term || '',
+    campaign_id: attr.campaign_id || '',
+    adset_id: attr.adset_id || '',
+    ad_id: attr.ad_id || '',
     items:carrito.map(i=>({item_name:i.nombre,item_category:i.categoria||'',item_variant:i.talle,price:Number(i.precio),quantity:1}))
   });
+
   document.getElementById('step2').classList.remove('active');
   document.getElementById('step2').classList.add('done');
   document.getElementById('step3').classList.add('active');
@@ -2334,26 +2473,64 @@ async function confirmarPedido() {
   document.getElementById('btn-volver').style.display = 'none';
   document.getElementById('wsp-btn').style.display = 'none';
 
-  // Guardar en Sheet
+  // Guardar pedido + atribución en Sheet. El Apps Script optimizado usa
+  // estos mismos datos para enviar Purchase por Conversions API si activás el token.
+  const payloadPedido = {
+    pedido_id: pedidoId,
+    meta_event_id: metaEventId,
+    meta_event_time: metaEventTime,
+    nombre,
+    instagram,
+    telefono,
+    telefono_e164: dsokTelefonoE164AR(telefono),
+    zona,
+    direccion,
+    localidad,
+    aclaraciones,
+    productos: productosStr,
+    subtotal: '$'+sub.toLocaleString('es-AR'),
+    descuento: descuento>0 ? '-$'+descuento.toLocaleString('es-AR') : '$0',
+    subtotal_con_descuento: '$'+subConDescuento.toLocaleString('es-AR'),
+    envio: '$'+envio.toLocaleString('es-AR'),
+    total: '$'+total.toLocaleString('es-AR'),
+    subtotal_num: Number(sub),
+    descuento_num: Number(descuento),
+    subtotal_con_descuento_num: Number(subConDescuento),
+    envio_num: Number(envio),
+    total_num: Number(total),
+    num_items: carrito.length,
+    content_ids: contentIds,
+    contents: contentsMeta,
+    utm_source: attr.utm_source || '',
+    utm_medium: attr.utm_medium || '',
+    utm_campaign: attr.utm_campaign || '',
+    utm_content: attr.utm_content || '',
+    utm_term: attr.utm_term || '',
+    campaign_id: attr.campaign_id || '',
+    adset_id: attr.adset_id || '',
+    ad_id: attr.ad_id || '',
+    fbclid: attr.fbclid || '',
+    fbp: attr.fbp || '',
+    fbc: attr.fbc || '',
+    landing_url: attr.landing_url || '',
+    page_url: attr.page_url || window.location.href,
+    referrer: attr.referrer || '',
+    user_agent: attr.user_agent || navigator.userAgent || ''
+  };
+
   try {
-    await fetch(SCRIPT_URL, {
+    // Fire-and-forget: no esperamos al servidor para no demorar/bloquear la apertura de WhatsApp.
+    fetch(SCRIPT_URL, {
       method: 'POST',
       mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        nombre, instagram, telefono, zona, direccion, localidad, aclaraciones,
-        productos: productosStr,
-        subtotal: '$'+sub.toLocaleString('es-AR'),
-        descuento: descuento>0 ? '-$'+descuento.toLocaleString('es-AR') : '$0',
-        subtotal_con_descuento: '$'+subConDescuento.toLocaleString('es-AR'),
-        envio: '$'+envio.toLocaleString('es-AR'),
-        total: '$'+total.toLocaleString('es-AR'),
-      })
-    });
+      headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+      body: JSON.stringify(payloadPedido)
+    }).catch(e => console.warn('Error guardando pedido:', e));
   } catch(e) { console.warn('Error guardando pedido:', e); }
 
-  // Armar mensaje WhatsApp
+  // Armar mensaje WhatsApp con el mismo ID de pedido.
   let msg = `¡Hola! Quiero confirmar mi pedido 🛒\n\n`;
+  msg += `🧾 *Pedido: ${pedidoId}*\n`;
   msg += `👤 *${nombre}*\n`;
   if (instagram) msg += `📸 ${instagram}\n`;
   msg += `📱 ${telefono}\n\n`;
@@ -2371,7 +2548,7 @@ async function confirmarPedido() {
 
   window.open(`https://wa.me/${WSP}?text=${encodeURIComponent(msg)}`, '_blank');
 
-  // Reset
+  // Reset para permitir un pedido nuevo, pero no un doble click del mismo pedido.
   setTimeout(() => {
     carrito = [];
     toggleDrawer();
@@ -2382,6 +2559,8 @@ async function confirmarPedido() {
     actualizarUI();
     ['f-nombre','f-instagram','f-telefono','f-zona','f-direccion','f-localidad','f-aclaraciones']
       .forEach(id => document.getElementById(id).value = '');
+    pedidoEnProceso = false;
+    if(btnConfirmar) btnConfirmar.disabled = false;
   }, 1500);
 }
 
