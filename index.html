@@ -48,7 +48,7 @@ src="https://www.facebook.com/tr?id=1632295294690951&ev=PageView&noscript=1"
 <link rel="preconnect" href="https://docs.google.com">
 <link rel="dns-prefetch" href="https://script.google.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=Roboto+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDg7dfZ-AeeJabfxMPtWcs1ae028QIajGg&libraries=places&language=es&region=AR&callback=initAutocomplete" async defer></script>
+
 <style>
 :root {
   --black: #080808; --white: #f2f1ed; --gray: #141414;
@@ -2681,69 +2681,100 @@ function cap(s) { return s.charAt(0).toUpperCase()+s.slice(1); }
 // Actualizar envío cuando cambia zona
 document.getElementById('f-zona')?.addEventListener('change', actualizarUI);
 
-// AUTOCOMPLETE DIRECCIONES — Google Places (nueva API)
+// AUTOCOMPLETE DIRECCIONES — Google Places (carga segura)
 async function initAutocomplete() {
   const input = document.getElementById('f-direccion');
   const list  = document.getElementById('autocomplete-list');
-  if (!input || !window.google) return;
+  if (!input || !list || !window.google?.maps) return;
 
-  let timer;
+  try {
+    // Carga explícita de Places para evitar condiciones de carrera.
+    const { AutocompleteSuggestion, AutocompleteSessionToken } = await google.maps.importLibrary('places');
+    let sessionToken = new AutocompleteSessionToken();
+    let timer;
 
-  input.addEventListener('input', function() {
-    clearTimeout(timer);
-    const val = this.value.trim();
-    if (val.length < 3) { list.style.display = 'none'; return; }
+    input.addEventListener('input', function() {
+      clearTimeout(timer);
+      const val = this.value.trim();
 
-    timer = setTimeout(async () => {
-      try {
-        const { suggestions } = await google.maps.places.AutocompleteSuggestion.fetchAutocompleteSuggestions({
-          input: val,
-          includedRegionCodes: ['ar'],
-        });
-
+      if (val.length < 3) {
         list.innerHTML = '';
-        if (!suggestions || !suggestions.length) { list.style.display = 'none'; return; }
+        list.style.display = 'none';
+        return;
+      }
 
-        suggestions.forEach(s => {
-          const p = s.placePrediction;
-          const item = document.createElement('div');
-          item.textContent = p.text.toString();
-          item.style.cssText = 'padding:11px 13px; cursor:pointer; font-size:13px; color:#f2f1ed; border-bottom:1px solid #2a2a2a; transition:background 0.15s;';
-          item.addEventListener('mouseenter', () => item.style.background = '#2e2e2e');
-          item.addEventListener('mouseleave', () => item.style.background = '');
-          item.addEventListener('mousedown', async (e) => {
-            e.preventDefault();
-            input.value = p.text.toString();
-            list.style.display = 'none';
-
-            try {
-              const place = p.toPlace();
-              await place.fetchFields({ fields: ['addressComponents','formattedAddress'] });
-              input.value = place.formattedAddress || p.text.toString();
-              const comps = place.addressComponents || [];
-              const barrio    = comps.find(c => c.types.includes('neighborhood') || c.types.includes('sublocality_level_1'));
-              const localidad = comps.find(c => c.types.includes('locality'));
-              const fLoc = document.getElementById('f-localidad');
-              if (fLoc) {
-                fLoc.value = barrio?.longText || localidad?.longText || '';
-                setTimeout(() => fLoc.focus(), 60);
-              }
-            } catch(err) {}
+      timer = setTimeout(async () => {
+        try {
+          const { suggestions } = await AutocompleteSuggestion.fetchAutocompleteSuggestions({
+            input: val,
+            includedRegionCodes: ['ar'],
+            sessionToken
           });
-          list.appendChild(item);
-        });
-        list.style.display = 'block';
-      } catch(err) {
+
+          list.innerHTML = '';
+          if (!suggestions || !suggestions.length) {
+            list.style.display = 'none';
+            return;
+          }
+
+          suggestions.forEach(s => {
+            const p = s.placePrediction;
+            if (!p) return;
+
+            const item = document.createElement('div');
+            item.textContent = p.text.toString();
+            item.style.cssText = 'padding:11px 13px; cursor:pointer; font-size:13px; color:#f2f1ed; border-bottom:1px solid #2a2a2a; transition:background 0.15s;';
+            item.addEventListener('mouseenter', () => item.style.background = '#2e2e2e');
+            item.addEventListener('mouseleave', () => item.style.background = '');
+
+            item.addEventListener('mousedown', async (e) => {
+              e.preventDefault();
+              list.style.display = 'none';
+
+              try {
+                const place = p.toPlace();
+                await place.fetchFields({ fields: ['addressComponents', 'formattedAddress'] });
+
+                input.value = place.formattedAddress || p.text.toString();
+                const comps = place.addressComponents || [];
+                const barrio = comps.find(c => c.types.includes('neighborhood') || c.types.includes('sublocality_level_1'));
+                const localidad = comps.find(c => c.types.includes('locality'));
+                const partido = comps.find(c => c.types.includes('administrative_area_level_2'));
+                const fLoc = document.getElementById('f-localidad');
+
+                if (fLoc) {
+                  fLoc.value = barrio?.longText || localidad?.longText || partido?.longText || '';
+                  setTimeout(() => fLoc.focus(), 60);
+                }
+
+                // Cada dirección elegida inicia una nueva sesión de autocomplete.
+                sessionToken = new AutocompleteSessionToken();
+              } catch (err) {
+                console.error('DSOK Places: error al obtener datos de la dirección', err);
+                input.value = p.text.toString();
+              }
+            });
+
+            list.appendChild(item);
+          });
+
+          list.style.display = 'block';
+        } catch (err) {
+          console.error('DSOK Places: error buscando direcciones', err);
+          list.innerHTML = '';
+          list.style.display = 'none';
+        }
+      }, 280);
+    });
+
+    document.addEventListener('click', e => {
+      if (!input.contains(e.target) && !list.contains(e.target)) {
         list.style.display = 'none';
       }
-    }, 280);
-  });
-
-  document.addEventListener('click', e => {
-    if (!input.contains(e.target) && !list.contains(e.target)) {
-      list.style.display = 'none';
-    }
-  });
+    });
+  } catch (err) {
+    console.error('DSOK Places: no se pudo cargar la librería Places', err);
+  }
 }
 
 window.initAutocomplete = initAutocomplete;
@@ -2764,12 +2795,12 @@ window.initAutocomplete = initAutocomplete;
 init();
 </script>
 
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDg7dfZ-AeeJabfxMPtWcs1ae028QIajGg&loading=async&language=es&region=AR&callback=initAutocomplete" async></script>
+
 <script>
 function tfOpen(id){document.getElementById('tf-'+id).classList.add('open');document.body.style.overflow='hidden';}
 function tfClose(id){document.getElementById('tf-'+id).classList.remove('open');document.body.style.overflow='';}
 </script>
-</body>
-</html>
 
 <script>
 /* CARRUSEL B — TARJETAS */
@@ -2917,3 +2948,5 @@ function hcTouchInit(){
   });
 }
 </script>
+</body>
+</html>
