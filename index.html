@@ -2160,6 +2160,25 @@ function openCartAfterAdd(nombreProducto){
   }, 120);
 }
 
+function mostrarFeedbackAgregado(nombreProducto, categoria){
+  const calc = calcularTotalesCarrito();
+  const grupo = (calc.detalle || []).find(g => g.categoria === categoria);
+  let msg = '✓ '+nombreProducto+' agregado al carrito';
+
+  if(grupo){
+    const cantidad = grupo.items.length;
+    if(cantidad === 1){
+      msg = '✓ Agregado · sumá 1 '+rubroSingular(categoria).toLowerCase()+' más y activás 10% OFF';
+    } else if(cantidad === 2){
+      msg = '🔥 10% OFF activo · sumá 1 '+rubroSingular(categoria).toLowerCase()+' más y subís a 15% OFF';
+    } else if(cantidad >= 3){
+      msg = '🔥 15% OFF activo en '+rubroLabel(categoria);
+    }
+  }
+
+  toast(msg);
+}
+
 function agregar(i, nombre, precio, foto, emoji, talleFixed, categoria) {
   const wrap = document.getElementById('talles-'+i);
   const talle = talleFixed || (wrap ? wrap.dataset.selected : '') || '';
@@ -2172,7 +2191,7 @@ function agregar(i, nombre, precio, foto, emoji, talleFixed, categoria) {
   }
   carrito.push({ nombre, precio, foto, emoji, talle, categoria: categoria || '', uid: Date.now()+Math.random() });
   actualizarUI();
-  openCartAfterAdd(nombre);
+  mostrarFeedbackAgregado(nombre, categoria || '');
   const btn = document.querySelector('[data-add-idx="'+i+'"]');
   if(btn){
     btn.textContent = '✓ AGREGADO';
@@ -2181,7 +2200,6 @@ function agregar(i, nombre, precio, foto, emoji, talleFixed, categoria) {
     btn.style.borderColor = '#1a9e47';
     setTimeout(()=>{ btn.textContent = 'QUIERO ESTE →'; btn.style.background = ''; btn.style.color=''; btn.style.borderColor=''; }, 1600);
   }
-  toast('🛒 '+nombre+' · '+talle+' — agregado al carrito');
   if(typeof fbq!=='undefined') fbq('trackSingle',window.DSOK_META_PIXEL_ID,'AddToCart',{content_name:nombre,content_ids:[nombre],content_type:'product',value:Number(precio),currency:'ARS'},{eventID:'atc-'+nombre.replace(/\s/g,'')+'-'+Date.now()});
   if(typeof gtag!=='undefined') gtag('event','add_to_cart',{
     currency:'ARS',
@@ -2360,7 +2378,7 @@ function agregarDesdeUpsell(i) {
   if(!talle){ toast('📏 Elegí un talle antes de agregar'); return; }
   carrito.push({ nombre: p.nombre, precio: p.precio, foto: p.foto, emoji: p.emoji, talle, categoria: p.categoria || '', uid: Date.now()+Math.random() });
   actualizarUI();
-  openCartAfterAdd(p.nombre);
+  mostrarFeedbackAgregado(p.nombre, p.categoria || '');
   toast('✓ '+p.nombre+' agregado');
   const btn = document.getElementById('ubtn'+i);
   if (btn) { btn.textContent = '✓'; btn.style.background = '#25D366'; btn.style.color = 'white'; btn.disabled = true; }
@@ -2914,7 +2932,7 @@ function hcPedir(i){
   }
   carrito.push({nombre:p.nombre,precio:p.precio,foto:p.foto,emoji:p.emoji,talle:talle,categoria:p.categoria||'',uid:Date.now()+Math.random()});
   actualizarUI();
-  openCartAfterAdd(p.nombre);
+  mostrarFeedbackAgregado(p.nombre, p.categoria || '');
   var btn=document.querySelector('[data-hc-idx="'+i+'"]');
   if(btn){
     btn.textContent='✓ AGREGADO';
@@ -2923,7 +2941,6 @@ function hcPedir(i){
     btn.style.borderColor='#1a9e47';
     setTimeout(function(){btn.textContent='QUIERO ESTE →';btn.style.background='';btn.style.color='';btn.style.borderColor='';},1600);
   }
-  toast('🛒 '+p.nombre+' · '+talle+' — agregado al carrito');
   if(typeof fbq!=='undefined') fbq('trackSingle',window.DSOK_META_PIXEL_ID,'AddToCart',{content_name:p.nombre,value:Number(p.precio),currency:'ARS'},{eventID:'atc-'+p.nombre.replace(/\s/g,'')+'-'+Date.now()});
   if(typeof gtag!=='undefined') gtag('event','add_to_cart',{
     currency:'ARS',
