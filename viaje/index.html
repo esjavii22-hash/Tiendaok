@@ -328,32 +328,31 @@ async function responderViaje(decision){
   setBotones(true);
 
   try{
-    const url = new URL(API_URL);
-    url.searchParams.set('action','responder');
-    url.searchParams.set('id',viajeId);
-    url.searchParams.set('t',token);
-    url.searchParams.set('decision',decision);
-    url.searchParams.set('_',Date.now());
+    const data = await jsonp({
+      action:'responder',
+      id:viajeId,
+      t:token,
+      decision:decision,
+      _:Date.now()
+    }, 15000);
 
-    // Enviamos la respuesta sin intentar leer el resultado del servidor.
-    // Esto evita bloqueos CORS/JSONP de algunos navegadores y WhatsApp.
-    await fetch(url.toString(), {
-      method:'GET',
-      mode:'no-cors',
-      cache:'no-store',
-      credentials:'omit',
-      redirect:'follow'
-    });
+    if(!data || data.ok !== true){
+      throw new Error((data && data.message) || 'No se pudo guardar la respuesta.');
+    }
 
-    if(decision === 'aceptar'){
+    if(data.status === 'ACEPTADO'){
       $('success-id').textContent = '#' + viajeId;
       mostrar('success');
-    }else{
+    }else if(data.status === 'RECHAZADO'){
       $('rejected-id').textContent = '#' + viajeId;
       mostrar('rejected');
+    }else{
+      throw new Error('El servidor respondió con un estado inesperado.');
     }
   }catch(err){
-    $('inline-error').textContent='No pudimos enviar la respuesta. Revisá tu conexión y volvé a intentar.';
+    $('inline-error').textContent = err && err.message
+      ? err.message
+      : 'No pudimos guardar la respuesta. Volvé a intentar.';
     $('inline-error').style.display='block';
     setBotones(false);
   }
