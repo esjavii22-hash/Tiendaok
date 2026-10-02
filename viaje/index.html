@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#080808">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Confirmar viaje | DSOK</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --black:#080808;
+      --panel:#101010;
+      --panel2:#161616;
+      --line:#2b2b2b;
+      --white:#f2f1ed;
+      --muted:#858585;
+      --accent:#d4ff00;
+      --danger:#ff5757;
+      --green:#25D366;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{min-height:100%}
+    body{
+      min-height:100svh;
+      background:
+        radial-gradient(circle at 50% -15%, rgba(212,255,0,.09), transparent 34%),
+        linear-gradient(180deg,#080808,#050505);
+      color:var(--white);
+      font-family:'DM Sans',sans-serif;
+      -webkit-font-smoothing:antialiased;
+      display:flex;
+      flex-direction:column;
+    }
+    .top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:18px 18px 14px;
+      border-bottom:1px solid #1d1d1d;
+      background:rgba(8,8,8,.93);
+      backdrop-filter:blur(12px);
+    }
+    .logo{
+      font-family:'Bebas Neue',sans-serif;
+      letter-spacing:3px;
+      font-size:27px;
+    }
+    .logo em{color:var(--accent);font-style:normal}
+    .secure{
+      display:flex;align-items:center;gap:6px;
+      font-size:11px;color:#9b9b9b;font-weight:600;
+    }
+    main{
+      width:min(100%,520px);
+      margin:0 auto;
+      flex:1;
+      display:flex;
+      align-items:center;
+      padding:26px 16px calc(28px + env(safe-area-inset-bottom));
+    }
+    .card{
+      width:100%;
+      background:linear-gradient(180deg,#111,#0c0c0c);
+      border:1px solid var(--line);
+      border-radius:24px;
+      overflow:hidden;
+      box-shadow:0 28px 70px rgba(0,0,0,.42);
+    }
+    .accent-line{height:4px;background:var(--accent)}
+    .content{padding:25px 20px 20px}
+    .icon{
+      width:62px;height:62px;border-radius:18px;
+      margin:0 auto 15px;
+      background:#151a06;border:1px solid #334000;
+      display:flex;align-items:center;justify-content:center;
+      font-size:29px;
+    }
+    .eyebrow{
+      text-align:center;color:var(--accent);
+      font-size:10px;font-weight:800;
+      letter-spacing:1.8px;text-transform:uppercase;
+      margin-bottom:7px;
+    }
+    h1{
+      font-family:'Bebas Neue',sans-serif;
+      font-size:42px;letter-spacing:1.4px;
+      line-height:.95;text-align:center;
+      margin-bottom:8px;
+    }
+    .sub{
+      text-align:center;color:#a1a1a1;
+      font-size:13px;line-height:1.5;
+      max-width:360px;margin:0 auto 20px;
+    }
+    .trip{
+      border:1px solid #262626;background:#0b0b0b;
+      border-radius:15px;padding:14px 15px;margin-bottom:18px;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+    }
+    .trip small{display:block;color:#777;font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
+    .trip strong{font-size:18px}
+    .status{
+      font-size:10px;font-weight:800;border-radius:999px;
+      padding:6px 9px;white-space:nowrap;
+      background:#191919;color:#aaa;border:1px solid #2b2b2b;
+    }
+    .actions{display:grid;gap:10px}
+    button{
+      width:100%;min-height:56px;border-radius:14px;
+      font-family:'DM Sans',sans-serif;font-size:15px;font-weight:800;
+      cursor:pointer;transition:.15s ease;
+      -webkit-tap-highlight-color:transparent;
+    }
+    button:active{transform:scale(.985)}
+    button:disabled{opacity:.45;cursor:not-allowed;transform:none}
+    .accept{
+      background:var(--accent);color:#080808;border:1px solid var(--accent);
+      box-shadow:0 7px 24px rgba(212,255,0,.10);
+    }
+    .reject{
+      background:#111;color:#ddd;border:1px solid #343434;
+    }
+    .reject:hover{border-color:#555}
+    .note{
+      margin-top:15px;text-align:center;color:#666;font-size:10px;line-height:1.45;
+    }
+    .state{
+      display:none;text-align:center;padding:5px 0 2px;
+    }
+    .state.show{display:block}
+    .state .big{font-size:54px;margin-bottom:10px}
+    .state h2{
+      font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:1px;margin-bottom:8px;
+    }
+    .state p{color:#999;font-size:13px;line-height:1.5}
+    .state .back{
+      display:inline-flex;margin-top:18px;color:var(--accent);text-decoration:none;
+      font-size:12px;font-weight:800;border:1px solid #313900;border-radius:999px;padding:9px 13px;
+    }
+    .spinner{
+      width:28px;height:28px;border:3px solid #2b2b2b;border-top-color:var(--accent);
+      border-radius:50%;margin:5px auto 13px;animation:spin .8s linear infinite;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .error-box{
+      background:#1a0909;border:1px solid #3a1616;color:#ff9898;
+      border-radius:12px;padding:10px 12px;font-size:11px;line-height:1.45;margin-top:13px;text-align:left;
+    }
+    footer{
+      text-align:center;padding:0 15px 18px;color:#444;font-size:9px;letter-spacing:.2px;
+    }
+    @media(max-width:380px){
+      .content{padding:22px 15px 17px}
+      h1{font-size:38px}
+      .trip strong{font-size:17px}
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="logo">DS<em>OK</em>.URBANO</div>
+    <div class="secure">🔒 Confirmación segura</div>
+  </header>
+
+  <main>
+    <section class="card">
+      <div class="accent-line"></div>
+      <div class="content">
+
+        <div id="loading" class="state show">
+          <div class="spinner"></div>
+          <h2>VERIFICANDO VIAJE</h2>
+          <p>Un segundo, estamos validando el enlace.</p>
+        </div>
+
+        <div id="pending" style="display:none">
+          <div class="icon">🚚</div>
+          <div class="eyebrow">Viaje asignado</div>
+          <h1>CONFIRMÁ TU VIAJE</h1>
+          <p class="sub">Confirmá si podés realizarlo. Tu respuesta queda registrada automáticamente.</p>
+
+          <div class="trip">
+            <div>
+              <small>N° DE VIAJE</small>
+              <strong id="trip-id">—</strong>
+            </div>
+            <span class="status" id="trip-status">PENDIENTE</span>
+          </div>
+
+          <div class="actions">
+            <button id="accept-btn" class="accept" type="button" onclick="responderViaje('aceptar')">✅ ACEPTAR VIAJE</button>
+            <button id="reject-btn" class="reject" type="button" onclick="responderViaje('rechazar')">✕ NO PUEDO TOMARLO</button>
+          </div>
+
+          <p class="note">No necesitás completar formularios. Con un toque queda guardada tu respuesta.</p>
+          <div id="inline-error" class="error-box" style="display:none"></div>
+        </div>
+
+        <div id="success" class="state">
+          <div class="big">✅</div>
+          <div class="eyebrow">Respuesta registrada</div>
+          <h2>VIAJE ACEPTADO</h2>
+          <p>Listo. El viaje <strong id="success-id"></strong> quedó marcado como aceptado.</p>
+        </div>
+
+        <div id="rejected" class="state">
+          <div class="big">❌</div>
+          <div class="eyebrow">Respuesta registrada</div>
+          <h2>VIAJE RECHAZADO</h2>
+          <p>Listo. Informamos que no podés tomar el viaje <strong id="rejected-id"></strong>.</p>
+        </div>
+
+        <div id="error" class="state">
+          <div class="big">⚠️</div>
+          <h2>NO PUDIMOS VALIDARLO</h2>
+          <p id="error-text">El enlace no es válido o hubo un problema al consultar el viaje.</p>
+          <a class="back" href="https://dsok-urbano.com/">IR A DSOK-URBANO.COM</a>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer>DSOK · Confirmación de viajes</footer>
+
+<script>
+/*
+  DSOK VIAJES
+  PASO ÚNICO DESPUÉS DE PUBLICAR EL APPS SCRIPT:
+  Pegá acá la URL terminada en /exec.
+*/
+const API_URL = 'https://script.google.com/macros/s/AKfycby_osoprPkYsDRjF00d_t6BHr1uHm_Oa8A99RVihClgmC7VutcTzrYTnjgcQe6CBucV7w/exec';
+
+const qs = new URLSearchParams(location.search);
+const viajeId = (qs.get('id') || '').trim();
+const token = (qs.get('t') || '').trim();
+
+const $ = id => document.getElementById(id);
+
+function mostrar(id){
+  ['loading','pending','success','rejected','error'].forEach(x=>{
+    const el=$(x);
+    if(!el) return;
+    if(x==='pending') el.style.display = x===id ? 'block' : 'none';
+    else el.classList.toggle('show', x===id);
+  });
+}
+
+function apiConfigurada(){
+  return API_URL && API_URL.startsWith('https://script.google.com/macros/s/') && API_URL.endsWith('/exec');
+}
+
+function mensajeError(msg){
+  $('error-text').textContent = msg || 'No pudimos validar este viaje.';
+  mostrar('error');
+}
+
+function setBotones(cargando){
+  $('accept-btn').disabled = cargando;
+  $('reject-btn').disabled = cargando;
+  $('accept-btn').textContent = cargando ? 'REGISTRANDO...' : '✅ ACEPTAR VIAJE';
+  $('reject-btn').textContent = '✕ NO PUEDO TOMARLO';
+}
+
+function jsonp(params, timeoutMs=10000){
+  return new Promise((resolve,reject)=>{
+    const callback = '__dsok_cb_' + Date.now() + '_' + Math.floor(Math.random()*100000);
+    const script = document.createElement('script');
+    let done = false;
+
+    const cleanup = ()=>{
+      if(done) return;
+      done = true;
+      clearTimeout(timer);
+      try{ delete window[callback]; }catch(e){ window[callback]=undefined; }
+      script.remove();
+    };
+
+    window[callback] = data=>{
+      cleanup();
+      resolve(data);
+    };
+
+    const timer = setTimeout(()=>{
+      cleanup();
+      reject(new Error('Tiempo de espera agotado'));
+    }, timeoutMs);
+
+    const url = new URL(API_URL);
+    Object.entries({...params, callback}).forEach(([k,v])=>url.searchParams.set(k, v ?? ''));
+    script.src = url.toString();
+    script.onerror = ()=>{
+      cleanup();
+      reject(new Error('No se pudo contactar al servidor'));
+    };
+    document.head.appendChild(script);
+  });
+}
+
+async function cargarEstado(){
+  if(!viajeId){
+    mensajeError('Falta el número de viaje en el enlace.');
+    return;
+  }
+  if(!token){
+    mensajeError('Este enlace de confirmación está incompleto.');
+    return;
+  }
+  if(!apiConfigurada()){
+    mensajeError('La página todavía no tiene configurada la URL del Apps Script.');
+    return;
+  }
+
+  $('trip-id').textContent = '#' + viajeId;
+
+  try{
+    const r = await jsonp({action:'estado', id:viajeId, t:token});
+    if(!r || !r.ok){
+      mensajeError((r && r.message) || 'No encontramos el viaje.');
+      return;
+    }
+
+    if(r.status === 'ACEPTADO'){
+      $('success-id').textContent = '#' + viajeId;
+      mostrar('success');
+      return;
+    }
+    if(r.status === 'RECHAZADO'){
+      $('rejected-id').textContent = '#' + viajeId;
+      mostrar('rejected');
+      return;
+    }
+    if(r.status === 'OCUPADO'){
+      mensajeError(r.message || 'La celda de estado ya contiene información y no se modificó.');
+      return;
+    }
+
+    $('trip-status').textContent = 'PENDIENTE';
+    mostrar('pending');
+  }catch(err){
+    mensajeError('No pudimos consultar el viaje. Probá nuevamente en unos segundos.');
+  }
+}
+
+async function responderViaje(decision){
+  if(!['aceptar','rechazar'].includes(decision)) return;
+  $('inline-error').style.display='none';
+  setBotones(true);
+
+  try{
+    const r = await jsonp({action:'responder', id:viajeId, t:token, decision});
+    if(!r || !r.ok){
+      $('inline-error').textContent = (r && r.message) || 'No se pudo registrar la respuesta.';
+      $('inline-error').style.display='block';
+      setBotones(false);
+      return;
+    }
+
+    if(r.status === 'ACEPTADO'){
+      $('success-id').textContent = '#' + viajeId;
+      mostrar('success');
+    }else if(r.status === 'RECHAZADO'){
+      $('rejected-id').textContent = '#' + viajeId;
+      mostrar('rejected');
+    }else{
+      $('inline-error').textContent='Respuesta inesperada. Volvé a intentar.';
+      $('inline-error').style.display='block';
+      setBotones(false);
+    }
+  }catch(err){
+    $('inline-error').textContent='No pudimos guardar la respuesta. Revisá tu conexión y volvé a intentar.';
+    $('inline-error').style.display='block';
+    setBotones(false);
+  }
+}
+
+cargarEstado();
+</script>
+</body>
+</html>
