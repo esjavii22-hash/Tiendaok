@@ -328,27 +328,32 @@ async function responderViaje(decision){
   setBotones(true);
 
   try{
-    const r = await jsonp({action:'responder', id:viajeId, t:token, decision});
-    if(!r || !r.ok){
-      $('inline-error').textContent = (r && r.message) || 'No se pudo registrar la respuesta.';
-      $('inline-error').style.display='block';
-      setBotones(false);
-      return;
-    }
+    const url = new URL(API_URL);
+    url.searchParams.set('action','responder');
+    url.searchParams.set('id',viajeId);
+    url.searchParams.set('t',token);
+    url.searchParams.set('decision',decision);
+    url.searchParams.set('_',Date.now());
 
-    if(r.status === 'ACEPTADO'){
+    // Enviamos la respuesta sin intentar leer el resultado del servidor.
+    // Esto evita bloqueos CORS/JSONP de algunos navegadores y WhatsApp.
+    await fetch(url.toString(), {
+      method:'GET',
+      mode:'no-cors',
+      cache:'no-store',
+      credentials:'omit',
+      redirect:'follow'
+    });
+
+    if(decision === 'aceptar'){
       $('success-id').textContent = '#' + viajeId;
       mostrar('success');
-    }else if(r.status === 'RECHAZADO'){
+    }else{
       $('rejected-id').textContent = '#' + viajeId;
       mostrar('rejected');
-    }else{
-      $('inline-error').textContent='Respuesta inesperada. Volvé a intentar.';
-      $('inline-error').style.display='block';
-      setBotones(false);
     }
   }catch(err){
-    $('inline-error').textContent='No pudimos guardar la respuesta. Revisá tu conexión y volvé a intentar.';
+    $('inline-error').textContent='No pudimos enviar la respuesta. Revisá tu conexión y volvé a intentar.';
     $('inline-error').style.display='block';
     setBotones(false);
   }
