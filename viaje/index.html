@@ -301,7 +301,7 @@ function jsonp(params, timeoutMs=10000){
   });
 }
 
-async function cargarEstado(){
+function cargarEstado(){
   if(!viajeId){
     mensajeError('Falta el número de viaje en el enlace.');
     return;
@@ -315,35 +315,11 @@ async function cargarEstado(){
     return;
   }
 
+  // Mostramos el viaje inmediatamente. La validación real se hace
+  // únicamente cuando la persona acepta o rechaza.
   $('trip-id').textContent = '#' + viajeId;
-
-  try{
-    const r = await jsonp({action:'estado', id:viajeId, t:token});
-    if(!r || !r.ok){
-      mensajeError((r && r.message) || 'No encontramos el viaje.');
-      return;
-    }
-
-    if(r.status === 'ACEPTADO'){
-      $('success-id').textContent = '#' + viajeId;
-      mostrar('success');
-      return;
-    }
-    if(r.status === 'RECHAZADO'){
-      $('rejected-id').textContent = '#' + viajeId;
-      mostrar('rejected');
-      return;
-    }
-    if(r.status === 'OCUPADO'){
-      mensajeError(r.message || 'La celda de estado ya contiene información y no se modificó.');
-      return;
-    }
-
-    $('trip-status').textContent = 'PENDIENTE';
-    mostrar('pending');
-  }catch(err){
-    mensajeError('No pudimos consultar el viaje. Probá nuevamente en unos segundos.');
-  }
+  $('trip-status').textContent = 'PENDIENTE';
+  mostrar('pending');
 }
 
 async function responderViaje(decision){
