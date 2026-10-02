@@ -337,22 +337,18 @@ async function responderViaje(decision){
     }, 15000);
 
     if(!data || data.ok !== true){
-      throw new Error((data && data.message) || 'No se pudo guardar la respuesta.');
+      throw new Error((data && data.message) ? data.message : 'No se pudo guardar la respuesta');
     }
 
-    if(data.status === 'ACEPTADO'){
+    if(decision === 'aceptar'){
       $('success-id').textContent = '#' + viajeId;
       mostrar('success');
-    }else if(data.status === 'RECHAZADO'){
+    }else{
       $('rejected-id').textContent = '#' + viajeId;
       mostrar('rejected');
-    }else{
-      throw new Error('El servidor respondió con un estado inesperado.');
     }
   }catch(err){
-    $('inline-error').textContent = err && err.message
-      ? err.message
-      : 'No pudimos guardar la respuesta. Volvé a intentar.';
+    $('inline-error').textContent = err && err.message ? err.message : 'No pudimos guardar la respuesta. Volvé a intentar.';
     $('inline-error').style.display='block';
     setBotones(false);
   }
