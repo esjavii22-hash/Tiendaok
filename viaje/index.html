@@ -228,16 +228,13 @@
   <footer>DSOK · Confirmación de viajes</footer>
 
 <script>
-/*
-  DSOK VIAJES
-  PASO ÚNICO DESPUÉS DE PUBLICAR EL APPS SCRIPT:
-  Pegá acá la URL terminada en /exec.
-*/
 const API_URL = 'https://script.google.com/macros/s/AKfycby_osoprPkYsDRjF00d_t6BHr1uHm_Oa8A99RVihClgmC7VutcTzrYTnjgcQe6CBucV7w/exec';
 
 const qs = new URLSearchParams(location.search);
 const viajeId = (qs.get('id') || '').trim();
 const token = (qs.get('t') || '').trim();
+const resultado = (qs.get('resultado') || '').trim().toLowerCase();
+const mensaje = (qs.get('mensaje') || '').trim();
 
 const $ = id => document.getElementById(id);
 
@@ -250,12 +247,8 @@ function mostrar(id){
   });
 }
 
-function apiConfigurada(){
-  return API_URL && API_URL.startsWith('https://script.google.com/macros/s/') && API_URL.endsWith('/exec');
-}
-
 function mensajeError(msg){
-  $('error-text').textContent = msg || 'No pudimos validar este viaje.';
+  $('error-text').textContent = msg || 'No pudimos procesar este viaje.';
   mostrar('error');
 }
 
@@ -263,42 +256,7 @@ function setBotones(cargando){
   $('accept-btn').disabled = cargando;
   $('reject-btn').disabled = cargando;
   $('accept-btn').textContent = cargando ? 'REGISTRANDO...' : '✅ ACEPTAR VIAJE';
-  $('reject-btn').textContent = '✕ NO PUEDO TOMARLO';
-}
-
-function jsonp(params, timeoutMs=10000){
-  return new Promise((resolve,reject)=>{
-    const callback = '__dsok_cb_' + Date.now() + '_' + Math.floor(Math.random()*100000);
-    const script = document.createElement('script');
-    let done = false;
-
-    const cleanup = ()=>{
-      if(done) return;
-      done = true;
-      clearTimeout(timer);
-      try{ delete window[callback]; }catch(e){ window[callback]=undefined; }
-      script.remove();
-    };
-
-    window[callback] = data=>{
-      cleanup();
-      resolve(data);
-    };
-
-    const timer = setTimeout(()=>{
-      cleanup();
-      reject(new Error('Tiempo de espera agotado'));
-    }, timeoutMs);
-
-    const url = new URL(API_URL);
-    Object.entries({...params, callback}).forEach(([k,v])=>url.searchParams.set(k, v ?? ''));
-    script.src = url.toString();
-    script.onerror = ()=>{
-      cleanup();
-      reject(new Error('No se pudo contactar al servidor'));
-    };
-    document.head.appendChild(script);
-  });
+  $('reject-btn').textContent = cargando ? 'REGISTRANDO...' : '✕ NO PUEDO TOMARLO';
 }
 
 function cargarEstado(){
@@ -310,48 +268,43 @@ function cargarEstado(){
     mensajeError('Este enlace de confirmación está incompleto.');
     return;
   }
-  if(!apiConfigurada()){
-    mensajeError('La página todavía no tiene configurada la URL del Apps Script.');
+
+  if(resultado === 'aceptado'){
+    $('success-id').textContent = '#' + viajeId;
+    mostrar('success');
     return;
   }
 
-  // Mostramos el viaje inmediatamente. La validación real se hace
-  // únicamente cuando la persona acepta o rechaza.
+  if(resultado === 'rechazado'){
+    $('rejected-id').textContent = '#' + viajeId;
+    mostrar('rejected');
+    return;
+  }
+
+  if(resultado === 'error'){
+    mensajeError(mensaje || 'No pudimos guardar la respuesta.');
+    return;
+  }
+
   $('trip-id').textContent = '#' + viajeId;
   $('trip-status').textContent = 'PENDIENTE';
   mostrar('pending');
 }
 
-async function responderViaje(decision){
+function responderViaje(decision){
   if(!['aceptar','rechazar'].includes(decision)) return;
   $('inline-error').style.display='none';
   setBotones(true);
 
-  try{
-    const data = await jsonp({
-      action:'responder',
-      id:viajeId,
-      t:token,
-      decision:decision,
-      _:Date.now()
-    }, 15000);
+  const url = new URL(API_URL);
+  url.searchParams.set('action','responder');
+  url.searchParams.set('id',viajeId);
+  url.searchParams.set('t',token);
+  url.searchParams.set('decision',decision);
+  url.searchParams.set('redirect','1');
 
-    if(!data || data.ok !== true){
-      throw new Error((data && data.message) ? data.message : 'No se pudo guardar la respuesta');
-    }
-
-    if(decision === 'aceptar'){
-      $('success-id').textContent = '#' + viajeId;
-      mostrar('success');
-    }else{
-      $('rejected-id').textContent = '#' + viajeId;
-      mostrar('rejected');
-    }
-  }catch(err){
-    $('inline-error').textContent = err && err.message ? err.message : 'No pudimos guardar la respuesta. Volvé a intentar.';
-    $('inline-error').style.display='block';
-    setBotones(false);
-  }
+  // Navegación directa al Apps Script: no usa fetch, CORS ni JSONP.
+  window.location.assign(url.toString());
 }
 
 cargarEstado();
