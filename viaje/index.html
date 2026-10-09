@@ -108,6 +108,21 @@
       padding:6px 9px;white-space:nowrap;
       background:#191919;color:#aaa;border:1px solid #2b2b2b;
     }
+    .aclaraciones-wrap{margin:0 0 14px}
+    .aclaraciones-label{
+      display:block;color:#9a9a9a;font-size:10px;font-weight:800;
+      letter-spacing:1px;text-transform:uppercase;margin:0 0 6px;
+    }
+    .aclaraciones-input{
+      width:100%;min-height:92px;resize:vertical;
+      background:#0b0b0b;color:var(--white);
+      border:1px solid #2b2b2b;border-radius:14px;
+      padding:12px 13px;font-family:'DM Sans',sans-serif;
+      font-size:13px;line-height:1.45;outline:none;
+    }
+    .aclaraciones-input:focus{border-color:var(--accent)}
+    .aclaraciones-input::placeholder{color:#5f5f5f}
+    .aclaraciones-help{display:block;color:#5f5f5f;font-size:9px;margin-top:5px}
     .actions{display:grid;gap:10px}
     button{
       width:100%;min-height:56px;border-radius:14px;
@@ -191,12 +206,18 @@
             <span class="status" id="trip-status">PENDIENTE</span>
           </div>
 
+          <div class="aclaraciones-wrap">
+            <label class="aclaraciones-label" for="aclaraciones">ACLARACIONES <span style="color:#666;font-weight:600">(opcional)</span></label>
+            <textarea id="aclaraciones" class="aclaraciones-input" maxlength="500" placeholder="Ej: llamar antes de llegar, tocar timbre, horario, etc."></textarea>
+            <small class="aclaraciones-help">Se guarda junto con tu respuesta.</small>
+          </div>
+
           <div class="actions">
             <button id="accept-btn" class="accept" type="button" onclick="responderViaje('aceptar')">✅ ACEPTAR VIAJE</button>
             <button id="reject-btn" class="reject" type="button" onclick="responderViaje('rechazar')">✕ NO PUEDO TOMARLO</button>
           </div>
 
-          <p class="note">No necesitás completar formularios. Con un toque queda guardada tu respuesta.</p>
+          <p class="note">Podés dejar una aclaración opcional. Al aceptar o rechazar queda guardada junto con tu respuesta.</p>
           <div id="inline-error" class="error-box" style="display:none"></div>
         </div>
 
@@ -301,6 +322,12 @@ function responderViaje(decision){
   url.searchParams.set('id',viajeId);
   url.searchParams.set('t',token);
   url.searchParams.set('decision',decision);
+
+  const aclaracion = ($('aclaraciones')?.value || '').trim();
+  if(aclaracion){
+    url.searchParams.set('aclaracion', aclaracion);
+  }
+
   url.searchParams.set('redirect','1');
 
   // Navegación directa al Apps Script: no usa fetch, CORS ni JSONP.
