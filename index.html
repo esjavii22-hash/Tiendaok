@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
 <!-- DSOK Tracking Optimizado: pedido único + UTM + Meta/GA4/CAPI-ready -->
+<!-- DSOK BUILD: CONFIRMACION_FINAL + UPSELL_PREVIEW_1 | 2026-10-09 -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Indumentaria Urbana Premium</title>
@@ -469,6 +470,61 @@ header {
 .step { flex: 1; height: 3px; border-radius: 2px; background: var(--gray3); transition: background 0.3s; }
 .step.active { background: var(--accent); }
 
+
+/* PASO 3 — CONFIRMACIÓN REAL DEL PEDIDO */
+.confirm-review{display:none;padding:1rem 1.25rem 1.4rem;}
+.confirm-review.visible{display:block;}
+.confirm-review-head{margin-bottom:14px;}
+.confirm-review-kicker{font-size:10px;font-weight:900;letter-spacing:1.4px;text-transform:uppercase;color:var(--accent);margin-bottom:5px;}
+.confirm-review-title{font-family:'Bebas Neue',sans-serif;font-size:31px;line-height:.98;letter-spacing:1px;color:#f2f1ed;margin:0 0 7px;}
+.confirm-review-title span{color:var(--accent);}
+.confirm-review-sub{font-size:12px;line-height:1.45;color:#929292;}
+.review-card{background:linear-gradient(180deg,#151515,#101010);border:1px solid #272727;border-radius:15px;padding:13px;margin-bottom:10px;}
+.review-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}
+.review-card-title{font-size:11px;font-weight:900;letter-spacing:.45px;text-transform:uppercase;color:#efefef;}
+.review-edit{border:0;background:transparent;color:#dcdcdc;text-decoration:underline;font-size:11px;font-weight:700;cursor:pointer;width:auto;min-height:0;padding:0;font-family:'DM Sans',sans-serif;}
+.review-products{display:flex;flex-direction:column;gap:0;}
+.review-product{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid #242424;}
+.review-product:last-child{border-bottom:0;}
+.review-product-img{width:52px;height:58px;border-radius:8px;overflow:hidden;background:#202020;border:1px solid #303030;display:flex;align-items:center;justify-content:center;}
+.review-product-img img{width:100%;height:100%;object-fit:cover;display:block;}
+.review-product-emoji{font-size:22px;}
+.review-product-name{font-size:12px;font-weight:800;line-height:1.25;color:#f2f1ed;}
+.review-product-meta{font-size:10px;color:#858585;margin-top:3px;}
+.review-product-price{text-align:right;font-size:12px;font-weight:900;color:#f2f1ed;white-space:nowrap;}
+.review-product-qty{display:block;font-size:9px;color:#757575;font-weight:500;margin-top:2px;}
+.review-totals{border-top:1px solid #2a2a2a;margin-top:4px;padding-top:6px;}
+.review-total-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 0;font-size:12px;color:#d2d2d2;}
+.review-total-row strong{font-size:12px;color:#f4f4f4;}
+.review-total-row.discount{color:var(--accent);}
+.review-total-row.discount strong{color:var(--accent);}
+.review-total-row.final{margin-top:6px;padding:10px 10px;background:linear-gradient(90deg,rgba(212,255,0,.12),rgba(212,255,0,.04));border:1px solid rgba(212,255,0,.14);border-radius:10px;font-size:14px;font-weight:900;}
+.review-total-row.final strong{font-family:'Bebas Neue',sans-serif;font-size:25px;letter-spacing:.6px;color:var(--accent);}
+.review-delivery-row{display:flex;gap:9px;align-items:flex-start;padding:5px 0;}
+.review-delivery-icon{width:23px;flex:0 0 23px;text-align:center;font-size:16px;line-height:1.3;}
+.review-delivery-label{font-size:9px;color:#767676;text-transform:uppercase;letter-spacing:.55px;margin-bottom:2px;}
+.review-delivery-value{font-size:12px;color:#eeeeee;font-weight:700;line-height:1.35;word-break:break-word;}
+.review-trust{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:10px 0;}
+.review-trust-item{background:#0e0e0e;border:1px solid #252525;border-radius:9px;padding:7px 5px;text-align:center;}
+.review-trust-item b{display:block;font-size:13px;margin-bottom:2px;}
+.review-trust-item span{font-size:8px;color:#8b8b8b;line-height:1.2;display:block;}
+.review-consent{display:flex;align-items:flex-start;gap:10px;padding:12px 2px 11px;cursor:pointer;}
+.review-consent input{appearance:none;-webkit-appearance:none;width:23px;height:23px;flex:0 0 23px;border:2px solid #777;border-radius:5px;background:#0b0b0b;position:relative;margin-top:1px;cursor:pointer;}
+.review-consent input:checked{background:var(--accent);border-color:var(--accent);}
+.review-consent input:checked:after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#080808;font-size:15px;font-weight:1000;}
+.review-consent span{font-size:12px;line-height:1.4;color:#e5e5e5;}
+.confirm-order-btn{width:100%;min-height:55px;border:1px solid var(--accent);border-radius:13px;background:var(--accent);color:#080808;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:1000;letter-spacing:.15px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;box-shadow:0 8px 25px rgba(212,255,0,.12);}
+.confirm-order-btn:disabled{background:#262626;border-color:#303030;color:#6e6e6e;box-shadow:none;opacity:1;cursor:not-allowed;}
+.review-final-note{text-align:center;color:#656565;font-size:9px;line-height:1.4;margin-top:8px;}
+@media(max-width:480px){
+  .confirm-review{padding-left:1rem;padding-right:1rem;}
+  .confirm-review-title{font-size:28px;}
+  .review-card{padding:11px;}
+  .review-product{grid-template-columns:48px minmax(0,1fr) auto;gap:8px;}
+  .review-product-img{width:48px;height:54px;}
+  .review-trust-item span{font-size:7.5px;}
+}
+
 /* ENVIANDO */
 .enviando { text-align: center; padding: 2rem; display: none; }
 .enviando.visible { display: block; }
@@ -498,22 +554,78 @@ header {
 .upsell-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; color: var(--white); }
 .upsell-sub { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
 .upsell-close { background: var(--gray2); border: none; color: var(--white); width: 28px; height: 28px; border-radius: 50%; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.upsell-list { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; padding-bottom: 0.75rem; flex: 1; }
-.upsell-card {
-  background: var(--gray2); border: 1px solid var(--gray3);
-  border-radius: 10px; display: flex; gap: 10px;
-  padding: 8px; align-items: center;
+.upsell-list{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  overflow-y:auto;
+  padding:0 1px .75rem;
+  flex:1;
+  align-content:start;
 }
-.upsell-img { width: 64px; height: 64px; border-radius: 8px; overflow: hidden; background: var(--gray3); flex-shrink: 0; }
-.upsell-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.upsell-emoji { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 24px; }
-.upsell-info { flex: 1; min-width: 0; }
-.upsell-name { font-size: 12px; font-weight: 500; color: var(--white); margin-bottom: 2px; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.upsell-price { font-size: 13px; color: var(--accent); font-weight: 700; margin-bottom: 6px; }
-.upsell-controls { display: flex; gap: 5px; align-items: center; }
-.upsell-sel { background: var(--black); color: var(--white); border: 1px solid var(--gray3); border-radius: 6px; padding: 4px 6px; font-size: 11px; font-family: 'DM Sans', sans-serif; cursor: pointer; max-width: 80px; }
-.upsell-add { background: var(--accent); color: var(--black); border: none; border-radius: 6px; padding: 5px 10px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.15s; flex-shrink: 0; }
-.upsell-add:active { transform: scale(0.95); }
+.upsell-card{
+  background:var(--gray2);
+  border:1px solid var(--gray3);
+  border-radius:10px;
+  display:grid;
+  grid-template-columns:72px minmax(0,1fr);
+  gap:8px;
+  padding:7px;
+  align-items:center;
+  min-width:0;
+  min-height:88px;
+}
+.upsell-img{
+  width:72px;
+  height:72px;
+  border-radius:8px;
+  overflow:hidden;
+  background:var(--gray3);
+  flex-shrink:0;
+}
+.upsell-img img{width:100%;height:100%;object-fit:cover;display:block;}
+.upsell-emoji{display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:24px;}
+.upsell-info{min-width:0;}
+.upsell-name{
+  font-size:10.5px;
+  font-weight:700;
+  color:var(--white);
+  margin-bottom:3px;
+  line-height:1.18;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.upsell-price{font-size:12px;color:var(--accent);font-weight:800;margin-bottom:6px;}
+.upsell-controls{display:flex;gap:5px;align-items:center;min-width:0;}
+.upsell-sel{
+  min-width:0;
+  width:58px;
+  background:var(--black);
+  color:var(--white);
+  border:1px solid var(--gray3);
+  border-radius:6px;
+  padding:5px 3px;
+  font-size:9px;
+  font-family:'DM Sans',sans-serif;
+  cursor:pointer;
+}
+.upsell-add{
+  flex:1;
+  min-width:0;
+  background:var(--accent);
+  color:var(--black);
+  border:none;
+  border-radius:6px;
+  padding:6px 4px;
+  font-size:9.5px;
+  font-weight:900;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:all .15s;
+}
+.upsell-add:active{transform:scale(.96);}
 .upsell-skip { width: 100%; margin-top: 10px; padding: 12px; background: transparent; color: var(--muted); border: 1px solid var(--gray3); border-radius: 12px; font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
 .upsell-skip:hover { border-color: var(--white); color: var(--white); }
 
@@ -998,6 +1110,18 @@ button,a,select{-webkit-tap-highlight-color:transparent;touch-action:manipulatio
   }
 }
 
+
+@media(max-width:480px){
+  .upsell-panel{max-height:92svh;padding:.85rem .75rem 0;}
+  .upsell-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;}
+  .upsell-card{grid-template-columns:62px minmax(0,1fr);gap:7px;padding:6px;min-height:78px;}
+  .upsell-img{width:62px;height:62px;}
+  .upsell-name{font-size:9.5px;}
+  .upsell-price{font-size:11px;margin-bottom:5px;}
+  .upsell-sel{width:52px;font-size:8px;padding:4px 2px;}
+  .upsell-add{font-size:8.5px;padding:5px 3px;}
+}
+
 </style>
 </head>
 <body>
@@ -1448,6 +1572,60 @@ button,a,select{-webkit-tap-highlight-color:transparent;touch-action:manipulatio
       </div>
     </div>
 
+    <!-- PASO 3: CONFIRMACIÓN FINAL -->
+    <div class="confirm-review" id="confirm-review">
+      <div class="confirm-review-head">
+        <div class="confirm-review-kicker">Último paso</div>
+        <h3 class="confirm-review-title">ESTÁS POR CONFIRMAR <span>TU PEDIDO</span></h3>
+        <p class="confirm-review-sub">Revisá que todo esté correcto. Una vez confirmado, lo preparamos para enviarlo.</p>
+      </div>
+
+      <div class="review-card">
+        <div class="review-card-head">
+          <span class="review-card-title" id="review-products-title">PRODUCTOS</span>
+          <button class="review-edit" type="button" onclick="volverCarrito()">Editar</button>
+        </div>
+        <div class="review-products" id="review-products"></div>
+        <div class="review-totals">
+          <div class="review-total-row"><span>Subtotal</span><strong id="review-subtotal">$0</strong></div>
+          <div class="review-total-row discount" id="review-discount-row" style="display:none"><span>Descuento</span><strong id="review-discount">-$0</strong></div>
+          <div class="review-total-row"><span>Envío</span><strong id="review-shipping">$0</strong></div>
+          <div class="review-total-row final"><span>TOTAL FINAL</span><strong id="review-total">$0</strong></div>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="review-card-head">
+          <span class="review-card-title">DATOS DE ENTREGA</span>
+          <button class="review-edit" type="button" onclick="volverDatosDesdeConfirmacion()">Editar</button>
+        </div>
+        <div class="review-delivery-row">
+          <div class="review-delivery-icon">👤</div>
+          <div><div class="review-delivery-label">Nombre</div><div class="review-delivery-value" id="review-name">—</div></div>
+        </div>
+        <div class="review-delivery-row">
+          <div class="review-delivery-icon">📍</div>
+          <div><div class="review-delivery-label">Dirección</div><div class="review-delivery-value" id="review-address">—</div></div>
+        </div>
+      </div>
+
+      <div class="review-trust">
+        <div class="review-trust-item"><b>💵</b><span>Pagás al recibir</span></div>
+        <div class="review-trust-item"><b>🔒</b><span>Compra segura</span></div>
+        <div class="review-trust-item"><b>🚚</b><span>Entrega a domicilio</span></div>
+      </div>
+
+      <label class="review-consent" for="confirm-check">
+        <input id="confirm-check" type="checkbox" onchange="actualizarBotonConfirmacion()">
+        <span>Confirmo que quiero recibir este pedido y abonarlo al recibirlo.</span>
+      </label>
+
+      <button class="confirm-order-btn" id="confirm-review-btn" type="button" onclick="confirmarPedido()" disabled>
+        <span>💬</span><span id="confirm-review-btn-text">CONFIRMAR PEDIDO</span>
+      </button>
+      <p class="review-final-note">🔒 Al confirmar, te redirigiremos a WhatsApp para coordinar tu pedido.</p>
+    </div>
+
     <!-- ENVIANDO -->
     <div class="enviando" id="enviando">
       <div style="font-size:48px;margin-bottom:1rem">📦</div>
@@ -1460,9 +1638,9 @@ button,a,select{-webkit-tap-highlight-color:transparent;touch-action:manipulatio
     <div class="step-indicator">
       <div class="step-pill active" id="step1">1. Carrito</div>
       <div class="step-pill" id="step2">2. Datos</div>
-      <div class="step-pill" id="step3">3. WhatsApp</div>
+      <div class="step-pill" id="step3">3. Confirmación</div>
     </div>
-    <div class="totales-mini-row">
+    <div class="totales-mini-row" id="footer-totales-row">
       <div>
         <div class="totales-mini-sub"><span id="subtotal">$0</span> + envío <span id="envio-txt">$8.500</span></div>
         <div class="totales-mini-total" id="total-main">$8.500</div>
@@ -1472,20 +1650,19 @@ button,a,select{-webkit-tap-highlight-color:transparent;touch-action:manipulatio
     </div>
     <button class="add-more-btn" id="btn-add-more" onclick="irAProductosDesdeCarrito()">AGREGAR ALGO MÁS 🔥</button>
     <p id="nota-pago" style="font-size:11px; color:#666; text-align:center; margin-bottom:6px; display:none;">Sin adelanto · Pagás cuando llega 🔐</p>
-    <button class="wsp-btn" id="wsp-btn" onclick="confirmarPedido()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-      FINALIZAR POR WHATSAPP
+    <button class="wsp-btn" id="wsp-btn" onclick="irAConfirmacion()">
+      REVISAR PEDIDO →
     </button>
     <button class="continue-shopping-btn" id="btn-seguir" onclick="cerrarDrawerYSeguir()">← SEGUIR COMPRANDO</button>
     <div id="wsp-confianza" style="display:none; background:#0a1400; border:1px solid #1e2e00; border-radius:10px; margin-bottom:8px; padding:9px 12px;">
       <p style="font-size:10px; color:#a8cc00; font-weight:700; margin-bottom:5px;">🔐 ¿Cómo funciona?</p>
       <div style="display:flex; flex-direction:column; gap:3px;">
         <p style="font-size:10px; color:#6a8800; display:flex; gap:5px;"><span style="color:#a8cc00; font-weight:700;">✓</span>Sin pago online · Pagás cuando llega</p>
-        <p style="font-size:10px; color:#6a8800; display:flex; gap:5px;"><span style="color:#a8cc00; font-weight:700;">✓</span>Confirmás por WhatsApp en segundos</p>
+        <p style="font-size:10px; color:#6a8800; display:flex; gap:5px;"><span style="color:#a8cc00; font-weight:700;">✓</span>Revisás todo antes de confirmar</p>
         <p style="font-size:10px; color:#6a8800; display:flex; gap:5px;"><span style="color:#a8cc00; font-weight:700;">✓</span>+10.000 clientes satisfechos</p>
       </div>
     </div>
-    <p class="wsp-note">Tu pedido quedará registrado automáticamente 📊</p>
+    <p class="wsp-note" id="wsp-note">El pedido se registra recién cuando confirmás en el último paso.</p>
   </div>
 </div>
 
@@ -2307,7 +2484,7 @@ function irAEnvio() {
   const puedeUpsell = carrito.length === 1 && recomendados.length > 0 && !window._upsellYaMostrado;
   if (puedeUpsell) {
     window._upsellYaMostrado = true;
-    mostrarUpsell(recomendados.slice(0,4));
+    mostrarUpsell(recomendados.slice(0,8));
   } else {
     irAEnvioReal();
   }
@@ -2316,10 +2493,16 @@ function irAEnvio() {
 function irAEnvioReal() {
   paso = 2;
   document.getElementById('drawer-items').style.display = 'none';
+  document.getElementById('confirm-review').classList.remove('visible');
   document.getElementById('envio-form').classList.add('visible');
   document.getElementById('btn-continuar').style.display = 'none';
   document.getElementById('btn-volver').style.display = 'block';
   document.getElementById('wsp-btn').style.display = 'flex';
+  document.getElementById('wsp-btn').textContent = 'REVISAR Y CONFIRMAR PEDIDO →';
+  const wspNote = document.getElementById('wsp-note');
+  if(wspNote) wspNote.style.display = 'block';
+  const totalsRow = document.getElementById('footer-totales-row');
+  if(totalsRow) totalsRow.style.display = 'flex';
   document.getElementById('drawer-title').textContent = 'Datos de envío';
   document.getElementById('step1').classList.remove('active');
   document.getElementById('step1').classList.add('done');
@@ -2390,19 +2573,162 @@ function cerrarUpsell() {
   irAEnvioReal();
 }
 
+
+function escHtml_(valor){
+  return String(valor ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+}
+
+function renderConfirmacionPedido(){
+  const calc = calcularTotalesCarrito();
+  const nombre = document.getElementById('f-nombre').value.trim();
+  const direccion = document.getElementById('f-direccion').value.trim();
+  const localidad = document.getElementById('f-localidad').value.trim();
+  const zona = document.getElementById('f-zona').value.trim();
+
+  const title = document.getElementById('review-products-title');
+  if(title) title.textContent = `PRODUCTOS (${carrito.length})`;
+
+  const products = document.getElementById('review-products');
+  if(products){
+    products.innerHTML = carrito.map(item=>{
+      const foto = item.foto
+        ? `<img src="${escHtml_(item.foto)}" alt="${escHtml_(item.nombre)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="review-product-emoji" style="display:none">${escHtml_(item.emoji || '👕')}</div>`
+        : `<div class="review-product-emoji">${escHtml_(item.emoji || '👕')}</div>`;
+      return `<div class="review-product">
+        <div class="review-product-img">${foto}</div>
+        <div>
+          <div class="review-product-name">${escHtml_(item.nombre)}</div>
+          <div class="review-product-meta">Talle ${escHtml_(item.talle)}</div>
+        </div>
+        <div class="review-product-price">$${Number(item.precio||0).toLocaleString('es-AR')}<span class="review-product-qty">x1</span></div>
+      </div>`;
+    }).join('');
+  }
+
+  document.getElementById('review-subtotal').textContent = '$'+calc.subtotal.toLocaleString('es-AR');
+  document.getElementById('review-shipping').textContent = '$'+calc.envio.toLocaleString('es-AR');
+  document.getElementById('review-total').textContent = '$'+calc.total.toLocaleString('es-AR');
+
+  const discountRow = document.getElementById('review-discount-row');
+  if(calc.descuento>0){
+    discountRow.style.display = 'flex';
+    document.getElementById('review-discount').textContent = '-$'+calc.descuento.toLocaleString('es-AR');
+  }else{
+    discountRow.style.display = 'none';
+  }
+
+  document.getElementById('review-name').textContent = nombre || '—';
+  document.getElementById('review-address').textContent = [direccion, localidad].filter(Boolean).join(', ') + (zona ? ` · ${zona}` : '');
+
+  const check = document.getElementById('confirm-check');
+  if(check) check.checked = false;
+  actualizarBotonConfirmacion();
+}
+
+function actualizarBotonConfirmacion(){
+  const btn = document.getElementById('confirm-review-btn');
+  const check = document.getElementById('confirm-check');
+  const calc = calcularTotalesCarrito();
+  if(!btn || !check) return;
+  btn.disabled = !check.checked;
+  document.getElementById('confirm-review-btn-text').textContent = 'CONFIRMAR PEDIDO — $'+calc.total.toLocaleString('es-AR');
+}
+
+function irAConfirmacion(){
+  if(!validarForm()){
+    toast('⚠️ Completá todos los campos obligatorios');
+    return;
+  }
+
+  paso = 3;
+  document.getElementById('envio-form').classList.remove('visible');
+  document.getElementById('confirm-review').classList.add('visible');
+  document.getElementById('drawer-title').textContent = 'Confirmá tu pedido';
+
+  document.getElementById('step1').classList.remove('active');
+  document.getElementById('step1').classList.add('done');
+  document.getElementById('step2').classList.remove('active');
+  document.getElementById('step2').classList.add('done');
+  document.getElementById('step3').classList.add('active');
+
+  document.getElementById('wsp-btn').style.display = 'none';
+  document.getElementById('btn-volver').style.display = 'none';
+  document.getElementById('btn-continuar').style.display = 'none';
+  document.getElementById('btn-add-more').style.display = 'none';
+  document.getElementById('btn-seguir').style.display = 'none';
+  document.getElementById('wsp-confianza').style.display = 'none';
+  document.getElementById('nota-pago').style.display = 'none';
+  const wspNote = document.getElementById('wsp-note');
+  if(wspNote) wspNote.style.display = 'none';
+  const totalsRow = document.getElementById('footer-totales-row');
+  if(totalsRow) totalsRow.style.display = 'none';
+  const benefits = document.getElementById('checkout-benefits');
+  if(benefits) benefits.style.display = 'none';
+
+  renderConfirmacionPedido();
+  setTimeout(()=>{
+    const body = document.getElementById('drawer')?.querySelector('.drawer-body');
+    if(body) body.scrollTop = 0;
+  },50);
+}
+
+function volverDatosDesdeConfirmacion(){
+  paso = 2;
+  document.getElementById('confirm-review').classList.remove('visible');
+  document.getElementById('envio-form').classList.add('visible');
+  document.getElementById('drawer-title').textContent = 'Datos de envío';
+
+  document.getElementById('step1').classList.remove('active');
+  document.getElementById('step1').classList.add('done');
+  document.getElementById('step2').classList.remove('done');
+  document.getElementById('step2').classList.add('active');
+  document.getElementById('step3').classList.remove('active');
+
+  document.getElementById('wsp-btn').style.display = 'flex';
+  document.getElementById('btn-volver').style.display = 'block';
+  document.getElementById('wsp-confianza').style.display = 'block';
+  const wspNote = document.getElementById('wsp-note');
+  if(wspNote) wspNote.style.display = 'block';
+  const totalsRow = document.getElementById('footer-totales-row');
+  if(totalsRow) totalsRow.style.display = 'flex';
+  const benefits = document.getElementById('checkout-benefits');
+  if(benefits) benefits.style.display = 'grid';
+
+  const check = document.getElementById('confirm-check');
+  if(check) check.checked = false;
+  actualizarBotonConfirmacion();
+  setTimeout(()=>{
+    const body = document.getElementById('drawer')?.querySelector('.drawer-body');
+    if(body) body.scrollTop = 0;
+  },50);
+}
+
 function volverCarrito() {
   paso = 1;
   document.getElementById('drawer-items').style.display = 'block';
   document.getElementById('envio-form').classList.remove('visible');
+  document.getElementById('confirm-review').classList.remove('visible');
   document.getElementById('btn-continuar').style.display = 'block';
   document.getElementById('btn-volver').style.display = 'none';
   document.getElementById('btn-add-more').style.display = 'none';
   document.getElementById('wsp-btn').style.display = 'none';
   document.getElementById('wsp-confianza').style.display = 'none';
+  const wspNote = document.getElementById('wsp-note');
+  if(wspNote) wspNote.style.display = 'block';
+  const totalsRow = document.getElementById('footer-totales-row');
+  if(totalsRow) totalsRow.style.display = 'flex';
+  const benefits = document.getElementById('checkout-benefits');
+  if(benefits && carrito.length) benefits.style.display = 'grid';
   document.getElementById('drawer-title').textContent = 'Tu pedido';
   document.getElementById('step1').classList.add('active');
   document.getElementById('step1').classList.remove('done');
   document.getElementById('step2').classList.remove('active');
+  document.getElementById('step2').classList.remove('done');
   document.getElementById('step3').classList.remove('active');
   if(carrito.length){
     document.getElementById('cart-helper-card').style.display = 'block';
@@ -2426,10 +2752,16 @@ async function confirmarPedido() {
     return;
   }
 
+  const confirmCheck = document.getElementById('confirm-check');
+  if(!confirmCheck || !confirmCheck.checked){
+    toast('☑️ Marcá la confirmación para continuar');
+    return;
+  }
+
   // Evita doble click / doble Purchase del mismo pedido.
   if (pedidoEnProceso) return;
   pedidoEnProceso = true;
-  const btnConfirmar = document.getElementById('wsp-btn');
+  const btnConfirmar = document.getElementById('confirm-review-btn');
   if(btnConfirmar) btnConfirmar.disabled = true;
 
   const nombre = document.getElementById('f-nombre').value.trim();
@@ -2454,7 +2786,7 @@ async function confirmarPedido() {
   const contentIds = carrito.map(i=>i.nombre);
   const contentsMeta = carrito.map(i=>({id:i.nombre, quantity:1, item_price:Number(i.precio)}));
 
-  // Para DSOK, venta = pedido generado al tocar FINALIZAR POR WHATSAPP.
+  // Para DSOK, venta = pedido generado recién después de la confirmación final.
   // Si abrís la web con ?test=1, guarda el pedido de prueba pero NO contamina Meta ni GA4.
   if(!dsokEsModoTest()){
     // Meta Pixel manual: un solo Purchase dirigido explícitamente a este Pixel.
@@ -2494,9 +2826,14 @@ async function confirmarPedido() {
   document.getElementById('step2').classList.add('done');
   document.getElementById('step3').classList.add('active');
   document.getElementById('envio-form').classList.remove('visible');
+  document.getElementById('confirm-review').classList.remove('visible');
   document.getElementById('enviando').classList.add('visible');
   document.getElementById('btn-volver').style.display = 'none';
   document.getElementById('wsp-btn').style.display = 'none';
+  const footerTotals = document.getElementById('footer-totales-row');
+  if(footerTotals) footerTotals.style.display = 'none';
+  const finalWspNote = document.getElementById('wsp-note');
+  if(finalWspNote) finalWspNote.style.display = 'none';
 
   // Guardar pedido + atribución en Sheet. El Apps Script optimizado usa
   // estos mismos datos para enviar Purchase por Conversions API si activás el token.
@@ -2583,6 +2920,14 @@ async function confirmarPedido() {
     document.getElementById('step2').classList.remove('done');
     document.getElementById('step3').classList.remove('active');
     document.getElementById('enviando').classList.remove('visible');
+    document.getElementById('confirm-review').classList.remove('visible');
+    const confirmCheckReset = document.getElementById('confirm-check');
+    if(confirmCheckReset) confirmCheckReset.checked = false;
+    actualizarBotonConfirmacion();
+    const footerTotalsReset = document.getElementById('footer-totales-row');
+    if(footerTotalsReset) footerTotalsReset.style.display = 'flex';
+    const wspNoteReset = document.getElementById('wsp-note');
+    if(wspNoteReset) wspNoteReset.style.display = 'block';
     actualizarUI();
     ['f-nombre','f-instagram','f-telefono','f-zona','f-direccion','f-localidad','f-aclaraciones']
       .forEach(id => document.getElementById(id).value = '');
