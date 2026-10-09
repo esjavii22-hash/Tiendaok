@@ -108,21 +108,16 @@
       padding:6px 9px;white-space:nowrap;
       background:#191919;color:#aaa;border:1px solid #2b2b2b;
     }
-    .aclaraciones-wrap{margin:0 0 14px}
-    .aclaraciones-label{
-      display:block;color:#9a9a9a;font-size:10px;font-weight:800;
-      letter-spacing:1px;text-transform:uppercase;margin:0 0 6px;
-    }
-    .aclaraciones-input{
-      width:100%;min-height:92px;resize:vertical;
-      background:#0b0b0b;color:var(--white);
-      border:1px solid #2b2b2b;border-radius:14px;
-      padding:12px 13px;font-family:'DM Sans',sans-serif;
-      font-size:13px;line-height:1.45;outline:none;
-    }
+    .customer-info{display:grid;gap:10px;margin-bottom:16px}
+    .info-row{border:1px solid #262626;background:#0b0b0b;border-radius:15px;padding:13px 14px}
+    .info-row small{display:block;color:#777;font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+    .info-row strong{display:block;font-size:15px;line-height:1.35;word-break:break-word}
+    .aclaraciones-wrap{margin:0 0 12px}
+    .aclaraciones-label{display:block;color:#9a9a9a;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin:0 0 6px}
+    .aclaraciones-input{width:100%;min-height:100px;resize:vertical;background:#0b0b0b;color:var(--white);border:1px solid #2b2b2b;border-radius:14px;padding:12px 13px;font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.45;outline:none}
     .aclaraciones-input:focus{border-color:var(--accent)}
     .aclaraciones-input::placeholder{color:#5f5f5f}
-    .aclaraciones-help{display:block;color:#5f5f5f;font-size:9px;margin-top:5px}
+    .aclaraciones-help{display:block;color:#666;font-size:9px;margin-top:6px;line-height:1.4}
     .actions{display:grid;gap:10px}
     button{
       width:100%;min-height:56px;border-radius:14px;
@@ -194,45 +189,48 @@
 
         <div id="pending" style="display:none">
           <div class="icon">🚚</div>
-          <div class="eyebrow">Viaje asignado</div>
-          <h1>CONFIRMÁ TU VIAJE</h1>
-          <p class="sub">Confirmá si podés realizarlo. Tu respuesta queda registrada automáticamente.</p>
+          <div class="eyebrow">Entrega programada</div>
+          <h1>TU PEDIDO ESTÁ EN CAMINO</h1>
+          <p class="sub">Ya está preparado para entrega. Revisá los datos y, si necesitás avisarnos algo, dejá una aclaración.</p>
 
           <div class="trip">
             <div>
-              <small>N° DE VIAJE</small>
+              <small>N° DE PEDIDO</small>
               <strong id="trip-id">—</strong>
             </div>
-            <span class="status" id="trip-status">PENDIENTE</span>
+            <span class="status" id="trip-status">EN CAMINO</span>
+          </div>
+
+          <div class="customer-info">
+            <div class="info-row">
+              <small>NOMBRE</small>
+              <strong id="client-name">—</strong>
+            </div>
+            <div class="info-row">
+              <small>DIRECCIÓN DE ENTREGA</small>
+              <strong id="client-address">—</strong>
+            </div>
           </div>
 
           <div class="aclaraciones-wrap">
             <label class="aclaraciones-label" for="aclaraciones">ACLARACIONES <span style="color:#666;font-weight:600">(opcional)</span></label>
-            <textarea id="aclaraciones" class="aclaraciones-input" maxlength="500" placeholder="Ej: llamar antes de llegar, tocar timbre, horario, etc."></textarea>
-            <small class="aclaraciones-help">Se guarda junto con tu respuesta.</small>
+            <textarea id="aclaraciones" class="aclaraciones-input" maxlength="500" placeholder="Ej: llamar antes de llegar, tocar timbre, entregar después de las 18 hs..."></textarea>
+            <small class="aclaraciones-help">Si no tenés ninguna aclaración, no hace falta hacer nada.</small>
           </div>
 
           <div class="actions">
-            <button id="accept-btn" class="accept" type="button" onclick="responderViaje('aceptar')">✅ ACEPTAR VIAJE</button>
-            <button id="reject-btn" class="reject" type="button" onclick="responderViaje('rechazar')">✕ NO PUEDO TOMARLO</button>
+            <button id="save-btn" class="accept" type="button" onclick="guardarAclaracion()">GUARDAR ACLARACIÓN</button>
           </div>
 
-          <p class="note">Podés dejar una aclaración opcional. Al aceptar o rechazar queda guardada junto con tu respuesta.</p>
+          <p class="note">Tu pedido ya está en camino. Este campo es únicamente para indicaciones de entrega.</p>
           <div id="inline-error" class="error-box" style="display:none"></div>
         </div>
 
         <div id="success" class="state">
           <div class="big">✅</div>
-          <div class="eyebrow">Respuesta registrada</div>
-          <h2>VIAJE ACEPTADO</h2>
-          <p>Listo. El viaje <strong id="success-id"></strong> quedó marcado como aceptado.</p>
-        </div>
-
-        <div id="rejected" class="state">
-          <div class="big">❌</div>
-          <div class="eyebrow">Respuesta registrada</div>
-          <h2>VIAJE RECHAZADO</h2>
-          <p>Listo. Informamos que no podés tomar el viaje <strong id="rejected-id"></strong>.</p>
+          <div class="eyebrow">Aclaración registrada</div>
+          <h2>ACLARACIÓN GUARDADA</h2>
+          <p>Listo. Guardamos la indicación para el pedido <strong id="success-id"></strong>.</p>
         </div>
 
         <div id="error" class="state">
@@ -260,7 +258,7 @@ const mensaje = (qs.get('mensaje') || '').trim();
 const $ = id => document.getElementById(id);
 
 function mostrar(id){
-  ['loading','pending','success','rejected','error'].forEach(x=>{
+  ['loading','pending','success','error'].forEach(x=>{
     const el=$(x);
     if(!el) return;
     if(x==='pending') el.style.display = x===id ? 'block' : 'none';
@@ -269,72 +267,73 @@ function mostrar(id){
 }
 
 function mensajeError(msg){
-  $('error-text').textContent = msg || 'No pudimos procesar este viaje.';
+  $('error-text').textContent = msg || 'No pudimos procesar este pedido.';
   mostrar('error');
 }
 
-function setBotones(cargando){
-  $('accept-btn').disabled = cargando;
-  $('reject-btn').disabled = cargando;
-  $('accept-btn').textContent = cargando ? 'REGISTRANDO...' : '✅ ACEPTAR VIAJE';
-  $('reject-btn').textContent = cargando ? 'REGISTRANDO...' : '✕ NO PUEDO TOMARLO';
+function setBoton(cargando){
+  const btn = $('save-btn');
+  if(!btn) return;
+  btn.disabled = cargando;
+  btn.textContent = cargando ? 'GUARDANDO...' : 'GUARDAR ACLARACIÓN';
 }
 
-function cargarEstado(){
-  if(!viajeId){
-    mensajeError('Falta el número de viaje en el enlace.');
-    return;
-  }
-  if(!token){
-    mensajeError('Este enlace de confirmación está incompleto.');
-    return;
-  }
+function cargarDatosPedido(){
+  if(!viajeId){ mensajeError('Falta el número de pedido en el enlace.'); return; }
+  if(!token){ mensajeError('Este enlace está incompleto.'); return; }
 
-  if(resultado === 'aceptado'){
+  if(resultado === 'aclaracion'){
     $('success-id').textContent = '#' + viajeId;
     mostrar('success');
     return;
   }
-
-  if(resultado === 'rechazado'){
-    $('rejected-id').textContent = '#' + viajeId;
-    mostrar('rejected');
-    return;
-  }
-
   if(resultado === 'error'){
-    mensajeError(mensaje || 'No pudimos guardar la respuesta.');
+    mensajeError(mensaje || 'No pudimos guardar la aclaración.');
     return;
   }
 
-  $('trip-id').textContent = '#' + viajeId;
-  $('trip-status').textContent = 'PENDIENTE';
-  mostrar('pending');
-}
-
-function responderViaje(decision){
-  if(!['aceptar','rechazar'].includes(decision)) return;
-  $('inline-error').style.display='none';
-  setBotones(true);
+  window.dsokEstadoCallback = function(r){
+    try{
+      if(!r || !r.ok){ mensajeError((r && r.message) || 'No pudimos cargar los datos del pedido.'); return; }
+      $('trip-id').textContent = '#' + viajeId;
+      $('trip-status').textContent = 'EN CAMINO';
+      $('client-name').textContent = r.nombre || '—';
+      $('client-address').textContent = r.direccion || '—';
+      $('aclaraciones').value = r.aclaracion || '';
+      mostrar('pending');
+    }catch(err){ mensajeError('No pudimos mostrar los datos del pedido.'); }
+  };
 
   const url = new URL(API_URL);
-  url.searchParams.set('action','responder');
+  url.searchParams.set('action','estado');
   url.searchParams.set('id',viajeId);
   url.searchParams.set('t',token);
-  url.searchParams.set('decision',decision);
+  url.searchParams.set('callback','dsokEstadoCallback');
+  const s = document.createElement('script');
+  s.src = url.toString();
+  s.onerror = () => mensajeError('No pudimos consultar los datos del pedido.');
+  document.head.appendChild(s);
+}
 
+function guardarAclaracion(){
   const aclaracion = ($('aclaraciones')?.value || '').trim();
-  if(aclaracion){
-    url.searchParams.set('aclaracion', aclaracion);
+  if(!aclaracion){
+    $('inline-error').textContent = 'Escribí una aclaración antes de guardar.';
+    $('inline-error').style.display='block';
+    return;
   }
-
+  $('inline-error').style.display='none';
+  setBoton(true);
+  const url = new URL(API_URL);
+  url.searchParams.set('action','aclaracion');
+  url.searchParams.set('id',viajeId);
+  url.searchParams.set('t',token);
+  url.searchParams.set('aclaracion',aclaracion);
   url.searchParams.set('redirect','1');
-
-  // Navegación directa al Apps Script: no usa fetch, CORS ni JSONP.
   window.location.assign(url.toString());
 }
 
-cargarEstado();
+cargarDatosPedido();
 </script>
 </body>
 </html>
