@@ -191,7 +191,7 @@
           <div class="icon">🚚</div>
           <div class="eyebrow">Entrega programada</div>
           <h1>TU PEDIDO ESTÁ EN CAMINO</h1>
-          <p class="sub">Ya está preparado para entrega. Revisá los datos y, si necesitás avisarnos algo, dejá una aclaración.</p>
+          <p class="sub">Ya está preparado para entrega. Revisá los datos, agregá una aclaración si hace falta y confirmá que vas a recibirlo.</p>
 
           <div class="trip">
             <div>
@@ -219,18 +219,18 @@
           </div>
 
           <div class="actions">
-            <button id="save-btn" class="accept" type="button" onclick="guardarAclaracion()">GUARDAR ACLARACIÓN</button>
+            <button id="confirm-btn" class="accept" type="button" onclick="confirmarPedido()">✅ CONFIRMAR</button>
           </div>
 
-          <p class="note">Tu pedido ya está en camino. Este campo es únicamente para indicaciones de entrega.</p>
+          <p class="note">Al confirmar, guardamos tu respuesta y también la aclaración si escribiste una.</p>
           <div id="inline-error" class="error-box" style="display:none"></div>
         </div>
 
         <div id="success" class="state">
           <div class="big">✅</div>
-          <div class="eyebrow">Aclaración registrada</div>
-          <h2>ACLARACIÓN GUARDADA</h2>
-          <p>Listo. Guardamos la indicación para el pedido <strong id="success-id"></strong>.</p>
+          <div class="eyebrow">Confirmación registrada</div>
+          <h2>PEDIDO CONFIRMADO</h2>
+          <p>Listo. Confirmaste que vas a recibir el pedido <strong id="success-id"></strong>.</p>
         </div>
 
         <div id="error" class="state">
@@ -272,17 +272,17 @@ function mensajeError(msg){
 }
 
 function setBoton(cargando){
-  const btn = $('save-btn');
+  const btn = $('confirm-btn');
   if(!btn) return;
   btn.disabled = cargando;
-  btn.textContent = cargando ? 'GUARDANDO...' : 'GUARDAR ACLARACIÓN';
+  btn.textContent = cargando ? 'CONFIRMANDO...' : '✅ CONFIRMAR';
 }
 
 function cargarDatosPedido(){
   if(!viajeId){ mensajeError('Falta el número de pedido en el enlace.'); return; }
   if(!token){ mensajeError('Este enlace está incompleto.'); return; }
 
-  if(resultado === 'aclaracion'){
+  if(resultado === 'confirmado' || resultado === 'aceptado'){
     $('success-id').textContent = '#' + viajeId;
     mostrar('success');
     return;
@@ -295,6 +295,11 @@ function cargarDatosPedido(){
   window.dsokEstadoCallback = function(r){
     try{
       if(!r || !r.ok){ mensajeError((r && r.message) || 'No pudimos cargar los datos del pedido.'); return; }
+      if(String(r.status || '').toUpperCase() === 'ACEPTADO'){
+        $('success-id').textContent = '#' + viajeId;
+        mostrar('success');
+        return;
+      }
       $('trip-id').textContent = '#' + viajeId;
       $('trip-status').textContent = 'EN CAMINO';
       $('client-name').textContent = r.nombre || '—';
@@ -315,20 +320,15 @@ function cargarDatosPedido(){
   document.head.appendChild(s);
 }
 
-function guardarAclaracion(){
+function confirmarPedido(){
   const aclaracion = ($('aclaraciones')?.value || '').trim();
-  if(!aclaracion){
-    $('inline-error').textContent = 'Escribí una aclaración antes de guardar.';
-    $('inline-error').style.display='block';
-    return;
-  }
   $('inline-error').style.display='none';
   setBoton(true);
   const url = new URL(API_URL);
-  url.searchParams.set('action','aclaracion');
+  url.searchParams.set('action','confirmar');
   url.searchParams.set('id',viajeId);
   url.searchParams.set('t',token);
-  url.searchParams.set('aclaracion',aclaracion);
+  if(aclaracion) url.searchParams.set('aclaracion',aclaracion);
   url.searchParams.set('redirect','1');
   window.location.assign(url.toString());
 }
