@@ -3,6 +3,7 @@
 <head>
 <!-- DSOK Tracking Optimizado: pedido único + UTM + Meta/GA4/CAPI-ready -->
 <!-- DSOK BUILD: CONFIRMACION_FINAL + UPSELL_PREVIEW_1 | 2026-10-09 -->
+<!-- DSOK BUILD: CATEGORIAS_MINIATURAS_V4 | 2026-10-23 -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Indumentaria Urbana Premium</title>
@@ -1122,6 +1123,197 @@ button,a,select{-webkit-tap-highlight-color:transparent;touch-action:manipulatio
   .upsell-add{font-size:8.5px;padding:5px 3px;}
 }
 
+
+/* =========================================================
+   DSOK — CATEGORÍAS VISUALES V4
+   Miniaturas automáticas tomadas de Productos (Google Sheets).
+   ========================================================= */
+.cats-visual-bar{
+  position:static !important;
+  padding:4px 12px 8px !important;
+  background:#050505 !important;
+  border-bottom:0 !important;
+  z-index:auto !important;
+}
+.cats-visual{
+  display:grid !important;
+  grid-template-columns:repeat(auto-fit,minmax(82px,1fr)) !important;
+  gap:7px !important;
+  overflow:visible !important;
+}
+.cat.cat-visual-card{
+  position:relative;
+  min-width:0 !important;
+  width:100%;
+  height:112px;
+  padding:0 !important;
+  border:1px solid #282828 !important;
+  border-radius:10px !important;
+  background:#111 !important;
+  overflow:hidden;
+  display:block !important;
+  cursor:pointer;
+  isolation:isolate;
+}
+.cat.cat-visual-card:hover{
+  border-color:#555 !important;
+  transform:translateY(-1px);
+}
+.cat.cat-visual-card.active{
+  border:2px solid var(--accent) !important;
+  background:#111 !important;
+  box-shadow:0 0 0 1px rgba(212,255,0,.08),0 5px 18px rgba(0,0,0,.22);
+}
+.cat-thumb{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  background:#171717;
+}
+.cat-thumb img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+  display:block;
+  filter:saturate(.88) contrast(1.03);
+  transform:scale(1.01);
+}
+.cat-thumb-fallback{
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:30px;
+  background:linear-gradient(145deg,#1a1a1a,#0d0d0d);
+}
+.cat.cat-visual-card:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  background:linear-gradient(180deg,rgba(0,0,0,.02) 28%,rgba(0,0,0,.30) 58%,rgba(0,0,0,.94) 100%);
+  pointer-events:none;
+}
+.cat-visual-name{
+  position:absolute;
+  z-index:2;
+  left:4px;
+  right:4px;
+  bottom:7px;
+  color:#fff !important;
+  font-family:'Roboto Condensed','Arial Narrow',sans-serif;
+  font-size:11px !important;
+  line-height:1;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.15px;
+  text-align:center;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  text-shadow:0 1px 4px rgba(0,0,0,.9);
+}
+.cat-active-check{
+  display:none;
+  position:absolute;
+  z-index:3;
+  top:5px;
+  right:5px;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:var(--accent);
+  color:#080808;
+  align-items:center;
+  justify-content:center;
+  font-size:11px;
+  font-weight:1000;
+  box-shadow:0 2px 8px rgba(0,0,0,.35);
+}
+.cat.cat-visual-card.active .cat-active-check{display:flex;}
+.filters-compact{
+  display:flex !important;
+  align-items:center;
+  gap:7px !important;
+  padding:7px 12px 12px !important;
+  border-bottom:1px solid #1b1b1b !important;
+  overflow:visible !important;
+  background:#050505 !important;
+}
+.filters-compact .filter-btn{
+  min-height:34px;
+  padding:6px 13px !important;
+  border-radius:999px !important;
+  border:1px solid #303030 !important;
+  background:#090909 !important;
+  color:#d3d3d3 !important;
+  font-size:11px !important;
+  font-weight:700;
+}
+.filters-compact .filter-btn.active{
+  border-color:var(--accent) !important;
+  color:#080808 !important;
+  background:var(--accent) !important;
+}
+.filters-compact .filter-talles{
+  margin-left:auto;
+  border-color:#343a08 !important;
+  color:#d4ff00 !important;
+}
+@media(min-width:700px){
+  .cats-visual-bar{max-width:1400px;margin:0 auto;padding-left:18px !important;padding-right:18px !important;}
+  .cats-visual{grid-template-columns:repeat(auto-fit,minmax(105px,1fr)) !important;}
+  .cat.cat-visual-card{height:138px;}
+  .cat-visual-name{font-size:13px !important;bottom:9px;}
+  .filters-compact{max-width:1400px;margin:0 auto;padding-left:18px !important;padding-right:18px !important;}
+}
+@media(max-width:480px){
+  .catalog-main-head{padding-bottom:8px !important;}
+  .cats-visual-bar{padding:2px 8px 7px !important;}
+  .cats-visual{
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+    gap:5px !important;
+  }
+  .cat.cat-visual-card{
+    height:88px;
+    min-height:88px !important;
+    border-radius:8px !important;
+  }
+  .cat-visual-name{
+    font-size:8.2px !important;
+    left:2px;
+    right:2px;
+    bottom:6px;
+    letter-spacing:0;
+  }
+  .cat-active-check{
+    width:16px;
+    height:16px;
+    top:4px;
+    right:4px;
+    font-size:9px;
+  }
+  .filters-compact{
+    padding:6px 8px 9px !important;
+    gap:5px !important;
+    white-space:normal !important;
+  }
+  .filters-compact .filter-btn{
+    min-height:31px;
+    padding:5px 10px !important;
+    font-size:10px !important;
+  }
+}
+@media(max-width:360px){
+  .cats-visual{gap:4px !important;}
+  .cat.cat-visual-card{height:82px;min-height:82px !important;}
+  .cat-visual-name{font-size:7.6px !important;}
+  .filters-compact .filter-btn{padding:5px 8px !important;font-size:9.5px !important;}
+}
+
 </style>
 </head>
 <body>
@@ -1212,16 +1404,14 @@ button,a,select{-webkit-tap-highlight-color:transparent;touch-action:manipulatio
     <div class="catalog-main-title">🛍️ TODOS LOS PRODUCTOS</div>
     <div class="catalog-main-sub">Elegí modelo y talle · stock actualizado desde Google Sheets</div>
   </div>
-<div class="cats-bar">
-  <div class="cats" id="cats"></div>
+<div class="cats-bar cats-visual-bar">
+  <div class="cats cats-visual" id="cats"></div>
 </div>
 
-<div class="filters-bar">
-  <span class="filter-label">Ver:</span>
-  <button class="filter-btn active" onclick="filtrarExtra('todos',this)">Todos</button>
+<div class="filters-bar filters-compact">
   <button class="filter-btn" onclick="filtrarExtra('destacado',this)">⭐ Top</button>
   <button class="filter-btn" onclick="filtrarExtra('novedad',this)">🆕 Nuevo</button>
-  <button class="filter-btn" onclick="abrirTalles()" style="margin-left:auto; border-color:#2a3300; color:#a8cc00;">📏 Talles</button>
+  <button class="filter-btn filter-talles" onclick="abrirTalles()">🏷️ Talles</button>
 </div>
 
 <div id="loading" class="loading">
@@ -1707,7 +1897,7 @@ const LOOKS_SHEET_NAME = 'Looks'; // pestaña opcional: titulo | archivo | tipo 
 const HERO_SHEET_NAME = 'Hero'; // pestaña opcional: imagen | activo | posicion | posicion_mobile
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwhByLmKeG6Pk0XkAHqOffxDaIfLf7vVMI6eM-9hfW834uQvVQ-QM8glvVnJ754JxG2fw/exec';
 
-const CAT_ORDER = ['joggins','buzos','remeras','medias','conjuntos'];
+const CAT_ORDER = ['shorts','joggins','buzos','remeras','conjuntos','medias','boxers'];
 const CAT_LABELS = {
   'joggins':   '👖 Joggins',
   'buzos':     '🧥 Buzos',
@@ -1974,33 +2164,68 @@ function parseTalles(v) {
 
 const CAT_ICONS = {
   'todos': '✦',
+  'shorts': '🩳',
   'joggins': '👖',
   'buzos': '🧥',
   'remeras': '👕',
   'medias': '🧦',
-  'conjuntos': '🤝',
+  'conjuntos': '🧥',
+  'boxers': '🩲',
+  'boxer': '🩲'
 };
 const CAT_SHORT = {
   'todos': 'Todos',
-  'joggins': 'Joggins',
+  'shorts': 'Shorts',
+  'joggins': 'Joggings',
   'buzos': 'Buzos',
   'remeras': 'Remeras',
   'medias': 'Medias',
   'conjuntos': 'Conjuntos',
+  'boxers': 'Boxers',
+  'boxer': 'Boxers'
 };
 
+function fotoCategoria_(cat) {
+  let pool;
+  if (cat === 'todos') {
+    const preferidos = todos.filter(p => p.categoria === 'shorts' && p.foto);
+    pool = preferidos.length ? preferidos : todos.filter(p => p.foto);
+  } else {
+    pool = todos.filter(p => p.categoria === cat && p.foto);
+  }
+  if (!pool.length) return '';
+  return (
+    pool.find(p => p.stock && p.destacado && p.foto) ||
+    pool.find(p => p.stock && p.foto) ||
+    pool.find(p => p.destacado && p.foto) ||
+    pool[0]
+  ).foto || '';
+}
+
 function renderCats() {
-  const usadas = [...new Set(todos.map(p=>p.categoria))];
-  const ordenadas = ['todos', ...CAT_ORDER.filter(c=>usadas.includes(c)), ...usadas.filter(c=>!CAT_ORDER.includes(c))];
+  const usadas = [...new Set(todos.map(p=>p.categoria).filter(Boolean))];
+  const conocidas = CAT_ORDER.filter(c=>usadas.includes(c));
+  const restantes = usadas.filter(c=>!CAT_ORDER.includes(c));
+  const ordenadas = ['todos', ...conocidas, ...restantes];
+
   document.getElementById('cats').innerHTML = ordenadas.map(c => {
     const cant = c==='todos' ? todos.length : todos.filter(p=>p.categoria===c).length;
     const icon = CAT_ICONS[c] || '📦';
     const name = CAT_SHORT[c] || cap(c);
-    const iconStyle = c==='todos' ? 'font-size:10px;color:#080808' : 'font-size:12px';
-    return `<button class="cat ${c==='todos'?'active':''}" onclick="selCat('${c}',this)">
-      <div class="cat-circle"><span style="${iconStyle}">${icon}</span></div>
-      <span class="cat-name">${name}</span>
-      <span class="cat-count">${cant}</span>
+    const foto = fotoCategoria_(c);
+    const safeFoto = String(foto || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const media = safeFoto
+      ? `<div class="cat-thumb"><img src="${safeFoto}" alt="${name}" loading="lazy"></div>`
+      : `<div class="cat-thumb"><div class="cat-thumb-fallback">${icon}</div></div>`;
+
+    return `<button
+      class="cat cat-visual-card ${c==='todos'?'active':''}"
+      onclick="selCat('${c}',this)"
+      aria-label="${name}, ${cant} productos"
+      title="${name} · ${cant} productos">
+      ${media}
+      <span class="cat-active-check">✓</span>
+      <span class="cat-name cat-visual-name">${name}</span>
     </button>`;
   }).join('');
 }
@@ -2010,15 +2235,15 @@ function selCat(cat, btn) {
   extraFiltro = 'todos';
   document.querySelectorAll('.cat').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelector('.filter-btn').classList.add('active');
+  document.querySelectorAll('.filters-compact .filter-btn').forEach(b=>b.classList.remove('active'));
   renderProductos();
 }
 
 function filtrarExtra(tipo, btn) {
-  extraFiltro = tipo;
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+  const yaActivo = extraFiltro === tipo && btn.classList.contains('active');
+  extraFiltro = yaActivo ? 'todos' : tipo;
+  document.querySelectorAll('.filters-compact .filter-btn').forEach(b=>b.classList.remove('active'));
+  if (!yaActivo) btn.classList.add('active');
   renderProductos();
 }
 
