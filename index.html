@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <!-- DSOK Tracking Optimizado: pedido único + UTM + Meta/GA4/CAPI-ready -->
-<!-- DSOK BUILD: CONFIRMACION_FINAL + UPSELL_PREVIEW_1 | 2026-10-09 -->
+<!-- DSOK BUILD: CATEGORIAS_V4 + POPUP_INFO + EXCLUSIONES_PROMO + LIQUIDACION | 2026-10-23 -->
 <!-- DSOK BUILD: CATEGORIAS_MINIATURAS_V4 | 2026-10-23 -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1314,9 +1314,83 @@ button,a,select{-webkit-tap-highlight-color:transparent;touch-action:manipulatio
   .filters-compact .filter-btn{padding:5px 8px !important;font-size:9.5px !important;}
 }
 
+
+
+/* === DSOK POPUP INFORMATIVO DE ENTRADA === */
+.dsok-entry-popup{
+  position:fixed;inset:0;z-index:5000;display:none;align-items:center;justify-content:center;
+  padding:18px;background:rgba(0,0,0,.82);backdrop-filter:blur(5px);
+}
+.dsok-entry-popup.show{display:flex;}
+.dsok-entry-card{
+  position:relative;width:min(100%,430px);max-height:calc(100svh - 28px);overflow-y:auto;
+  background:linear-gradient(180deg,#101010 0%,#080808 100%);border:1px solid rgba(212,255,0,.78);
+  border-radius:22px;padding:22px 18px 18px;box-shadow:0 25px 80px rgba(0,0,0,.72),0 0 28px rgba(212,255,0,.06);
+  scrollbar-width:thin;scrollbar-color:#333 transparent;
+}
+.dsok-entry-close{position:absolute;right:12px;top:12px;width:34px;height:34px;border-radius:50%;border:1px solid #3a3a3a;background:#1d1d1d;color:#fff;font-size:19px;cursor:pointer;line-height:1;}
+.dsok-entry-title{font-family:'Bebas Neue',sans-serif;font-size:35px;line-height:.98;letter-spacing:1.2px;text-align:center;margin:6px 38px 6px 0;}
+.dsok-entry-title span{color:var(--accent)}
+.dsok-entry-sub{text-align:center;color:#aaa;font-size:12px;font-weight:600;margin-bottom:16px;}
+.dsok-entry-promos{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px;}
+.dsok-entry-promo{border:1px solid rgba(212,255,0,.68);border-radius:14px;padding:10px;background:#0b0b0b;}
+.dsok-entry-promo-top{display:flex;gap:8px;align-items:center;color:#eee;font-weight:800;font-size:12px;line-height:1.15;margin-bottom:8px;}
+.dsok-entry-promo-icon{width:32px;height:32px;border-radius:50%;background:#222;display:flex;align-items:center;justify-content:center;flex:0 0 32px;}
+.dsok-entry-off{display:block;text-align:center;background:var(--accent);color:#080808;border-radius:9px;padding:9px 4px;font-family:'Bebas Neue',sans-serif;font-size:29px;letter-spacing:.5px;line-height:1;}
+.dsok-entry-understand{text-align:center;color:#bdbdbd;font-size:11px;line-height:1.35;margin:0 4px 12px;}
+.dsok-entry-stock{display:flex;gap:11px;align-items:center;border:1px solid #343434;border-radius:12px;padding:10px 12px;margin-bottom:12px;background:#0c0c0c;}
+.dsok-entry-stock-icon{width:42px;height:42px;border-radius:10px;background:#1b1b1b;display:flex;align-items:center;justify-content:center;font-size:24px;flex:0 0 42px;}
+.dsok-entry-stock strong{font-size:13px;line-height:1.3;}
+.dsok-entry-benefits{border-top:1px solid #333;padding-top:10px;display:grid;gap:8px;margin-bottom:13px;}
+.dsok-entry-benefit{display:flex;gap:9px;align-items:center;color:#e8e8e8;font-size:12px;}
+.dsok-entry-check{width:22px;height:22px;border:1.5px solid var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:12px;flex:0 0 22px;font-weight:900;}
+.dsok-entry-excluded{font-size:10px;line-height:1.35;color:#858585;text-align:center;margin:-2px 4px 12px;}
+.dsok-entry-btn{width:100%;border:0;border-radius:12px;background:var(--accent);color:#080808;padding:14px 12px;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.8px;cursor:pointer;font-weight:900;}
+body.dsok-popup-open{overflow:hidden;}
+@media(max-width:380px){
+  .dsok-entry-popup{padding:10px}.dsok-entry-card{padding:18px 13px 14px;border-radius:18px}
+  .dsok-entry-title{font-size:31px}.dsok-entry-promo{padding:8px}.dsok-entry-off{font-size:25px}
+  .dsok-entry-benefit{font-size:11px}.dsok-entry-stock strong{font-size:12px}
+}
 </style>
 </head>
 <body>
+
+<!-- DSOK POPUP: información antes de comprar -->
+<div class="dsok-entry-popup" id="dsokEntryPopup" role="dialog" aria-modal="true" aria-labelledby="dsokEntryTitle">
+  <div class="dsok-entry-card">
+    <button class="dsok-entry-close" type="button" aria-label="Cerrar" onclick="cerrarDsokEntryPopup()">×</button>
+    <div class="dsok-entry-title" id="dsokEntryTitle">🔥 ANTES DE <span>SEGUIR</span></div>
+    <div class="dsok-entry-sub">Leé esta info importante para comprar</div>
+
+    <div class="dsok-entry-promos">
+      <div class="dsok-entry-promo">
+        <div class="dsok-entry-promo-top"><span class="dsok-entry-promo-icon">👕</span><span>2 del mismo<br>rubro</span></div>
+        <span class="dsok-entry-off">10% OFF</span>
+      </div>
+      <div class="dsok-entry-promo">
+        <div class="dsok-entry-promo-top"><span class="dsok-entry-promo-icon">👕</span><span>3 del mismo<br>rubro</span></div>
+        <span class="dsok-entry-off">15% OFF</span>
+      </div>
+    </div>
+
+    <div class="dsok-entry-understand">Entiendo que el descuento se aplica automático dentro del carrito.</div>
+
+    <div class="dsok-entry-stock">
+      <div class="dsok-entry-stock-icon">📦</div>
+      <strong>Al confirmar reservamos<br>stock y preparamos la entrega</strong>
+    </div>
+
+    <div class="dsok-entry-benefits">
+      <div class="dsok-entry-benefit"><span class="dsok-entry-check">✓</span><span>Envíos a CABA, GBA y La Plata</span></div>
+      <div class="dsok-entry-benefit"><span class="dsok-entry-check">✓</span><span>Pagás al recibir</span></div>
+      <div class="dsok-entry-benefit"><span class="dsok-entry-check">✓</span><span>Podés combinar talles, colores y modelos</span></div>
+    </div>
+    <div class="dsok-entry-excluded">La promo 10%/15% no aplica a Medias, Boxers ni productos de Liquidación.</div>
+    <button class="dsok-entry-btn" type="button" onclick="cerrarDsokEntryPopup()">ENTENDIDO, QUIERO VER →</button>
+  </div>
+</div>
+
 
 <header>
   <div class="logo">dsok<em>.</em>importado</div>
@@ -1337,7 +1411,7 @@ button,a,select{-webkit-tap-highlight-color:transparent;touch-action:manipulatio
 </div>
 
 
-<div class="promo-top-strip">🔥 PROMOS ACTIVAS · 2 DEL MISMO RUBRO = 10% OFF · 3 DEL MISMO RUBRO = 15% OFF</div>
+<div class="promo-top-strip">🔥 PROMOS ACTIVAS · 2 DEL MISMO RUBRO = 10% OFF · 3 DEL MISMO RUBRO = 15% OFF · EXCEPTO MEDIAS, BOXERS Y LIQUIDACIÓN</div>
 <section class="v1-hero" id="v1Hero">
   <div class="v1-hero-bg" id="v1HeroBg"></div>
   <div class="v1-hero-inner">
@@ -1353,7 +1427,7 @@ button,a,select{-webkit-tap-highlight-color:transparent;touch-action:manipulatio
         <div class="hero-promo-chip"><span>Llevá 2 del mismo rubro</span><b>10% OFF</b></div>
         <div class="hero-promo-chip"><span>Llevá 3 del mismo rubro</span><b>15% OFF</b></div>
       </div>
-      <div class="hero-promo-note">Podés combinar modelos, colores y talles dentro del mismo rubro. El descuento se aplica automático en el carrito.</div>
+      <div class="hero-promo-note">Podés combinar modelos, colores y talles dentro del mismo rubro. El descuento se aplica automático en el carrito. <strong>No aplica en Medias, Boxers ni Liquidación.</strong></div>
     </div>
     <button class="v1-hero-cta" onclick="document.querySelector('.hc-section').scrollIntoView({behavior:'smooth'})">VER EL DROP 🔥</button>
     <div class="v1-rating"><span class="v1-stars">★★★★★</span><strong>4.9</strong> · +10.000 clientes</div>
@@ -1897,13 +1971,15 @@ const LOOKS_SHEET_NAME = 'Looks'; // pestaña opcional: titulo | archivo | tipo 
 const HERO_SHEET_NAME = 'Hero'; // pestaña opcional: imagen | activo | posicion | posicion_mobile
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwhByLmKeG6Pk0XkAHqOffxDaIfLf7vVMI6eM-9hfW834uQvVQ-QM8glvVnJ754JxG2fw/exec';
 
-const CAT_ORDER = ['shorts','joggins','buzos','remeras','conjuntos','medias','boxers'];
+const CAT_ORDER = ['shorts','joggins','buzos','remeras','conjuntos','medias','boxers','liquidacion'];
 const CAT_LABELS = {
   'joggins':   '👖 Joggins',
   'buzos':     '🧥 Buzos',
   'remeras':   '👕 Remeras',
   'medias':    '🧦 Medias y Térmicas',
   'conjuntos': '🧥 Conjuntos',
+  'boxers':    '🩲 Boxers',
+  'liquidacion':'🏷️ Liquidación',
 };
 
 let todos = [], looks = [], heroConfig = null, carrito = [], catActual = 'todos', extraFiltro = 'todos';
@@ -2148,7 +2224,9 @@ function prepararHero(){
 }
 
 function normCat(c) {
-  c = c.toLowerCase().trim();
+  c = String(c || '').toLowerCase().trim();
+  if (c.includes('liquid')) return 'liquidacion';
+  if (c.includes('boxer')) return 'boxers';
   if (c.includes('joggin') || c.includes('panta')) return 'joggins';
   if (c.includes('buzo')) return 'buzos';
   if (c.includes('remera')) return 'remeras';
@@ -2171,7 +2249,8 @@ const CAT_ICONS = {
   'medias': '🧦',
   'conjuntos': '🧥',
   'boxers': '🩲',
-  'boxer': '🩲'
+  'boxer': '🩲',
+  'liquidacion': '🏷️'
 };
 const CAT_SHORT = {
   'todos': 'Todos',
@@ -2182,7 +2261,8 @@ const CAT_SHORT = {
   'medias': 'Medias',
   'conjuntos': 'Conjuntos',
   'boxers': 'Boxers',
-  'boxer': 'Boxers'
+  'boxer': 'Boxers',
+  'liquidacion': 'Liquidación'
 };
 
 function fotoCategoria_(cat) {
@@ -2320,6 +2400,14 @@ const PROMO_RATE_2 = 0.10;
 const PROMO_RATE_3 = 0.15;
 const PROMO_MAX_DESTACADO = 3;
 
+// Rubros que NO participan de la promo 2=10% / 3=15%.
+// Importante: se controla por categoría normalizada, no por nombre del producto.
+const PROMO_EXCLUDED_CATEGORIES = new Set(['medias','boxers','liquidacion']);
+function categoriaConPromo(cat){
+  const c = String(cat || '').trim().toLowerCase();
+  return !!c && c !== 'sin_categoria' && !PROMO_EXCLUDED_CATEGORIES.has(c);
+}
+
 // Redondeo comercial solicitado:
 // 36.400 -> 36.500 | 36.500 -> 36.500 | 36.600 -> 36.999 | 36.999 -> 36.999
 function redondearPrecioFinal(valor){
@@ -2334,12 +2422,12 @@ function redondearPrecioFinal(valor){
 }
 
 function rubroLabel(cat){
-  const labels={joggins:'Joggins',buzos:'Buzos',remeras:'Remeras',medias:'Medias y Térmicas',conjuntos:'Conjuntos',shorts:'Shorts'};
+  const labels={joggins:'Joggings',buzos:'Buzos',remeras:'Remeras',medias:'Medias',conjuntos:'Conjuntos',shorts:'Shorts',boxers:'Boxers',liquidacion:'Liquidación'};
   return labels[cat] || (cat ? cat.charAt(0).toUpperCase()+cat.slice(1) : 'rubro');
 }
 
 function rubroSingular(cat){
-  const labels={joggins:'Joggin',buzos:'Buzo',remeras:'Remera',medias:'artículo',conjuntos:'Conjunto',shorts:'Short'};
+  const labels={joggins:'Joggin',buzos:'Buzo',remeras:'Remera',medias:'artículo',conjuntos:'Conjunto',shorts:'Short',boxers:'Boxer',liquidacion:'artículo'};
   return labels[cat] || 'artículo';
 }
 
@@ -2367,7 +2455,7 @@ function precioReferenciaGrupo(grupo){
 }
 
 function obtenerGrupoPrioritario(detalle){
-  const grupos=(detalle||[]).filter(g=>g.categoria!=='sin_categoria' && g.items.length);
+  const grupos=(detalle||[]).filter(g=>categoriaConPromo(g.categoria) && g.items.length);
   return grupos.find(g=>g.items.length===2)
     || grupos.find(g=>g.items.length===1)
     || grupos.find(g=>g.items.length>=3)
@@ -2390,7 +2478,7 @@ function calcularTotalesCarrito(){
 
   Object.entries(grupos).forEach(([categoria,items])=>{
     const subtotalRubro=items.reduce((s,i)=>s+Number(i.precio||0),0);
-    const promoRate = categoria!=='sin_categoria' ? obtenerRatePromo(items.length) : 0;
+    const promoRate = categoriaConPromo(categoria) ? obtenerRatePromo(items.length) : 0;
     let totalPromoRubro=subtotalRubro;
     let descuentoRubro=0;
 
@@ -2437,14 +2525,17 @@ function renderPromoCarrito(){
   if(!carrito.length){ box.style.display='none'; lines.innerHTML=''; return; }
 
   const calc=calcularTotalesCarrito();
-  const grupos=calc.detalle.filter(g=>g.categoria!=='sin_categoria' && g.items.length);
+  const grupos=calc.detalle.filter(g=>categoriaConPromo(g.categoria) && g.items.length);
   const principal=obtenerGrupoPrioritario(grupos);
   const bloques=[];
 
   if(!principal){
-    kicker.textContent='🔥 PROMO ACTIVA';
-    title.textContent='LLEVÁ MÁS DEL MISMO RUBRO';
-    sub.innerHTML='Con 2 del mismo rubro obtenés <strong>10% OFF</strong> y con 3 del mismo rubro obtenés <strong>15% OFF</strong>.';
+    const soloExcluidos = calc.detalle.length > 0 && calc.detalle.every(g => !categoriaConPromo(g.categoria));
+    kicker.textContent = soloExcluidos ? 'ℹ️ SIN PROMO POR RUBRO' : '🔥 PROMO ACTIVA';
+    title.textContent = soloExcluidos ? 'ESTOS PRODUCTOS NO PARTICIPAN' : 'LLEVÁ MÁS DEL MISMO RUBRO';
+    sub.innerHTML = soloExcluidos
+      ? 'Medias, Boxers y Liquidación no participan del 10%/15% por rubro.'
+      : 'Con 2 del mismo rubro obtenés <strong>10% OFF</strong> y con 3 del mismo rubro obtenés <strong>15% OFF</strong>.';
     price.textContent=''; saving.textContent=''; missing.textContent=''; progress.style.width='0%';
     lines.innerHTML='';
     return;
@@ -3535,6 +3626,34 @@ function hcTouchInit(){
     hcDragging=false;hcDeltaX=0;
   });
 }
+</script>
+
+<script>
+(function(){
+  const KEY='dsok_info_popup_seen_v1';
+  const TTL=24*60*60*1000;
+  window.cerrarDsokEntryPopup=function(){
+    const el=document.getElementById('dsokEntryPopup');
+    if(el) el.classList.remove('show');
+    document.body.classList.remove('dsok-popup-open');
+    try{localStorage.setItem(KEY,String(Date.now()));}catch(e){}
+  };
+  function abrir(){
+    const el=document.getElementById('dsokEntryPopup');
+    if(!el) return;
+    let mostrar=true;
+    const test=new URLSearchParams(location.search).get('test')==='1';
+    if(!test){
+      try{
+        const last=Number(localStorage.getItem(KEY)||0);
+        if(last && Date.now()-last<TTL) mostrar=false;
+      }catch(e){}
+    }
+    if(mostrar){el.classList.add('show');document.body.classList.add('dsok-popup-open');}
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',abrir,{once:true});
+  else abrir();
+})();
 </script>
 </body>
 </html>
