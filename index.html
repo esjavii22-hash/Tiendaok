@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <!-- DSOK Tracking Optimizado: pedido único + UTM + Meta/GA4/CAPI-ready -->
-<!-- DSOK BUILD: CATEGORIAS_V4 + POPUP_INFO + EXCLUSIONES_PROMO + LIQUIDACION | 2026-10-23 -->
+<!-- DSOK BUILD: CATEGORIAS_V4 + POPUP_INFO + EXCLUSIONES_PROMO + LIQUIDACION + GUIAS_TALLES_TABS | 2026-11-13 -->
 <!-- DSOK BUILD: CATEGORIAS_MINIATURAS_V4 | 2026-10-23 -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1352,6 +1352,53 @@ body.dsok-popup-open{overflow:hidden;}
   .dsok-entry-title{font-size:31px}.dsok-entry-promo{padding:8px}.dsok-entry-off{font-size:25px}
   .dsok-entry-benefit{font-size:11px}.dsok-entry-stock strong{font-size:12px}
 }
+
+/* === DSOK GUIAS DE TALLES v2: pestañas escalables + acceso rápido por producto === */
+.quick-size-guide{
+  width:100%;height:27px;margin:0 0 6px;display:flex;align-items:center;justify-content:center;gap:5px;
+  background:#0b0b0b;color:#d4ff00;border:1px solid #303800;border-radius:5px;
+  font-family:'DM Sans',sans-serif;font-size:8.5px;font-weight:800;letter-spacing:.25px;cursor:pointer;
+}
+.quick-size-guide:hover{background:#111600;border-color:#d4ff00;}
+.hc-quick-size-guide{height:25px;font-size:8px;margin:0 0 6px;}
+.size-guide-panel{max-height:88vh !important;}
+.size-guide-tabs{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding:10px 0 8px;overscroll-behavior-x:contain;}
+.size-guide-tabs::-webkit-scrollbar{display:none;}
+.size-guide-tab{
+  flex:0 0 auto;min-width:120px;height:42px;padding:0 13px;border:1px solid #363636;border-radius:10px;
+  background:#171717;color:#d6d6d6;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;white-space:nowrap;
+}
+.size-guide-tab.active{background:#d4ff00;color:#080808;border-color:#d4ff00;box-shadow:0 0 0 1px rgba(212,255,0,.12);}
+.size-guide-tab .sg-icon{font-size:17px;line-height:1;}
+.size-guide-scroll-hint{font-size:8px;color:#555;margin:-2px 0 5px;text-align:right;}
+.size-guide-content{padding:2px 0 2px;}
+.sg-subtitle{font-size:10px;color:#777;margin:0 0 9px;}
+.sg-measure-card{display:grid;grid-template-columns:86px 1fr;gap:12px;align-items:center;background:#101010;border:1px solid #242424;border-radius:11px;padding:10px;margin-bottom:9px;}
+.sg-garment{height:92px;border-radius:9px;background:linear-gradient(180deg,#191919,#101010);display:flex;align-items:center;justify-content:center;font-size:46px;border:1px solid #292929;}
+.sg-measure-info{display:flex;flex-direction:column;gap:8px;}
+.sg-measure-line{display:flex;gap:7px;align-items:flex-start;}
+.sg-badge{width:21px;height:21px;flex:0 0 21px;border-radius:50%;background:#d4ff00;color:#080808;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:1000;}
+.sg-measure-line b{display:block;color:#eee;font-size:10px;line-height:1.15;margin-bottom:2px;}
+.sg-measure-line span{display:block;color:#777;font-size:8.5px;line-height:1.3;}
+.sg-table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border:1px solid #303030;border-radius:10px;background:#0d0d0d;}
+.sg-table th{background:#1c1c1c;color:#d4ff00;font-size:9px;font-weight:900;padding:8px 6px;text-align:center;border-right:1px solid #323232;}
+.sg-table th:first-child{text-align:left;color:#f1f1f1;}
+.sg-table th:last-child{border-right:0;}
+.sg-table td{padding:8px 6px;font-size:10px;color:#cfcfcf;text-align:center;border-top:1px solid #242424;border-right:1px solid #242424;}
+.sg-table td:first-child{text-align:left;color:#f2f1ed;font-weight:800;}
+.sg-table td:last-child{border-right:0;}
+.sg-note{display:flex;align-items:flex-start;gap:8px;margin-top:9px;background:#111;border:1px solid #2b2b2b;border-radius:9px;padding:9px 10px;color:#888;font-size:9px;line-height:1.35;}
+.sg-note b{color:#d4ff00;}
+@media(max-width:480px){
+  .quick-size-guide{height:25px;font-size:7.8px;margin-bottom:5px;}
+  .size-guide-tab{min-width:112px;height:39px;font-size:10px;padding:0 11px;}
+  .sg-measure-card{grid-template-columns:72px 1fr;gap:9px;padding:8px;}
+  .sg-garment{height:82px;font-size:40px;}
+  .sg-table th{font-size:8px;padding:7px 4px;}
+  .sg-table td{font-size:9px;padding:7px 4px;}
+}
+
 </style>
 </head>
 <body>
@@ -1650,82 +1697,18 @@ body.dsok-popup-open{overflow:hidden;}
 
 <!-- GUIA TALLES -->
 <div class="upsell-overlay" id="talles-overlay">
-  <div class="upsell-panel" style="max-height:85vh">
+  <div class="upsell-panel size-guide-panel">
     <div class="upsell-hdr">
       <div>
         <span class="upsell-title">📏 GUIA DE TALLES</span>
-        <p style="font-size:9px;color:var(--muted);margin-top:2px">Medidas de la prenda en cm</p>
+        <p style="font-size:9px;color:var(--muted);margin-top:2px">Elegí el tipo de prenda</p>
       </div>
       <button class="upsell-close" onclick="cerrarTalles()">✕</button>
     </div>
-    <div style="overflow-y:auto;padding-bottom:1rem">
-      <div style="display:flex;padding:10px 0;gap:14px;align-items:flex-start">
-        <div style="flex-shrink:0;width:90px">
-          <svg viewBox="0 0 90 155" width="90" height="155" xmlns="http://www.w3.org/2000/svg">
-            <line x1="15" y1="4" x2="75" y2="4" stroke="#d4ff00" stroke-width="1.5"/>
-            <polyline points="18,1 15,4 18,7" fill="none" stroke="#d4ff00" stroke-width="1.5"/>
-            <polyline points="72,1 75,4 72,7" fill="none" stroke="#d4ff00" stroke-width="1.5"/>
-            <rect x="36" y="0" width="18" height="8" rx="4" fill="#d4ff00"/>
-            <text x="45" y="6.5" text-anchor="middle" font-size="6.5" font-weight="bold" fill="#080808">B</text>
-            <rect x="15" y="10" width="60" height="10" rx="3" fill="#222" stroke="#d4ff00" stroke-width="1.2"/>
-            <line x1="40" y1="10" x2="38" y2="20" stroke="#666" stroke-width="0.8"/>
-            <line x1="50" y1="10" x2="52" y2="20" stroke="#666" stroke-width="0.8"/>
-            <path d="M15,20 Q13,30 12,42 L78,42 Q77,30 75,20 Z" fill="#1c1c1c" stroke="#333" stroke-width="0.8"/>
-            <path d="M12,42 Q10,70 11,120 Q11,128 14,130 L42,130 Q44,128 44,120 L44,42 Z" fill="#1c1c1c" stroke="#333" stroke-width="0.8"/>
-            <path d="M46,42 L46,120 Q46,128 48,130 L76,130 Q79,128 79,120 Q80,70 78,42 Z" fill="#1c1c1c" stroke="#333" stroke-width="0.8"/>
-            <line x1="28" y1="55" x2="26" y2="123" stroke="#282828" stroke-width="0.8"/>
-            <line x1="62" y1="55" x2="64" y2="123" stroke="#282828" stroke-width="0.8"/>
-            <line x1="4" y1="10" x2="4" y2="130" stroke="#a8cc00" stroke-width="1.5"/>
-            <polyline points="1,13 4,10 7,13" fill="none" stroke="#a8cc00" stroke-width="1.5"/>
-            <polyline points="1,127 4,130 7,127" fill="none" stroke="#a8cc00" stroke-width="1.5"/>
-            <rect x="0" y="63" width="8" height="12" rx="4" fill="#a8cc00"/>
-            <text x="4" y="71.5" text-anchor="middle" font-size="6.5" font-weight="bold" fill="#080808">A</text>
-          </svg>
-          <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px">
-            <div style="display:flex;align-items:center;gap:5px">
-              <div style="background:#a8cc00;border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:#080808">A</div>
-              <span style="font-size:8px;color:#666">Largo prenda</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:5px">
-              <div style="background:#d4ff00;border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:#080808">B</div>
-              <span style="font-size:8px;color:#666">Cintura</span>
-            </div>
-          </div>
-        </div>
-        <div style="flex:1">
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;background:#1e1e1e;border-radius:6px 6px 0 0;padding:6px 8px;margin-bottom:1px">
-            <span style="font-size:9px;color:#888;font-weight:600">TALLE</span>
-            <span style="font-size:9px;color:#a8cc00;font-weight:600;text-align:center">A cm</span>
-            <span style="font-size:9px;color:#d4ff00;font-weight:600;text-align:center">B cm</span>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:8px;border-bottom:1px solid #181818;background:#0d0d0d">
-            <span style="font-size:11px;color:#f2f1ed;font-weight:700">S — 38</span>
-            <span style="font-size:11px;color:#777;text-align:center">100</span>
-            <span style="font-size:11px;color:#777;text-align:center">29</span>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:8px;border-bottom:1px solid #181818">
-            <span style="font-size:11px;color:#f2f1ed;font-weight:700">M — 40</span>
-            <span style="font-size:11px;color:#777;text-align:center">102</span>
-            <span style="font-size:11px;color:#777;text-align:center">31</span>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:8px;border-bottom:1px solid #181818;background:#0d0d0d">
-            <span style="font-size:11px;color:#f2f1ed;font-weight:700">L — 42</span>
-            <span style="font-size:11px;color:#777;text-align:center">103</span>
-            <span style="font-size:11px;color:#777;text-align:center">33</span>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:8px;border-bottom:1px solid #181818">
-            <span style="font-size:11px;color:#f2f1ed;font-weight:700">XL — 44</span>
-            <span style="font-size:11px;color:#777;text-align:center">104</span>
-            <span style="font-size:11px;color:#777;text-align:center">34</span>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:8px;background:#151515;border-radius:0 0 6px 6px">
-            <span style="font-size:11px;color:#f2f1ed;font-weight:700">XXL — 46</span>
-            <span style="font-size:11px;color:#777;text-align:center">104</span>
-            <span style="font-size:11px;color:#777;text-align:center">36</span>
-          </div>
-          <p style="font-size:7px;color:#333;margin-top:5px">* Puede variar +/-1cm segun modelo</p>
-        </div>
-      </div>
+    <div class="size-guide-tabs" id="size-guide-tabs"></div>
+    <div class="size-guide-scroll-hint" id="size-guide-scroll-hint">Deslizá para ver más guías →</div>
+    <div style="overflow-y:auto;padding-bottom:.35rem">
+      <div class="size-guide-content" id="size-guide-content"></div>
     </div>
     <button onclick="cerrarTalles()" class="upsell-skip">Cerrar</button>
   </div>
@@ -2377,6 +2360,7 @@ function cardHTML(p, i) {
         ${p.descripcion?`<p class="card-desc">${p.descripcion}</p>`:''}
         <div class="product-review"><span class="product-stars">★★★★★</span><span class="product-rating">${p.rating.toFixed(1)}</span>${p.reviews?`<span class="product-review-count">(${p.reviews})</span>`:''}</div>
         <div class="price-row"><p class="card-price">$${p.precio.toLocaleString('es-AR')}</p>${p.precioAnterior>p.precio?`<span class="old-price">$${p.precioAnterior.toLocaleString('es-AR')}</span>`:''}</div>
+        <button type="button" class="quick-size-guide" onclick="event.stopPropagation();abrirTalles('${guiaSugeridaProducto(p)}')">📏 GUÍA DE TALLES</button>
         <div class="card-controls">
           ${tallesVisibles}
           <button class="add-btn" data-add-idx="${i}" ${agotado?'disabled':''}
@@ -2394,6 +2378,78 @@ function seleccionarTalle(i, talle, btn) {
   wrap.dataset.selected = talle;
   wrap.querySelectorAll('.talle-chip').forEach(b=>b.classList.remove('selected'));
   if(btn) btn.classList.add('selected');
+}
+
+
+// === GUIAS DE TALLES ESCALABLES ===
+// Para sumar una nueva guía después, agregamos una entrada a este objeto y aparece como pestaña nueva.
+const GUIAS_TALLES = {
+  joggin: {
+    label:'Joggin', icon:'👖', garment:'👖',
+    subtitle:'Medidas actuales del joggin en cm',
+    aLabel:'Largo prenda', aDesc:'Largo total de la prenda.',
+    bLabel:'Cintura', bDesc:'Medida de cintura en plano.',
+    columns:['Talle','Largo prenda','Cintura'],
+    rows:[['S / 38','100','29'],['M / 40','102','31'],['L / 42','103','33'],['XL / 44','104','34'],['XXL / 46','104','36']],
+    note:'Las medidas pueden variar +/-1 cm según el modelo.'
+  },
+  short_training: {
+    label:'Short Training', icon:'🩳', garment:'🩳',
+    subtitle:'Medidas del short training y calza en cm',
+    aLabel:'Ancho (sin estirar)', aDesc:'Ancho de cintura, de lado a lado.',
+    bLabel:'Largo', bDesc:'Largo total de la prenda.',
+    columns:['Talle','Ancho sin estirar','Largo'],
+    rows:[['S / 38','31,5','40'],['M / 40','33','41,5'],['L / 42','34','43'],['XL / 44','35','44,5'],['XXL / 46','36','46']],
+    note:'Medidas tomadas en plano. Puede haber una mínima variación según el modelo.'
+  }
+};
+let guiaTallesActiva='joggin';
+
+function guiaSugeridaProducto(p){
+  const nombre=String((p&&p.nombre)||'').toLowerCase();
+  const cat=String((p&&p.categoria)||'').toLowerCase();
+  if(nombre.includes('training') || nombre.includes('calza')) return 'short_training';
+  if(cat==='joggins' || nombre.includes('joggin')) return 'joggin';
+  return guiaTallesActiva || 'joggin';
+}
+
+function renderTabsGuiaTalles(){
+  const tabs=document.getElementById('size-guide-tabs');
+  if(!tabs) return;
+  const keys=Object.keys(GUIAS_TALLES);
+  tabs.innerHTML=keys.map(k=>{
+    const g=GUIAS_TALLES[k];
+    return `<button type="button" class="size-guide-tab ${k===guiaTallesActiva?'active':''}" onclick="seleccionarGuiaTalles('${k}')"><span class="sg-icon">${g.icon}</span>${g.label}</button>`;
+  }).join('');
+  const hint=document.getElementById('size-guide-scroll-hint');
+  if(hint) hint.style.display=keys.length>2?'block':'none';
+}
+
+function renderGuiaTalles(){
+  const g=GUIAS_TALLES[guiaTallesActiva] || GUIAS_TALLES.joggin;
+  const el=document.getElementById('size-guide-content');
+  if(!el) return;
+  el.innerHTML=`
+    <p class="sg-subtitle">${g.subtitle}</p>
+    <div class="sg-measure-card">
+      <div class="sg-garment" aria-hidden="true">${g.garment}</div>
+      <div class="sg-measure-info">
+        <div class="sg-measure-line"><div class="sg-badge">A</div><div><b>${g.aLabel}</b><span>${g.aDesc}</span></div></div>
+        <div class="sg-measure-line"><div class="sg-badge">B</div><div><b>${g.bLabel}</b><span>${g.bDesc}</span></div></div>
+      </div>
+    </div>
+    <table class="sg-table">
+      <thead><tr>${g.columns.map((c,i)=>`<th>${i===1?'A · ':i===2?'B · ':''}${c}</th>`).join('')}</tr></thead>
+      <tbody>${g.rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]} cm</td><td>${r[2]} cm</td></tr>`).join('')}</tbody>
+    </table>
+    <div class="sg-note"><b>ⓘ</b><span>${g.note}</span></div>`;
+}
+
+function seleccionarGuiaTalles(tipo){
+  if(!GUIAS_TALLES[tipo]) return;
+  guiaTallesActiva=tipo;
+  renderTabsGuiaTalles();
+  renderGuiaTalles();
 }
 
 const PROMO_RATE_2 = 0.10;
@@ -3297,7 +3353,10 @@ document.addEventListener('click', function(e) {
   }
 });
 
-function abrirTalles() {
+function abrirTalles(tipo) {
+  if(tipo && GUIAS_TALLES[tipo]) guiaTallesActiva=tipo;
+  renderTabsGuiaTalles();
+  renderGuiaTalles();
   document.getElementById('talles-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -3522,6 +3581,7 @@ function initCarousel(){
         +'<div class="hc-card-name">'+p.nombre+'</div>'
         +'<div class="hc-product-review"><span class="hc-product-stars">★★★★★</span><span class="hc-product-rating">'+(Number(p.rating)||4.9).toFixed(1)+'</span>'+(p.reviews?'<span class="hc-product-review-count">('+p.reviews+')</span>':'')+'</div>'
         +'<div class="hc-price-row">'+(p.precio?'<div class="hc-card-price">$'+p.precio.toLocaleString('es-AR')+'</div>':'')+((p.precioAnterior||0)>p.precio?'<span class="hc-old-price">$'+p.precioAnterior.toLocaleString('es-AR')+'</span>':'')+'</div>'
+        +'<button type="button" class="quick-size-guide hc-quick-size-guide" onclick="event.stopPropagation();abrirTalles(\''+guiaSugeridaProducto(p)+'\')">📏 GUÍA DE TALLES</button>'
         +'<div class="hc-card-controls">'+tallesHtml+btnWsp+'</div>'
       +'</div>';
     track.appendChild(card);
