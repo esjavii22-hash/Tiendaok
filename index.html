@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <!-- DSOK Tracking Optimizado: pedido único + UTM + Meta/GA4/CAPI-ready -->
-<!-- DSOK BUILD: CATEGORIAS_V5_LIQUIDACION_DESTACADA + PEDIDOS_ROBUSTOS + POPUP_INFO + EXCLUSIONES_PROMO + GUIAS_TALLES_TABS | 2026-11-22 -->
+<!-- DSOK BUILD: CATEGORIAS_V5_LIQUIDACION_DESTACADA + CHECKOUT_WSP_NO_BLOQUEANTE + PEDIDOS_DEDUP + POPUP_INFO + EXCLUSIONES_PROMO + GUIAS_TALLES_TABS | 2026-11-22 -->
 <!-- DSOK BUILD: CATEGORIAS_MINIATURAS_V4 | 2026-10-23 -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -2072,6 +2072,35 @@ async function dsokPostPedido(payload){
   });
 }
 
+// Envío no bloqueante del pedido.
+// Se lanza fetch keepalive y WhatsApp NO queda esperando la verificación secundaria.
+function dsokDespacharPedido(payload){
+  const fetchPromise = dsokPostPedido(payload).catch(e => {
+    console.warn('fetch pedido en segundo plano falló:', e);
+    return null;
+  });
+
+  return {fetchPromise};
+}
+
+// Verificación secundaria: sirve para diagnóstico/estado local, pero NUNCA bloquea WhatsApp.
+async function dsokVerificarPedidoEnSegundoPlano(pedidoId){
+  const esperas = [900, 2200, 4500];
+  for(const espera of esperas){
+    await dsokSleep(espera);
+    try {
+      const check = await dsokVerificarPedidoEnSheet(pedidoId, 2500);
+      if(check && check.ok && check.exists && check.pedido_id === pedidoId){
+        dsokMarcarPedidoVerificado(pedidoId);
+        return check;
+      }
+    } catch(e){
+      console.warn('Verificación secundaria falló:', e);
+    }
+  }
+  return null;
+}
+
 async function dsokGuardarPedidoVerificado(payload){
   // Si un intento anterior sí se guardó pero la confirmación de red falló,
   // primero lo buscamos por pedido_id para no volver a generarlo ni duplicarlo.
@@ -3272,13 +3301,13 @@ async function confirmarPedido() {
   const btnConfirmar = document.getElementById('confirm-review-btn');
   if(btnConfirmar) btnConfirmar.disabled = true;
 
-  // Se abre desde el click del usuario para que el navegador no bloquee WhatsApp
-  // después de esperar la confirmación de Sheets.
+  // Abrimos la pestaña desde el click real del usuario para evitar bloqueo de popup.
+  // La red NO va a decidir si WhatsApp abre o no.
   let wspWindow = null;
   try {
     wspWindow = window.open('about:blank', '_blank');
     if(wspWindow && wspWindow.document){
-      wspWindow.document.write('<!doctype html><meta charset="utf-8"><title>Confirmando pedido...</title><body style="margin:0;background:#080808;color:#f2f1ed;font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center"><div><div style="font-size:38px">📦</div><p>Confirmando tu pedido...</p></div></body>');
+      wspWindow.document.write('<!doctype html><meta charset="utf-8"><title>Abriendo WhatsApp...</title><body style="margin:0;background:#080808;color:#f2f1ed;font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center"><div><div style="font-size:38px">💬</div><p>Abriendo WhatsApp...</p></div></body>');
       wspWindow.document.close();
     }
   } catch(e) { wspWindow = null; }
@@ -3369,60 +3398,52 @@ async function confirmarPedido() {
     user_agent: attr.user_agent || navigator.userAgent || ''
   };
 
-  let confirmacionServidor = null;
-  try {
-    confirmacionServidor = await dsokGuardarPedidoVerificado(payloadPedido);
-  } catch(e) {
-    console.error('Error verificando guardado:', e);
-  }
+  // CLAVE DEL FIX:
+  // Despachamos el pedido inmediatamente y NO esperamos el endpoint de verificación
+  // para abrir WhatsApp. El backend ya deduplica por pedido_id.
+  dsokDespacharPedido(payloadPedido);
+  dsokVerificarPedidoEnSegundoPlano(pedidoId).catch(()=>{});
 
-  // Punto crítico: NO avanzamos si el pedido no aparece realmente en la columna N de Pedidos.
-  if(!confirmacionServidor || !confirmacionServidor.exists){
-    try { if(wspWindow && !wspWindow.closed) wspWindow.close(); } catch(e) {}
-    pedidoEnProceso = false;
-    if(btnConfirmar) btnConfirmar.disabled = false;
-    document.getElementById('enviando').classList.remove('visible');
-    document.getElementById('confirm-review').classList.add('visible');
-    const footerTotalsError = document.getElementById('footer-totales-row');
-    if(footerTotalsError) footerTotalsError.style.display = 'flex';
-    toast('⚠️ No se pudo confirmar el guardado. Tocá CONFIRMAR PEDIDO nuevamente.');
-    return;
-  }
+  // Le damos apenas un instante al navegador para despachar el POST, sin bloquear el checkout.
+  await dsokSleep(250);
 
-  dsokMarcarPedidoVerificado(pedidoId);
-
-  // Recién AHORA, con el pedido confirmado en Sheets, registramos Purchase en navegador.
+  // Registramos Purchase en navegador una sola vez por pedido_id.
+  // El pedido ya fue despachado al backend antes de este punto.
   if(!dsokEsModoTest() && !dsokTrackingYaEnviado(pedidoId)){
-    if(typeof fbq!=='undefined'){
-      fbq('trackSingle',window.DSOK_META_PIXEL_ID,'Purchase',{
-        value:Number(total),
-        currency:'ARS',
-        num_items:carrito.length,
-        content_ids:contentIds,
-        contents:contentsMeta,
-        content_type:'product',
-        discount:Number(descuento),
-        order_id:pedidoId
-      },{eventID:metaEventId});
-    }
+    try {
+      if(typeof fbq!=='undefined'){
+        fbq('trackSingle',window.DSOK_META_PIXEL_ID,'Purchase',{
+          value:Number(total),
+          currency:'ARS',
+          num_items:carrito.length,
+          content_ids:contentIds,
+          contents:contentsMeta,
+          content_type:'product',
+          discount:Number(descuento),
+          order_id:pedidoId
+        },{eventID:metaEventId});
+      }
 
-    if(typeof gtag!=='undefined') gtag('event','purchase',{
-      transaction_id:pedidoId,
-      currency:'ARS',
-      value:Number(total),
-      shipping:Number(envio),
-      coupon: obtenerCodigoCupon(calcPedido),
-      utm_source: attr.utm_source || '',
-      utm_medium: attr.utm_medium || '',
-      utm_campaign: attr.utm_campaign || '',
-      utm_content: attr.utm_content || '',
-      utm_term: attr.utm_term || '',
-      campaign_id: attr.campaign_id || '',
-      adset_id: attr.adset_id || '',
-      ad_id: attr.ad_id || '',
-      items:carrito.map(i=>({item_name:i.nombre,item_category:i.categoria||'',item_variant:i.talle,price:Number(i.precio),quantity:1}))
-    });
-    dsokMarcarTrackingEnviado(pedidoId);
+      if(typeof gtag!=='undefined') gtag('event','purchase',{
+        transaction_id:pedidoId,
+        currency:'ARS',
+        value:Number(total),
+        shipping:Number(envio),
+        coupon: obtenerCodigoCupon(calcPedido),
+        utm_source: attr.utm_source || '',
+        utm_medium: attr.utm_medium || '',
+        utm_campaign: attr.utm_campaign || '',
+        utm_content: attr.utm_content || '',
+        utm_term: attr.utm_term || '',
+        campaign_id: attr.campaign_id || '',
+        adset_id: attr.adset_id || '',
+        ad_id: attr.ad_id || '',
+        items:carrito.map(i=>({item_name:i.nombre,item_category:i.categoria||'',item_variant:i.talle,price:Number(i.precio),quantity:1}))
+      });
+      dsokMarcarTrackingEnviado(pedidoId);
+    } catch(e){
+      console.warn('Tracking Purchase no bloqueante:', e);
+    }
   }
 
   let msg = `¡Hola! Quiero confirmar mi pedido 🛒\n\n`;
@@ -3451,12 +3472,14 @@ async function confirmarPedido() {
       abierto = true;
     }
   } catch(e) {}
+
   if(!abierto){
-    // Fallback que no depende de popups.
+    // Fallback en la misma pestaña. fetch keepalive ya fue lanzado.
     window.location.href = wspUrl;
+    return;
   }
 
-  // Si WhatsApp abrió en pestaña/app aparte, limpiamos la tienda original.
+  // WhatsApp abrió en otra pestaña/app: limpiamos la tienda original.
   setTimeout(() => {
     carrito = [];
     toggleDrawer();
@@ -3477,7 +3500,7 @@ async function confirmarPedido() {
       .forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
     pedidoEnProceso = false;
     if(btnConfirmar) btnConfirmar.disabled = false;
-  }, 1500);
+  }, 700);
 }
 
 function toggleDrawer() {
