@@ -1978,6 +1978,138 @@ let paso = 1;
 const DSOK_ATTR_KEY = 'dsok_paid_attribution_v1';
 const DSOK_ATTR_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 let pedidoEnProceso = false;
+const DSOK_BACKEND_VERSION_EXPECTED = '2026-11-22-ROBUST-V2';
+const DSOK_PENDING_ORDER_KEY = 'dsok_pending_order_v2';
+const DSOK_PENDING_TTL_MS = 30 * 60 * 1000; // reutiliza el mismo pedido_id durante 30 min si hay reintentos
+
+function dsokSleep(ms){ return new Promise(resolve => setTimeout(resolve, ms)); }
+
+function dsokFirmaPedido(data){
+  return JSON.stringify(data);
+}
+
+function dsokObtenerIdsPedido(firma){
+  try {
+    const guardado = JSON.parse(sessionStorage.getItem(DSOK_PENDING_ORDER_KEY) || 'null');
+    if(guardado && guardado.firma === firma && guardado.ts && (Date.now() - guardado.ts) < DSOK_PENDING_TTL_MS){
+      return guardado;
+    }
+  } catch(e) {}
+
+  const pedidoId = dsokPedidoId();
+  const nuevo = {
+    firma,
+    pedidoId,
+    metaEventId:`purchase-${pedidoId}`,
+    metaEventTime:Math.floor(Date.now()/1000),
+    ts:Date.now()
+  };
+  try { sessionStorage.setItem(DSOK_PENDING_ORDER_KEY, JSON.stringify(nuevo)); } catch(e) {}
+  return nuevo;
+}
+
+function dsokMarcarPedidoVerificado(pedidoId){
+  try {
+    const p = JSON.parse(sessionStorage.getItem(DSOK_PENDING_ORDER_KEY) || 'null');
+    if(p && p.pedidoId === pedidoId){
+      p.verifiedAt = Date.now();
+      p.ts = Date.now();
+      sessionStorage.setItem(DSOK_PENDING_ORDER_KEY, JSON.stringify(p));
+    }
+  } catch(e) {}
+}
+
+function dsokTrackingYaEnviado(pedidoId){
+  try { return sessionStorage.getItem('dsok_tracking_' + pedidoId) === '1'; }
+  catch(e) { return false; }
+}
+function dsokMarcarTrackingEnviado(pedidoId){
+  try { sessionStorage.setItem('dsok_tracking_' + pedidoId, '1'); } catch(e) {}
+}
+
+function dsokVerificarPedidoEnSheet(pedidoId, timeoutMs=6000){
+  return new Promise((resolve) => {
+    const cb = '__dsokCheck_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
+    const script = document.createElement('script');
+    let terminado = false;
+
+    const limpiar = () => {
+      if(terminado) return;
+      terminado = true;
+      try { delete window[cb]; } catch(e) { window[cb] = undefined; }
+      try { script.remove(); } catch(e) {}
+    };
+
+    const timer = setTimeout(() => {
+      limpiar();
+      resolve({ok:false, exists:false, timeout:true});
+    }, timeoutMs);
+
+    window[cb] = (data) => {
+      clearTimeout(timer);
+      const resp = data || {};
+      limpiar();
+      resolve(resp);
+    };
+
+    script.onerror = () => {
+      clearTimeout(timer);
+      limpiar();
+      resolve({ok:false, exists:false, networkError:true});
+    };
+
+    script.src = SCRIPT_URL
+      + '?action=check'
+      + '&pedido_id=' + encodeURIComponent(pedidoId)
+      + '&callback=' + encodeURIComponent(cb)
+      + '&_=' + Date.now();
+    document.head.appendChild(script);
+  });
+}
+
+async function dsokPostPedido(payload){
+  await fetch(SCRIPT_URL, {
+    method:'POST',
+    mode:'no-cors',
+    keepalive:true,
+    cache:'no-store',
+    headers:{'Content-Type':'text/plain;charset=UTF-8'},
+    body:JSON.stringify(payload)
+  });
+}
+
+async function dsokGuardarPedidoVerificado(payload){
+  // Si un intento anterior sí se guardó pero la confirmación de red falló,
+  // primero lo buscamos por pedido_id para no volver a generarlo ni duplicarlo.
+  let check = await dsokVerificarPedidoEnSheet(payload.pedido_id, 3500);
+  if(check && check.ok && check.exists && check.pedido_id === payload.pedido_id){
+    if(check.version && check.version !== DSOK_BACKEND_VERSION_EXPECTED){
+      throw new Error('BACKEND_VERSION_MISMATCH');
+    }
+    return check;
+  }
+
+  const pausas = [300, 700, 1400];
+  for(let intento=1; intento<=3; intento++){
+    try {
+      await dsokPostPedido(payload);
+    } catch(e) {
+      console.warn('POST pedido intento ' + intento + ' falló:', e);
+    }
+
+    for(const pausa of pausas){
+      await dsokSleep(pausa);
+      check = await dsokVerificarPedidoEnSheet(payload.pedido_id, 5000);
+      if(check && check.ok && check.exists && check.pedido_id === payload.pedido_id){
+        if(check.version && check.version !== DSOK_BACKEND_VERSION_EXPECTED){
+          throw new Error('BACKEND_VERSION_MISMATCH');
+        }
+        return check;
+      }
+    }
+  }
+  return null;
+}
 const DSOK_MODO_TEST = new URLSearchParams(window.location.search).get('test') === '1';
 
 function dsokEsModoTest(){ return DSOK_MODO_TEST; }
@@ -3130,11 +3262,21 @@ async function confirmarPedido() {
     return;
   }
 
-  // Evita doble click / doble Purchase del mismo pedido.
   if (pedidoEnProceso) return;
   pedidoEnProceso = true;
   const btnConfirmar = document.getElementById('confirm-review-btn');
   if(btnConfirmar) btnConfirmar.disabled = true;
+
+  // Se abre desde el click del usuario para que el navegador no bloquee WhatsApp
+  // después de esperar la confirmación de Sheets.
+  let wspWindow = null;
+  try {
+    wspWindow = window.open('about:blank', '_blank');
+    if(wspWindow && wspWindow.document){
+      wspWindow.document.write('<!doctype html><meta charset="utf-8"><title>Confirmando pedido...</title><body style="margin:0;background:#080808;color:#f2f1ed;font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center"><div><div style="font-size:38px">📦</div><p>Confirmando tu pedido...</p></div></body>');
+      wspWindow.document.close();
+    }
+  } catch(e) { wspWindow = null; }
 
   const nombre = document.getElementById('f-nombre').value.trim();
   const instagram = document.getElementById('f-instagram').value.trim();
@@ -3151,48 +3293,19 @@ async function confirmarPedido() {
   const total = calcPedido.total;
   const productosStr = carrito.map(i=>`${i.nombre} (Talle ${i.talle})`).join(' | ');
 
-  const pedidoId = dsokPedidoId();
-  const metaEventId = `purchase-${pedidoId}`;
-  const metaEventTime = Math.floor(Date.now()/1000);
+  const firmaPedido = dsokFirmaPedido({
+    nombre, instagram, telefono, zona, direccion, localidad, aclaraciones,
+    productos:carrito.map(i=>({n:i.nombre,t:i.talle,p:Number(i.precio)})),
+    total:Number(total)
+  });
+  const idsPedido = dsokObtenerIdsPedido(firmaPedido);
+  const pedidoId = idsPedido.pedidoId;
+  const metaEventId = idsPedido.metaEventId;
+  const metaEventTime = idsPedido.metaEventTime;
+
   const attr = dsokAtribucionCompleta();
   const contentIds = carrito.map(i=>i.nombre);
   const contentsMeta = carrito.map(i=>({id:i.nombre, quantity:1, item_price:Number(i.precio)}));
-
-  // Para DSOK, venta = pedido generado recién después de la confirmación final.
-  // Si abrís la web con ?test=1, guarda el pedido de prueba pero NO contamina Meta ni GA4.
-  if(!dsokEsModoTest()){
-    // Meta Pixel manual: un solo Purchase dirigido explícitamente a este Pixel.
-    if(typeof fbq!=='undefined'){
-      fbq('trackSingle',window.DSOK_META_PIXEL_ID,'Purchase',{
-        value:Number(total),
-        currency:'ARS',
-        num_items:carrito.length,
-        content_ids:contentIds,
-        contents:contentsMeta,
-        content_type:'product',
-        discount:Number(descuento),
-        order_id:pedidoId
-      },{eventID:metaEventId});
-    }
-
-    // GA4: transaction_id idéntico al pedido de Sheet/WhatsApp/Meta.
-    if(typeof gtag!=='undefined') gtag('event','purchase',{
-      transaction_id:pedidoId,
-      currency:'ARS',
-      value:Number(total),
-      shipping:Number(envio),
-      coupon: obtenerCodigoCupon(calcPedido),
-      utm_source: attr.utm_source || '',
-      utm_medium: attr.utm_medium || '',
-      utm_campaign: attr.utm_campaign || '',
-      utm_content: attr.utm_content || '',
-      utm_term: attr.utm_term || '',
-      campaign_id: attr.campaign_id || '',
-      adset_id: attr.adset_id || '',
-      ad_id: attr.ad_id || '',
-      items:carrito.map(i=>({item_name:i.nombre,item_category:i.categoria||'',item_variant:i.talle,price:Number(i.precio),quantity:1}))
-    });
-  }
 
   document.getElementById('step2').classList.remove('active');
   document.getElementById('step2').classList.add('done');
@@ -3207,8 +3320,6 @@ async function confirmarPedido() {
   const finalWspNote = document.getElementById('wsp-note');
   if(finalWspNote) finalWspNote.style.display = 'none';
 
-  // Guardar pedido + atribución en Sheet. El Apps Script optimizado usa
-  // estos mismos datos para enviar Purchase por Conversions API si activás el token.
   const payloadPedido = {
     pedido_id: pedidoId,
     es_test: dsokEsModoTest() ? 'SI' : '',
@@ -3253,17 +3364,62 @@ async function confirmarPedido() {
     user_agent: attr.user_agent || navigator.userAgent || ''
   };
 
+  let confirmacionServidor = null;
   try {
-    // Fire-and-forget: no esperamos al servidor para no demorar/bloquear la apertura de WhatsApp.
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
-      body: JSON.stringify(payloadPedido)
-    }).catch(e => console.warn('Error guardando pedido:', e));
-  } catch(e) { console.warn('Error guardando pedido:', e); }
+    confirmacionServidor = await dsokGuardarPedidoVerificado(payloadPedido);
+  } catch(e) {
+    console.error('Error verificando guardado:', e);
+  }
 
-  // Armar mensaje WhatsApp con el mismo ID de pedido.
+  // Punto crítico: NO avanzamos si el pedido no aparece realmente en la columna N de Pedidos.
+  if(!confirmacionServidor || !confirmacionServidor.exists){
+    try { if(wspWindow && !wspWindow.closed) wspWindow.close(); } catch(e) {}
+    pedidoEnProceso = false;
+    if(btnConfirmar) btnConfirmar.disabled = false;
+    document.getElementById('enviando').classList.remove('visible');
+    document.getElementById('confirm-review').classList.add('visible');
+    const footerTotalsError = document.getElementById('footer-totales-row');
+    if(footerTotalsError) footerTotalsError.style.display = 'flex';
+    toast('⚠️ No se pudo confirmar el guardado. Tocá CONFIRMAR PEDIDO nuevamente.');
+    return;
+  }
+
+  dsokMarcarPedidoVerificado(pedidoId);
+
+  // Recién AHORA, con el pedido confirmado en Sheets, registramos Purchase en navegador.
+  if(!dsokEsModoTest() && !dsokTrackingYaEnviado(pedidoId)){
+    if(typeof fbq!=='undefined'){
+      fbq('trackSingle',window.DSOK_META_PIXEL_ID,'Purchase',{
+        value:Number(total),
+        currency:'ARS',
+        num_items:carrito.length,
+        content_ids:contentIds,
+        contents:contentsMeta,
+        content_type:'product',
+        discount:Number(descuento),
+        order_id:pedidoId
+      },{eventID:metaEventId});
+    }
+
+    if(typeof gtag!=='undefined') gtag('event','purchase',{
+      transaction_id:pedidoId,
+      currency:'ARS',
+      value:Number(total),
+      shipping:Number(envio),
+      coupon: obtenerCodigoCupon(calcPedido),
+      utm_source: attr.utm_source || '',
+      utm_medium: attr.utm_medium || '',
+      utm_campaign: attr.utm_campaign || '',
+      utm_content: attr.utm_content || '',
+      utm_term: attr.utm_term || '',
+      campaign_id: attr.campaign_id || '',
+      adset_id: attr.adset_id || '',
+      ad_id: attr.ad_id || '',
+      items:carrito.map(i=>({item_name:i.nombre,item_category:i.categoria||'',item_variant:i.talle,price:Number(i.precio),quantity:1}))
+    });
+    dsokMarcarTrackingEnviado(pedidoId);
+  }
+
   let msg = `¡Hola! Quiero confirmar mi pedido 🛒\n\n`;
   msg += `🧾 *Pedido: ${pedidoId}*\n`;
   if(dsokEsModoTest()) msg += `🧪 *PEDIDO DE PRUEBA - NO CONTABILIZAR*\n`;
@@ -3282,9 +3438,20 @@ async function confirmarPedido() {
   msg += `💵 *Total: $${total.toLocaleString('es-AR')}*\n`;
   msg += `\n🔐 Abono al recibir`;
 
-  window.open(`https://wa.me/${WSP}?text=${encodeURIComponent(msg)}`, '_blank');
+  const wspUrl = `https://wa.me/${WSP}?text=${encodeURIComponent(msg)}`;
+  let abierto = false;
+  try {
+    if(wspWindow && !wspWindow.closed){
+      wspWindow.location.replace(wspUrl);
+      abierto = true;
+    }
+  } catch(e) {}
+  if(!abierto){
+    // Fallback que no depende de popups.
+    window.location.href = wspUrl;
+  }
 
-  // Reset para permitir un pedido nuevo, pero no un doble click del mismo pedido.
+  // Si WhatsApp abrió en pestaña/app aparte, limpiamos la tienda original.
   setTimeout(() => {
     carrito = [];
     toggleDrawer();
@@ -3302,7 +3469,7 @@ async function confirmarPedido() {
     if(wspNoteReset) wspNoteReset.style.display = 'block';
     actualizarUI();
     ['f-nombre','f-instagram','f-telefono','f-zona','f-direccion','f-localidad','f-aclaraciones']
-      .forEach(id => document.getElementById(id).value = '');
+      .forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
     pedidoEnProceso = false;
     if(btnConfirmar) btnConfirmar.disabled = false;
   }, 1500);
