@@ -3301,16 +3301,8 @@ async function confirmarPedido() {
   const btnConfirmar = document.getElementById('confirm-review-btn');
   if(btnConfirmar) btnConfirmar.disabled = true;
 
-  // Abrimos la pestaña desde el click real del usuario para evitar bloqueo de popup.
-  // La red NO va a decidir si WhatsApp abre o no.
-  let wspWindow = null;
-  try {
-    wspWindow = window.open('about:blank', '_blank');
-    if(wspWindow && wspWindow.document){
-      wspWindow.document.write('<!doctype html><meta charset="utf-8"><title>Abriendo WhatsApp...</title><body style="margin:0;background:#080808;color:#f2f1ed;font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center"><div><div style="font-size:38px">💬</div><p>Abriendo WhatsApp...</p></div></body>');
-      wspWindow.document.close();
-    }
-  } catch(e) { wspWindow = null; }
+  // FIX V2: no usamos popup ni nueva pestaña.
+  // Despachamos el pedido y después esta MISMA pestaña va directo a WhatsApp.
 
   const nombre = document.getElementById('f-nombre').value.trim();
   const instagram = document.getElementById('f-instagram').value.trim();
@@ -3405,7 +3397,7 @@ async function confirmarPedido() {
   dsokVerificarPedidoEnSegundoPlano(pedidoId).catch(()=>{});
 
   // Le damos apenas un instante al navegador para despachar el POST, sin bloquear el checkout.
-  await dsokSleep(250);
+  await dsokSleep(120);
 
   // Registramos Purchase en navegador una sola vez por pedido_id.
   // El pedido ya fue despachado al backend antes de este punto.
@@ -3465,42 +3457,18 @@ async function confirmarPedido() {
   msg += `\n🔐 Abono al recibir`;
 
   const wspUrl = `https://wa.me/${WSP}?text=${encodeURIComponent(msg)}`;
-  let abierto = false;
+
+  // FIX V2: navegación directa en la misma pestaña.
+  // No depende de popup, nueva ventana ni de la verificación secundaria.
   try {
-    if(wspWindow && !wspWindow.closed){
-      wspWindow.location.replace(wspUrl);
-      abierto = true;
-    }
+    sessionStorage.setItem('dsok_last_order_redirect', JSON.stringify({
+      pedidoId,
+      ts: Date.now()
+    }));
   } catch(e) {}
 
-  if(!abierto){
-    // Fallback en la misma pestaña. fetch keepalive ya fue lanzado.
-    window.location.href = wspUrl;
-    return;
-  }
-
-  // WhatsApp abrió en otra pestaña/app: limpiamos la tienda original.
-  setTimeout(() => {
-    carrito = [];
-    toggleDrawer();
-    volverCarrito();
-    document.getElementById('step2').classList.remove('done');
-    document.getElementById('step3').classList.remove('active');
-    document.getElementById('enviando').classList.remove('visible');
-    document.getElementById('confirm-review').classList.remove('visible');
-    const confirmCheckReset = document.getElementById('confirm-check');
-    if(confirmCheckReset) confirmCheckReset.checked = false;
-    actualizarBotonConfirmacion();
-    const footerTotalsReset = document.getElementById('footer-totales-row');
-    if(footerTotalsReset) footerTotalsReset.style.display = 'flex';
-    const wspNoteReset = document.getElementById('wsp-note');
-    if(wspNoteReset) wspNoteReset.style.display = 'block';
-    actualizarUI();
-    ['f-nombre','f-instagram','f-telefono','f-zona','f-direccion','f-localidad','f-aclaraciones']
-      .forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
-    pedidoEnProceso = false;
-    if(btnConfirmar) btnConfirmar.disabled = false;
-  }, 700);
+  window.location.assign(wspUrl);
+  return;
 }
 
 function toggleDrawer() {
