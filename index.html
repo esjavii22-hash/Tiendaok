@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <!-- DSOK Tracking Optimizado: pedido único + UTM + Meta/GA4/CAPI-ready -->
-<!-- DSOK BUILD: CATEGORIAS_V4 + POPUP_INFO + EXCLUSIONES_PROMO + LIQUIDACION + GUIAS_TALLES_TABS | 2026-11-13 -->
+<!-- DSOK BUILD: CATEGORIAS_V5_LIQUIDACION_DESTACADA + PEDIDOS_ROBUSTOS + POPUP_INFO + EXCLUSIONES_PROMO + GUIAS_TALLES_TABS | 2026-11-22 -->
 <!-- DSOK BUILD: CATEGORIAS_MINIATURAS_V4 | 2026-10-23 -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1125,196 +1125,177 @@ button,a,select{-webkit-tap-highlight-color:transparent;touch-action:manipulatio
 
 
 /* =========================================================
-   DSOK — CATEGORÍAS VISUALES V4
-   Miniaturas automáticas tomadas de Productos (Google Sheets).
+   DSOK — CATEGORÍAS VISUALES V5
+   Liquidación destacada + grilla 3/4 en mobile.
+   No modifica lógica de pedidos, carrito ni promociones.
    ========================================================= */
 .cats-visual-bar{
   position:static !important;
-  padding:4px 12px 8px !important;
+  padding:2px 12px 9px !important;
   background:#050505 !important;
   border-bottom:0 !important;
   z-index:auto !important;
 }
+.categories-title-head{
+  padding:18px 12px 10px !important;
+}
+.categories-title-head .catalog-main-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:29px;
+  letter-spacing:1.1px;
+  line-height:1;
+}
+
+/* Banner principal Liquidación */
+.cat.cat-liquidacion-banner{
+  width:100%;
+  min-height:82px;
+  margin:0 0 7px;
+  padding:12px 15px !important;
+  border:1px solid rgba(235,235,205,.38) !important;
+  border-radius:12px !important;
+  background:linear-gradient(100deg,#c6c66e 0%,#c4c678 48%,#d0d28a 100%) !important;
+  color:#080808 !important;
+  display:flex !important;
+  align-items:center;
+  gap:13px;
+  cursor:pointer;
+  transition:transform .15s ease,filter .15s ease,box-shadow .15s ease;
+  box-shadow:0 8px 24px rgba(0,0,0,.18);
+  text-align:left;
+}
+.cat.cat-liquidacion-banner:hover{filter:brightness(1.035);transform:translateY(-1px);}
+.cat.cat-liquidacion-banner.active{
+  border:2px solid #f2f1ed !important;
+  box-shadow:0 0 0 2px rgba(198,198,110,.30),0 8px 24px rgba(0,0,0,.22);
+}
+.liquidacion-feature-icon{
+  width:46px;height:46px;flex:0 0 46px;
+  display:flex;align-items:center;justify-content:center;
+}
+.liquidacion-feature-icon svg{width:44px;height:44px;display:block;}
+.liquidacion-feature-copy{display:flex;flex-direction:column;min-width:0;flex:1;}
+.liquidacion-feature-title{
+  font-family:'Roboto Condensed','Arial Narrow',sans-serif;
+  font-size:24px;line-height:.95;font-weight:900;letter-spacing:.15px;
+  text-transform:uppercase;color:#080808;
+}
+.liquidacion-feature-sub{
+  margin-top:5px;font-size:12px;line-height:1;color:#242410;font-weight:600;
+}
+.liquidacion-feature-arrow{
+  flex:0 0 auto;font-family:Arial,sans-serif;font-size:36px;line-height:1;font-weight:300;color:#080808;
+  transform:translateY(-1px);
+}
+
+/* Grilla de categorías: 3 arriba + 4 abajo */
 .cats-visual{
   display:grid !important;
-  grid-template-columns:repeat(auto-fit,minmax(82px,1fr)) !important;
-  gap:7px !important;
+  grid-template-columns:repeat(12,minmax(0,1fr)) !important;
+  gap:6px !important;
   overflow:visible !important;
 }
 .cat.cat-visual-card{
   position:relative;
   min-width:0 !important;
   width:100%;
-  height:112px;
+  height:104px;
   padding:0 !important;
-  border:1px solid #282828 !important;
+  border:1px solid #343434 !important;
   border-radius:10px !important;
   background:#111 !important;
   overflow:hidden;
   display:block !important;
   cursor:pointer;
   isolation:isolate;
+  box-shadow:0 5px 15px rgba(0,0,0,.16);
 }
-.cat.cat-visual-card:hover{
-  border-color:#555 !important;
-  transform:translateY(-1px);
-}
+.cat.cat-visual-card.cat-row-3{grid-column:span 4;}
+.cat.cat-visual-card.cat-row-4{grid-column:span 3;height:94px;}
+.cat.cat-visual-card:hover{border-color:#646464 !important;transform:translateY(-1px);}
 .cat.cat-visual-card.active{
-  border:2px solid var(--accent) !important;
+  border:2px solid #c8c96f !important;
   background:#111 !important;
-  box-shadow:0 0 0 1px rgba(212,255,0,.08),0 5px 18px rgba(0,0,0,.22);
+  box-shadow:0 0 0 1px rgba(200,201,111,.12),0 5px 18px rgba(0,0,0,.22);
 }
-.cat-thumb{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  background:#171717;
-}
+.cat-thumb{position:absolute;inset:0;width:100%;height:100%;background:#171717;}
 .cat-thumb img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  object-position:center;
-  display:block;
-  filter:saturate(.88) contrast(1.03);
-  transform:scale(1.01);
+  width:100%;height:100%;object-fit:cover;object-position:center;display:block;
+  filter:saturate(.72) contrast(1.04) brightness(.92);transform:scale(1.01);
 }
 .cat-thumb-fallback{
-  width:100%;
-  height:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:30px;
-  background:linear-gradient(145deg,#1a1a1a,#0d0d0d);
+  width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+  font-size:30px;background:linear-gradient(145deg,#1a1a1a,#0d0d0d);
 }
 .cat.cat-visual-card:before{
-  content:"";
-  position:absolute;
-  inset:0;
-  z-index:1;
-  background:linear-gradient(180deg,rgba(0,0,0,.02) 28%,rgba(0,0,0,.30) 58%,rgba(0,0,0,.94) 100%);
+  content:"";position:absolute;inset:0;z-index:1;
+  background:linear-gradient(180deg,rgba(0,0,0,.02) 30%,rgba(0,0,0,.12) 55%,rgba(0,0,0,.86) 100%);
   pointer-events:none;
 }
 .cat-visual-name{
-  position:absolute;
-  z-index:2;
-  left:4px;
-  right:4px;
-  bottom:7px;
-  color:#fff !important;
-  font-family:'Roboto Condensed','Arial Narrow',sans-serif;
-  font-size:11px !important;
-  line-height:1;
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:.15px;
-  text-align:center;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  text-shadow:0 1px 4px rgba(0,0,0,.9);
+  position:absolute;z-index:2;left:4px;right:4px;bottom:7px;
+  color:#fff !important;font-family:'Roboto Condensed','Arial Narrow',sans-serif;
+  font-size:11px !important;line-height:1;font-weight:900;text-transform:uppercase;
+  letter-spacing:.1px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  text-shadow:0 1px 5px rgba(0,0,0,.95);
 }
 .cat-active-check{
-  display:none;
-  position:absolute;
-  z-index:3;
-  top:5px;
-  right:5px;
-  width:18px;
-  height:18px;
-  border-radius:50%;
-  background:var(--accent);
-  color:#080808;
-  align-items:center;
-  justify-content:center;
-  font-size:11px;
-  font-weight:1000;
-  box-shadow:0 2px 8px rgba(0,0,0,.35);
+  display:none;position:absolute;z-index:3;top:5px;right:5px;width:18px;height:18px;
+  border-radius:50%;background:#c8c96f;color:#080808;align-items:center;justify-content:center;
+  font-size:11px;font-weight:1000;box-shadow:0 2px 8px rgba(0,0,0,.35);
 }
 .cat.cat-visual-card.active .cat-active-check{display:flex;}
+
 .filters-compact{
-  display:flex !important;
-  align-items:center;
-  gap:7px !important;
-  padding:7px 12px 12px !important;
-  border-bottom:1px solid #1b1b1b !important;
-  overflow:visible !important;
-  background:#050505 !important;
+  display:flex !important;align-items:center;gap:7px !important;padding:7px 12px 12px !important;
+  border-bottom:1px solid #1b1b1b !important;overflow:visible !important;background:#050505 !important;
 }
 .filters-compact .filter-btn{
-  min-height:34px;
-  padding:6px 13px !important;
-  border-radius:999px !important;
-  border:1px solid #303030 !important;
-  background:#090909 !important;
-  color:#d3d3d3 !important;
-  font-size:11px !important;
-  font-weight:700;
+  min-height:34px;padding:6px 13px !important;border-radius:999px !important;
+  border:1px solid #303030 !important;background:#090909 !important;color:#d3d3d3 !important;
+  font-size:11px !important;font-weight:700;
 }
 .filters-compact .filter-btn.active{
-  border-color:var(--accent) !important;
-  color:#080808 !important;
-  background:var(--accent) !important;
+  border-color:#c8c96f !important;color:#080808 !important;background:#c8c96f !important;
 }
-.filters-compact .filter-talles{
-  margin-left:auto;
-  border-color:#343a08 !important;
-  color:#d4ff00 !important;
-}
+.filters-compact .filter-talles{margin-left:auto;border-color:#3c3c2a !important;color:#d8d8a0 !important;}
+
 @media(min-width:700px){
-  .cats-visual-bar{max-width:1400px;margin:0 auto;padding-left:18px !important;padding-right:18px !important;}
-  .cats-visual{grid-template-columns:repeat(auto-fit,minmax(105px,1fr)) !important;}
-  .cat.cat-visual-card{height:138px;}
+  .categories-title-head,.cats-visual-bar,.filters-compact{max-width:1400px;margin-left:auto;margin-right:auto;}
+  .categories-title-head{padding-left:18px !important;padding-right:18px !important;}
+  .cats-visual-bar{padding-left:18px !important;padding-right:18px !important;}
+  .filters-compact{padding-left:18px !important;padding-right:18px !important;}
+  .cat.cat-liquidacion-banner{max-width:760px;min-height:92px;}
+  .cats-visual{grid-template-columns:repeat(7,minmax(0,1fr)) !important;}
+  .cat.cat-visual-card.cat-row-3,.cat.cat-visual-card.cat-row-4{grid-column:span 1;height:132px;}
   .cat-visual-name{font-size:13px !important;bottom:9px;}
-  .filters-compact{max-width:1400px;margin:0 auto;padding-left:18px !important;padding-right:18px !important;}
 }
 @media(max-width:480px){
-  .catalog-main-head{padding-bottom:8px !important;}
-  .cats-visual-bar{padding:2px 8px 7px !important;}
-  .cats-visual{
-    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
-    gap:5px !important;
-  }
-  .cat.cat-visual-card{
-    height:88px;
-    min-height:88px !important;
-    border-radius:8px !important;
-  }
-  .cat-visual-name{
-    font-size:8.2px !important;
-    left:2px;
-    right:2px;
-    bottom:6px;
-    letter-spacing:0;
-  }
-  .cat-active-check{
-    width:16px;
-    height:16px;
-    top:4px;
-    right:4px;
-    font-size:9px;
-  }
-  .filters-compact{
-    padding:6px 8px 9px !important;
-    gap:5px !important;
-    white-space:normal !important;
-  }
-  .filters-compact .filter-btn{
-    min-height:31px;
-    padding:5px 10px !important;
-    font-size:10px !important;
-  }
+  .categories-title-head{padding:17px 9px 9px !important;}
+  .categories-title-head .catalog-main-title{font-size:28px;}
+  .cats-visual-bar{padding:2px 8px 8px !important;}
+  .cat.cat-liquidacion-banner{min-height:76px;margin-bottom:6px;padding:10px 12px !important;border-radius:10px !important;gap:10px;}
+  .liquidacion-feature-icon{width:42px;height:42px;flex-basis:42px;}
+  .liquidacion-feature-icon svg{width:40px;height:40px;}
+  .liquidacion-feature-title{font-size:22px;}
+  .liquidacion-feature-sub{font-size:11px;margin-top:4px;}
+  .liquidacion-feature-arrow{font-size:31px;}
+  .cats-visual{gap:5px !important;}
+  .cat.cat-visual-card{height:96px;min-height:96px !important;border-radius:8px !important;}
+  .cat.cat-visual-card.cat-row-4{height:84px;min-height:84px !important;}
+  .cat-visual-name{font-size:9.2px !important;left:2px;right:2px;bottom:6px;letter-spacing:0;}
+  .cat-active-check{width:16px;height:16px;top:4px;right:4px;font-size:9px;}
+  .filters-compact{padding:6px 8px 10px !important;gap:5px !important;white-space:normal !important;}
+  .filters-compact .filter-btn{min-height:31px;padding:5px 9px !important;font-size:10px !important;}
 }
 @media(max-width:360px){
-  .cats-visual{gap:4px !important;}
-  .cat.cat-visual-card{height:82px;min-height:82px !important;}
-  .cat-visual-name{font-size:7.6px !important;}
-  .filters-compact .filter-btn{padding:5px 8px !important;font-size:9.5px !important;}
+  .cat.cat-liquidacion-banner{min-height:72px;}
+  .liquidacion-feature-title{font-size:20px;}
+  .cat.cat-visual-card{height:91px;min-height:91px !important;}
+  .cat.cat-visual-card.cat-row-4{height:80px;min-height:80px !important;}
+  .cat-visual-name{font-size:8.5px !important;}
+  .filters-compact .filter-btn{padding:5px 7px !important;font-size:9.3px !important;}
 }
-
-
 
 /* === DSOK POPUP INFORMATIVO DE ENTRADA === */
 .dsok-entry-popup{
@@ -1521,15 +1502,28 @@ body.dsok-popup-open{overflow:hidden;}
 </section>
 
 <section class="catalog-block" id="catalogo">
-  <div class="catalog-main-head">
-    <div class="catalog-main-title">🛍️ TODOS LOS PRODUCTOS</div>
-    <div class="catalog-main-sub">Elegí modelo y talle · stock actualizado desde Google Sheets</div>
+  <div class="catalog-main-head categories-title-head">
+    <div class="catalog-main-title">CATEGORÍAS</div>
   </div>
 <div class="cats-bar cats-visual-bar">
+  <button type="button" class="cat cat-liquidacion-banner" id="liquidacion-feature" onclick="selCat('liquidacion',this)" aria-label="Ver Liquidación">
+    <span class="liquidacion-feature-icon" aria-hidden="true">
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 29.5L29.5 8H52L56 12V34.5L34.5 56C32.2 58.3 28.5 58.3 26.2 56L8 37.8C5.7 35.5 5.7 31.8 8 29.5Z" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/>
+        <circle cx="44" cy="20" r="4" fill="currentColor"/>
+      </svg>
+    </span>
+    <span class="liquidacion-feature-copy">
+      <span class="liquidacion-feature-title">LIQUIDACIÓN</span>
+      <span class="liquidacion-feature-sub">Hasta 40% OFF</span>
+    </span>
+    <span class="liquidacion-feature-arrow" aria-hidden="true">›</span>
+  </button>
   <div class="cats cats-visual" id="cats"></div>
 </div>
 
 <div class="filters-bar filters-compact">
+  <button class="filter-btn active" onclick="mostrarTodos(this)">Todos</button>
   <button class="filter-btn" onclick="filtrarExtra('destacado',this)">⭐ Top</button>
   <button class="filter-btn" onclick="filtrarExtra('novedad',this)">🆕 Nuevo</button>
   <button class="filter-btn filter-talles" onclick="abrirTalles()">🏷️ Talles</button>
@@ -2342,6 +2336,7 @@ function normCat(c) {
   c = String(c || '').toLowerCase().trim();
   if (c.includes('liquid')) return 'liquidacion';
   if (c.includes('boxer')) return 'boxers';
+  if (c.includes('bermuda')) return 'shorts';
   if (c.includes('joggin') || c.includes('panta')) return 'joggins';
   if (c.includes('buzo')) return 'buzos';
   if (c.includes('remera')) return 'remeras';
@@ -2399,12 +2394,12 @@ function fotoCategoria_(cat) {
 
 function renderCats() {
   const usadas = [...new Set(todos.map(p=>p.categoria).filter(Boolean))];
-  const conocidas = CAT_ORDER.filter(c=>usadas.includes(c));
-  const restantes = usadas.filter(c=>!CAT_ORDER.includes(c));
-  const ordenadas = ['todos', ...conocidas, ...restantes];
+  // Liquidación se muestra aparte como banner principal.
+  const principales = ['shorts','joggins','buzos','remeras','conjuntos','medias','boxers']
+    .filter(c=>usadas.includes(c));
 
-  document.getElementById('cats').innerHTML = ordenadas.map(c => {
-    const cant = c==='todos' ? todos.length : todos.filter(p=>p.categoria===c).length;
+  document.getElementById('cats').innerHTML = principales.map((c, idx) => {
+    const cant = todos.filter(p=>p.categoria===c).length;
     const icon = CAT_ICONS[c] || '📦';
     const name = CAT_SHORT[c] || cap(c);
     const foto = fotoCategoria_(c);
@@ -2412,9 +2407,10 @@ function renderCats() {
     const media = safeFoto
       ? `<div class="cat-thumb"><img src="${safeFoto}" alt="${name}" loading="lazy"></div>`
       : `<div class="cat-thumb"><div class="cat-thumb-fallback">${icon}</div></div>`;
+    const rowClass = idx < 3 ? 'cat-row-3' : 'cat-row-4';
 
     return `<button
-      class="cat cat-visual-card ${c==='todos'?'active':''}"
+      class="cat cat-visual-card ${rowClass}"
       onclick="selCat('${c}',this)"
       aria-label="${name}, ${cant} productos"
       title="${name} · ${cant} productos">
@@ -2423,6 +2419,15 @@ function renderCats() {
       <span class="cat-name cat-visual-name">${name}</span>
     </button>`;
   }).join('');
+}
+
+function mostrarTodos(btn){
+  catActual='todos';
+  extraFiltro='todos';
+  document.querySelectorAll('.cat').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.filters-compact .filter-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderProductos();
 }
 
 function selCat(cat, btn) {
