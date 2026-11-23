@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<!-- DSOK BUILD: VARIANTE5_CATEGORIAS_MENU_HERO_COMPACTO | 2026-11-23 -->
 <!-- DSOK BUILD: CHECKOUT_FIX_V3_GA4_SAFE_REDIRECT | 2026-11-22 -->
 <!-- DSOK Tracking Optimizado: pedido único + UTM + Meta/GA4/CAPI-ready -->
 <!-- DSOK BUILD: CATEGORIAS_V5_LIQUIDACION_DESTACADA + CHECKOUT_WSP_NO_BLOQUEANTE + PEDIDOS_DEDUP + POPUP_INFO + EXCLUSIONES_PROMO + GUIAS_TALLES_TABS | 2026-11-22 -->
@@ -1381,6 +1382,92 @@ body.dsok-popup-open{overflow:hidden;}
   .sg-table td{font-size:9px;padding:7px 4px;}
 }
 
+
+
+/* =========================================================
+   DSOK — FINAL 2026-11-23
+   Variante 5 categorías + menú lateral + hero compacto.
+   ========================================================= */
+.header-brand-wrap{display:flex;align-items:center;gap:11px;min-width:0;}
+.menu-toggle{
+  width:35px;height:35px;flex:0 0 35px;border:0;background:transparent;color:#fff;
+  display:flex;flex-direction:column;justify-content:center;gap:5px;padding:6px;cursor:pointer;border-radius:8px;
+}
+.menu-toggle span{display:block;width:23px;height:2px;border-radius:2px;background:#f2f1ed;transition:transform .2s ease,opacity .2s ease;}
+.menu-toggle:active{background:#151515;}
+
+.main-menu-overlay{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.72);backdrop-filter:blur(5px);opacity:0;pointer-events:none;transition:opacity .22s ease;}
+.main-menu-overlay.open{opacity:1;pointer-events:auto;}
+.main-menu{position:absolute;left:0;top:0;bottom:0;width:min(340px,88vw);background:#090909;border-right:1px solid #242424;padding:18px 16px 20px;display:flex;flex-direction:column;transform:translateX(-102%);transition:transform .28s cubic-bezier(.2,.8,.2,1);box-shadow:20px 0 60px rgba(0,0,0,.45);}
+.main-menu-overlay.open .main-menu{transform:translateX(0);}
+.main-menu-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 2px 18px;border-bottom:1px solid #202020;}
+.main-menu-brand{font-family:'Bebas Neue',sans-serif;font-size:25px;letter-spacing:2px;color:#f2f1ed;}.main-menu-brand span{color:var(--accent);}
+.main-menu-close{width:34px;height:34px;border-radius:50%;border:1px solid #2d2d2d;background:#151515;color:#eaeaea;cursor:pointer;font-size:14px;}
+.main-menu-links{display:flex;flex-direction:column;padding:13px 0;}
+.main-menu-links button{width:100%;border:0;border-bottom:1px solid #171717;background:transparent;color:#f1f1f1;display:flex;align-items:center;justify-content:space-between;text-align:left;padding:14px 4px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;}
+.main-menu-links button b{font-size:12px;color:#707070;font-weight:400;}.main-menu-links button:hover{color:var(--accent);}
+.main-menu-wsp{margin-top:auto;display:flex;align-items:center;justify-content:center;min-height:48px;background:#25D366;color:#fff;border-radius:12px;text-decoration:none;font-size:13px;font-weight:900;}
+.main-menu-note{text-align:center;color:#606060;font-size:9px;margin-top:10px;}
+body.main-menu-open{overflow:hidden;}
+
+/* Hero: mismo contenido e imagen, menos altura visual */
+@media(max-width:480px){
+  .v1-hero{min-height:68svh !important;}
+  .v1-hero-inner{padding:18px 14px 15px !important;}
+  .v1-drop-pill{margin-bottom:9px !important;padding:6px 9px !important;}
+  .v1-hero h1{font-size:49px !important;margin-bottom:9px !important;}
+  .v1-hero p{margin-bottom:10px !important;}
+  .v1-benefits{margin-bottom:10px !important;gap:5px 9px !important;}
+  .hero-promo-box{padding:10px 10px 9px !important;margin-bottom:10px !important;border-radius:13px !important;}
+  .hero-promo-chip{padding:7px 9px !important;font-size:11px !important;}
+  .hero-promo-note{font-size:10px !important;line-height:1.32 !important;}
+  .v1-hero-cta{min-height:44px !important;}
+  .v1-rating{margin-top:8px !important;}
+}
+
+/* Categorías — Variante 5 */
+.categories-title-head{padding-bottom:9px !important;}
+.cats-visual-bar{padding-bottom:7px !important;}
+.cats-visual{
+  display:grid !important;
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+  gap:6px !important;
+  overflow:visible !important;
+}
+.cat.cat-visual-card{
+  position:relative !important;display:block !important;overflow:hidden !important;isolation:isolate;
+  min-width:0 !important;width:100% !important;padding:0 !important;background:#111 !important;
+  border:1px solid #393939 !important;border-radius:11px !important;box-shadow:0 5px 16px rgba(0,0,0,.18);
+  transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease;
+}
+.cat.cat-visual-card.cat-v5-main{grid-column:span 2;height:86px !important;min-height:86px !important;}
+.cat.cat-visual-card.cat-v5-mini{grid-column:span 1;height:82px !important;min-height:82px !important;}
+.cat.cat-visual-card:hover{transform:translateY(-1px);border-color:#666 !important;}
+.cat.cat-visual-card.active{border:2px solid #d4ff00 !important;box-shadow:0 0 0 1px rgba(212,255,0,.16),0 7px 18px rgba(0,0,0,.25) !important;}
+.cat-thumb{position:absolute;inset:0;z-index:0;background:#171717;}
+.cat-thumb img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;filter:saturate(.74) contrast(1.07) brightness(.84);transform:scale(1.02);}
+.cat.cat-visual-card:before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(0,0,0,.72) 0%,rgba(0,0,0,.22) 72%,rgba(0,0,0,.08) 100%),linear-gradient(0deg,rgba(0,0,0,.74),transparent 62%);pointer-events:none;}
+.cat-visual-name{position:absolute !important;z-index:2;left:11px !important;right:35px !important;bottom:9px !important;text-align:left !important;color:#fff !important;font-family:'Roboto Condensed','Arial Narrow',sans-serif !important;font-size:14px !important;line-height:1 !important;font-weight:900 !important;text-transform:uppercase;letter-spacing:.1px !important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 6px rgba(0,0,0,.95);}
+.cat-v5-mini .cat-visual-name{left:7px !important;right:7px !important;bottom:7px !important;font-size:9.5px !important;text-align:center !important;}
+.cat-v5-arrow{position:absolute;z-index:3;right:8px;bottom:7px;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#d4ff00;color:#080808;font-family:Arial,sans-serif;font-size:20px;line-height:1;font-weight:500;box-shadow:0 2px 8px rgba(0,0,0,.35);}
+.cat-v5-mini .cat-v5-arrow{display:none;}
+.cat-active-check{top:5px !important;right:5px !important;background:#d4ff00 !important;}
+.cat-v5-arrow + *{pointer-events:none;}
+.catalog-scroll-anchor{height:1px;scroll-margin-top:78px;}
+
+@media(min-width:700px){
+  .cats-visual{grid-template-columns:repeat(8,minmax(0,1fr)) !important;}
+  .cat.cat-visual-card.cat-v5-main,.cat.cat-visual-card.cat-v5-mini{grid-column:span 2;height:120px !important;min-height:120px !important;}
+  .cat-v5-mini .cat-visual-name{left:11px !important;right:35px !important;bottom:9px !important;font-size:13px !important;text-align:left !important;}
+  .cat-v5-mini .cat-v5-arrow{display:flex;}
+}
+@media(max-width:360px){
+  .cat.cat-visual-card.cat-v5-main{height:80px !important;min-height:80px !important;}
+  .cat.cat-visual-card.cat-v5-mini{height:76px !important;min-height:76px !important;}
+  .cat-visual-name{font-size:12.5px !important;}
+  .cat-v5-mini .cat-visual-name{font-size:8.5px !important;}
+}
+
 </style>
 </head>
 <body>
@@ -1422,7 +1509,12 @@ body.dsok-popup-open{overflow:hidden;}
 
 
 <header>
-  <div class="logo">dsok<em>.</em>importado</div>
+  <div class="header-brand-wrap">
+    <button class="menu-toggle" type="button" onclick="toggleMainMenu(true)" aria-label="Abrir menú" aria-controls="main-menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="logo">dsok<em>.</em>importado</div>
+  </div>
   <div style="display:flex; gap:8px; align-items:center;">
     <a href="https://wa.me/541130086629" style="display:flex; align-items:center; gap:5px; background:#25D366; color:white; padding:7px 13px; border-radius:100px; font-size:12px; font-weight:600; text-decoration:none; font-family:'DM Sans',sans-serif;">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
@@ -1433,6 +1525,26 @@ body.dsok-popup-open{overflow:hidden;}
     </button>
   </div>
 </header>
+
+<div class="main-menu-overlay" id="main-menu-overlay" onclick="if(event.target===this)toggleMainMenu(false)">
+  <nav class="main-menu" id="main-menu" aria-label="Menú principal">
+    <div class="main-menu-head">
+      <div class="main-menu-brand">DSOK<span>.</span>IMPORTADO</div>
+      <button class="main-menu-close" type="button" onclick="toggleMainMenu(false)" aria-label="Cerrar menú">✕</button>
+    </div>
+    <div class="main-menu-links">
+      <button type="button" onclick="menuNavigate('top')"><span>Inicio</span><b>↗</b></button>
+      <button type="button" onclick="menuNavigate('catalogo')"><span>Categorías</span><b>↗</b></button>
+      <button type="button" onclick="menuNavigate('catalogo-productos')"><span>Catálogo</span><b>↗</b></button>
+      <button type="button" onclick="toggleMainMenu(false);setTimeout(abrirTalles,180)"><span>Guía de talles</span><b>↗</b></button>
+      <button type="button" onclick="toggleMainMenu(false);setTimeout(()=>tfOpen('envios'),180)"><span>Envíos y zonas</span><b>↗</b></button>
+      <button type="button" onclick="toggleMainMenu(false);setTimeout(()=>tfOpen('cambios'),180)"><span>Cambios de talle</span><b>↗</b></button>
+      <button type="button" onclick="toggleMainMenu(false);setTimeout(()=>tfOpen('faq'),180)"><span>Preguntas frecuentes</span><b>↗</b></button>
+    </div>
+    <a class="main-menu-wsp" href="https://wa.me/541130086629">💬 Hablar por WhatsApp</a>
+    <div class="main-menu-note">Pagás al recibir · CABA · GBA · La Plata</div>
+  </nav>
+</div>
 
 <div style="background:#0a0a0a;padding:7px 16px;border-bottom:1px solid #111;display:flex;align-items:center;justify-content:center;gap:6px;">
   <svg width="10" height="10" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
@@ -1458,7 +1570,7 @@ body.dsok-popup-open{overflow:hidden;}
       </div>
       <div class="hero-promo-note">Podés combinar modelos, colores y talles dentro del mismo rubro. El descuento se aplica automático en el carrito. <strong>No aplica en Medias, Boxers ni Liquidación.</strong></div>
     </div>
-    <button class="v1-hero-cta" onclick="document.querySelector('.hc-section').scrollIntoView({behavior:'smooth'})">VER EL DROP 🔥</button>
+    <button class="v1-hero-cta" onclick="scrollToCatalogo()">VER EL DROP 🔥</button>
     <div class="v1-rating"><span class="v1-stars">★★★★★</span><strong>4.9</strong> · +10.000 clientes</div>
   </div>
 </section>
@@ -1530,6 +1642,7 @@ body.dsok-popup-open{overflow:hidden;}
   <button class="filter-btn filter-talles" onclick="abrirTalles()">🏷️ Talles</button>
 </div>
 
+<div id="catalogo-productos" class="catalog-scroll-anchor" aria-hidden="true"></div>
 <div id="loading" class="loading">
   Cargando productos<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>
 </div>
@@ -1949,14 +2062,16 @@ const LOOKS_SHEET_NAME = 'Looks'; // pestaña opcional: titulo | archivo | tipo 
 const HERO_SHEET_NAME = 'Hero'; // pestaña opcional: imagen | activo | posicion | posicion_mobile
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwhByLmKeG6Pk0XkAHqOffxDaIfLf7vVMI6eM-9hfW834uQvVQ-QM8glvVnJ754JxG2fw/exec';
 
-const CAT_ORDER = ['shorts','joggins','buzos','remeras','conjuntos','medias','boxers','liquidacion'];
+const CAT_ORDER = ['shorts','joggins','buzos','remeras','conjuntos','medias','boxers','bermudas','liquidacion'];
 const CAT_LABELS = {
+  'shorts':    '🩳 Shorts',
   'joggins':   '👖 Joggins',
   'buzos':     '🧥 Buzos',
   'remeras':   '👕 Remeras',
   'medias':    '🧦 Medias y Térmicas',
   'conjuntos': '🧥 Conjuntos',
   'boxers':    '🩲 Boxers',
+  'bermudas':  '🩳 Bermudas',
   'liquidacion':'🏷️ Liquidación',
 };
 
@@ -2366,7 +2481,7 @@ function normCat(c) {
   c = String(c || '').toLowerCase().trim();
   if (c.includes('liquid')) return 'liquidacion';
   if (c.includes('boxer')) return 'boxers';
-  if (c.includes('bermuda')) return 'shorts';
+  if (c.includes('bermuda')) return 'bermudas';
   if (c.includes('joggin') || c.includes('panta')) return 'joggins';
   if (c.includes('buzo')) return 'buzos';
   if (c.includes('remera')) return 'remeras';
@@ -2383,6 +2498,7 @@ function parseTalles(v) {
 const CAT_ICONS = {
   'todos': '✦',
   'shorts': '🩳',
+  'bermudas': '🩳',
   'joggins': '👖',
   'buzos': '🧥',
   'remeras': '👕',
@@ -2395,6 +2511,7 @@ const CAT_ICONS = {
 const CAT_SHORT = {
   'todos': 'Todos',
   'shorts': 'Shorts',
+  'bermudas': 'Bermudas',
   'joggins': 'Joggings',
   'buzos': 'Buzos',
   'remeras': 'Remeras',
@@ -2424,8 +2541,8 @@ function fotoCategoria_(cat) {
 
 function renderCats() {
   const usadas = [...new Set(todos.map(p=>p.categoria).filter(Boolean))];
-  // Liquidación se muestra aparte como banner principal.
-  const principales = ['shorts','joggins','buzos','remeras','conjuntos','medias','boxers']
+  // Variante 5: 4 tarjetas principales + 4 compactas. Liquidación queda destacada arriba.
+  const principales = ['shorts','joggins','buzos','remeras','conjuntos','medias','boxers','bermudas']
     .filter(c=>usadas.includes(c));
 
   document.getElementById('cats').innerHTML = principales.map((c, idx) => {
@@ -2437,20 +2554,20 @@ function renderCats() {
     const media = safeFoto
       ? `<div class="cat-thumb"><img src="${safeFoto}" alt="${name}" loading="lazy"></div>`
       : `<div class="cat-thumb"><div class="cat-thumb-fallback">${icon}</div></div>`;
-    const rowClass = idx < 3 ? 'cat-row-3' : 'cat-row-4';
+    const sizeClass = idx < 4 ? 'cat-v5-main' : 'cat-v5-mini';
 
     return `<button
-      class="cat cat-visual-card ${rowClass}"
+      class="cat cat-visual-card ${sizeClass}"
       onclick="selCat('${c}',this)"
       aria-label="${name}, ${cant} productos"
       title="${name} · ${cant} productos">
       ${media}
       <span class="cat-active-check">✓</span>
       <span class="cat-name cat-visual-name">${name}</span>
+      <span class="cat-v5-arrow" aria-hidden="true">›</span>
     </button>`;
   }).join('');
 }
-
 function mostrarTodos(btn){
   catActual='todos';
   extraFiltro='todos';
@@ -3915,6 +4032,40 @@ function hcTouchInit(){
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',abrir,{once:true});
   else abrir();
 })();
+
+
+// ===== DSOK FINAL: menú principal + navegación al catálogo =====
+function toggleMainMenu(open){
+  const overlay=document.getElementById('main-menu-overlay');
+  const btn=document.querySelector('.menu-toggle');
+  if(!overlay) return;
+  const shouldOpen = typeof open==='boolean' ? open : !overlay.classList.contains('open');
+  overlay.classList.toggle('open',shouldOpen);
+  document.body.classList.toggle('main-menu-open',shouldOpen);
+  if(btn) btn.setAttribute('aria-expanded',shouldOpen?'true':'false');
+}
+
+function menuNavigate(targetId){
+  toggleMainMenu(false);
+  setTimeout(()=>{
+    if(targetId==='top'){
+      window.scrollTo({top:0,behavior:'smooth'});
+      return;
+    }
+    const el=document.getElementById(targetId);
+    if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+  },180);
+}
+
+function scrollToCatalogo(){
+  const el=document.getElementById('catalogo-productos') || document.getElementById('contenido');
+  if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+document.addEventListener('keydown',(e)=>{
+  if(e.key==='Escape') toggleMainMenu(false);
+});
+
 </script>
 </body>
 </html>
