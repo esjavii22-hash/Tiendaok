@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
 <!-- DSOK BUILD: VARIANTE5_CATEGORIAS_MENU_HERO_COMPACTO | 2026-11-23 -->
+<!-- DSOK BUILD: FINAL_UX_SEARCH_SIZE_RECENT_CHECKOUT_SIMPLE | 2026-11-23 -->
 <!-- DSOK BUILD: CHECKOUT_FIX_V3_GA4_SAFE_REDIRECT | 2026-11-22 -->
 <!-- DSOK Tracking Optimizado: pedido único + UTM + Meta/GA4/CAPI-ready -->
 <!-- DSOK BUILD: CATEGORIAS_V5_LIQUIDACION_DESTACADA + CHECKOUT_WSP_NO_BLOQUEANTE + PEDIDOS_DEDUP + POPUP_INFO + EXCLUSIONES_PROMO + GUIAS_TALLES_TABS | 2026-11-22 -->
@@ -1468,6 +1469,130 @@ body.main-menu-open{overflow:hidden;}
   .cat-v5-mini .cat-visual-name{font-size:8.5px !important;}
 }
 
+
+/* =========================================================
+   DSOK — UX COMERCIAL 2026-11-23
+   Buscador + filtro por talle + vistos recientemente
+   + confirmación final simplificada.
+   ========================================================= */
+
+/* BUSCADOR */
+.store-search-wrap{
+  position:relative;
+  background:#050505;
+  padding:9px 12px 10px;
+  border-bottom:1px solid #171717;
+}
+.store-search-box{
+  max-width:1400px;
+  margin:0 auto;
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-height:43px;
+  padding:0 13px;
+  border:1px solid #363636;
+  border-radius:999px;
+  background:#0e0e0e;
+  transition:border-color .18s ease,box-shadow .18s ease;
+}
+.store-search-box:focus-within{
+  border-color:#6e6e6e;
+  box-shadow:0 0 0 2px rgba(255,255,255,.035);
+}
+.store-search-icon{font-size:16px;color:#bdbdbd;flex:0 0 auto;}
+.store-search-input{
+  flex:1;min-width:0;border:0;outline:0;background:transparent;color:#f2f1ed;
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;
+}
+.store-search-input::placeholder{color:#6f6f6f;font-weight:500;}
+.store-search-clear{
+  display:none;flex:0 0 auto;width:28px;height:28px;border-radius:50%;
+  border:1px solid #2c2c2c;background:#171717;color:#aaa;cursor:pointer;font-size:12px;
+}
+.store-search-clear.show{display:block;}
+.store-search-suggestions{
+  display:none;position:absolute;z-index:160;left:12px;right:12px;top:59px;
+  max-width:1376px;margin:0 auto;background:#0e0e0e;border:1px solid #303030;
+  border-radius:12px;overflow:hidden;box-shadow:0 16px 40px rgba(0,0,0,.42);
+}
+.store-search-suggestions.show{display:block;}
+.search-suggestion{
+  width:100%;display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:9px;
+  align-items:center;padding:8px 10px;border:0;border-bottom:1px solid #1d1d1d;
+  background:#0e0e0e;color:#fff;text-align:left;cursor:pointer;font-family:'DM Sans',sans-serif;
+}
+.search-suggestion:last-child{border-bottom:0;}
+.search-suggestion:hover{background:#151515;}
+.search-suggestion-img{width:48px;height:48px;border-radius:8px;overflow:hidden;background:#191919;display:flex;align-items:center;justify-content:center;font-size:20px;}
+.search-suggestion-img img{width:100%;height:100%;object-fit:cover;}
+.search-suggestion-name{font-size:11px;font-weight:800;line-height:1.2;}
+.search-suggestion-meta{font-size:9px;color:#777;margin-top:3px;text-transform:uppercase;}
+.search-suggestion-price{font-size:11px;font-weight:900;color:var(--accent);white-space:nowrap;}
+.search-empty{padding:14px;color:#777;font-size:11px;text-align:center;}
+
+/* FILTRO POR TALLE */
+.size-filter-row{
+  display:flex;align-items:center;gap:6px;padding:0 12px 11px;background:#050505;
+  border-bottom:1px solid #1b1b1b;overflow-x:auto;scrollbar-width:none;
+}
+.size-filter-row::-webkit-scrollbar{display:none;}
+.size-filter-inner{display:flex;align-items:center;gap:6px;max-width:1400px;width:100%;margin:0 auto;}
+.size-filter-label{font-size:10px;color:#8b8b8b;font-weight:700;white-space:nowrap;margin-right:3px;}
+.size-filter-chip{
+  flex:0 0 auto;min-width:34px;height:31px;border-radius:999px;border:1px solid #333;
+  background:#0b0b0b;color:#d8d8d8;font-family:'DM Sans',sans-serif;font-size:10px;
+  font-weight:800;cursor:pointer;padding:0 10px;transition:.15s ease;
+}
+.size-filter-chip:hover{border-color:#666;color:#fff;}
+.size-filter-chip.active{background:var(--accent);border-color:var(--accent);color:#080808;}
+.size-filter-clear{margin-left:auto;min-width:max-content;color:#838383;background:transparent;border-color:#292929;}
+
+/* VISTOS RECIENTEMENTE */
+.recent-section{
+  display:none;margin:18px 8px 10px;padding:12px;border:1px solid #262626;
+  border-radius:14px;background:#0b0b0b;
+}
+.recent-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;}
+.recent-title{font-family:'Bebas Neue',sans-serif;font-size:21px;letter-spacing:.8px;color:#f2f1ed;}
+.recent-clear{border:0;background:transparent;color:#727272;font-size:9px;font-family:'DM Sans',sans-serif;cursor:pointer;}
+.recent-track{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
+.recent-track::-webkit-scrollbar{display:none;}
+.recent-card{
+  flex:0 0 154px;display:grid;grid-template-columns:54px minmax(0,1fr);gap:8px;align-items:center;
+  background:#121212;border:1px solid #252525;border-radius:10px;padding:7px;cursor:pointer;
+  transition:border-color .15s ease,transform .15s ease;
+}
+.recent-card:hover{border-color:#555;transform:translateY(-1px);}
+.recent-img{width:54px;height:62px;border-radius:8px;overflow:hidden;background:#191919;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.recent-img img{width:100%;height:100%;object-fit:cover;}
+.recent-name{font-size:9.5px;font-weight:800;line-height:1.15;color:#f0f0f0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.recent-price{font-size:11px;font-weight:900;color:#fff;margin-top:6px;}
+.recent-cat{font-size:8px;color:#6e6e6e;text-transform:uppercase;margin-top:2px;}
+
+/* CHECKOUT FINAL: sin checkbox, CTA abajo */
+.review-consent{display:none !important;}
+.confirm-inline-shopping{margin-top:12px !important;margin-bottom:5px !important;}
+.footer-confirm-order{
+  display:none;
+  margin:9px 0 2px !important;
+  min-height:56px !important;
+  font-size:13px !important;
+  position:relative;
+}
+.footer-confirm-order.visible{display:flex !important;}
+.confirm-review .review-final-note{margin-bottom:2px;}
+@media(max-width:480px){
+  .store-search-wrap{padding:8px 8px 9px;}
+  .store-search-box{min-height:41px;padding:0 11px;}
+  .store-search-input{font-size:12px;}
+  .store-search-suggestions{left:8px;right:8px;top:55px;}
+  .size-filter-row{padding:0 8px 10px;}
+  .recent-section{margin:15px 8px 8px;padding:10px;}
+  .recent-card{flex-basis:145px;}
+}
+
 </style>
 </head>
 <body>
@@ -1525,6 +1650,24 @@ body.main-menu-open{overflow:hidden;}
     </button>
   </div>
 </header>
+
+<div class="store-search-wrap" id="store-search-wrap">
+  <div class="store-search-box">
+    <span class="store-search-icon" aria-hidden="true">⌕</span>
+    <input
+      class="store-search-input"
+      id="store-search-input"
+      type="search"
+      autocomplete="off"
+      placeholder="Buscar productos: joggin, bermuda, remera..."
+      aria-label="Buscar productos"
+      oninput="buscarProductos(this.value)"
+      onkeydown="if(event.key==='Enter'){cerrarSugerenciasBusqueda();scrollToCatalogo();}"
+    >
+    <button class="store-search-clear" id="store-search-clear" type="button" onclick="limpiarBusqueda()" aria-label="Limpiar búsqueda">✕</button>
+  </div>
+  <div class="store-search-suggestions" id="store-search-suggestions"></div>
+</div>
 
 <div class="main-menu-overlay" id="main-menu-overlay" onclick="if(event.target===this)toggleMainMenu(false)">
   <nav class="main-menu" id="main-menu" aria-label="Menú principal">
@@ -1642,11 +1785,31 @@ body.main-menu-open{overflow:hidden;}
   <button class="filter-btn filter-talles" onclick="abrirTalles()">🏷️ Talles</button>
 </div>
 
+<div class="size-filter-row" id="size-filter-row">
+  <div class="size-filter-inner">
+    <span class="size-filter-label">Filtrar por talle:</span>
+    <button class="size-filter-chip" data-size="S" type="button" onclick="seleccionarFiltroTalle('S',this)">S</button>
+    <button class="size-filter-chip" data-size="M" type="button" onclick="seleccionarFiltroTalle('M',this)">M</button>
+    <button class="size-filter-chip" data-size="L" type="button" onclick="seleccionarFiltroTalle('L',this)">L</button>
+    <button class="size-filter-chip" data-size="XL" type="button" onclick="seleccionarFiltroTalle('XL',this)">XL</button>
+    <button class="size-filter-chip" data-size="XXL" type="button" onclick="seleccionarFiltroTalle('XXL',this)">XXL</button>
+    <button class="size-filter-chip size-filter-clear" id="size-filter-clear" type="button" onclick="limpiarFiltroTalle()">Limpiar</button>
+  </div>
+</div>
+
 <div id="catalogo-productos" class="catalog-scroll-anchor" aria-hidden="true"></div>
 <div id="loading" class="loading">
   Cargando productos<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>
 </div>
 <div id="contenido" style="display:none"></div>
+
+<section class="recent-section" id="recent-section" aria-label="Vistos recientemente">
+  <div class="recent-head">
+    <div class="recent-title">👁 VISTOS RECIENTEMENTE</div>
+    <button class="recent-clear" type="button" onclick="limpiarVistosRecientes()">Limpiar historial</button>
+  </div>
+  <div class="recent-track" id="recent-track"></div>
+</section>
 </section>
 <div class="v1-trust-strip">
   <div class="v1-trust-item"><b>🚚</b>Entrega 24hs</div>
@@ -1970,15 +2133,8 @@ body.main-menu-open{overflow:hidden;}
         <div class="review-trust-item"><b>🚚</b><span>Entrega a domicilio</span></div>
       </div>
 
-      <label class="review-consent" for="confirm-check">
-        <input id="confirm-check" type="checkbox" onchange="actualizarBotonConfirmacion()">
-        <span>Confirmo que quiero recibir este pedido y abonarlo al recibirlo.</span>
-      </label>
-
-      <button class="confirm-order-btn" id="confirm-review-btn" type="button" onclick="confirmarPedido()" disabled>
-        <span>💬</span><span id="confirm-review-btn-text">CONFIRMAR PEDIDO</span>
-      </button>
-      <p class="review-final-note">🔒 Al confirmar, te redirigiremos a WhatsApp para coordinar tu pedido.</p>
+      <button class="continue-shopping-btn confirm-inline-shopping" id="btn-seguir" type="button" onclick="cerrarDrawerYSeguir()">← SEGUIR COMPRANDO</button>
+      <p class="review-final-note">🔒 Cuando termines de revisar, confirmá el pedido desde el botón inferior.</p>
     </div>
 
     <!-- ENVIANDO -->
@@ -2008,7 +2164,9 @@ body.main-menu-open{overflow:hidden;}
     <button class="wsp-btn" id="wsp-btn" onclick="irAConfirmacion()">
       REVISAR PEDIDO →
     </button>
-    <button class="continue-shopping-btn" id="btn-seguir" onclick="cerrarDrawerYSeguir()">← SEGUIR COMPRANDO</button>
+    <button class="confirm-order-btn footer-confirm-order" id="confirm-review-btn" type="button" onclick="confirmarPedido()">
+      <span>💬</span><span id="confirm-review-btn-text">CONFIRMAR PEDIDO</span>
+    </button>
     <div id="wsp-confianza" style="display:none; background:#0a1400; border:1px solid #1e2e00; border-radius:10px; margin-bottom:8px; padding:9px 12px;">
       <p style="font-size:10px; color:#a8cc00; font-weight:700; margin-bottom:5px;">🔐 ¿Cómo funciona?</p>
       <div style="display:flex; flex-direction:column; gap:3px;">
@@ -2077,6 +2235,10 @@ const CAT_LABELS = {
 
 let todos = [], looks = [], heroConfig = null, carrito = [], catActual = 'todos', extraFiltro = 'todos';
 let paso = 1;
+let busquedaProducto = '';
+let talleFiltro = '';
+const DSOK_RECENT_KEY = 'dsok_recent_products_v1';
+const DSOK_RECENT_MAX = 8;
 
 
 /* =========================================================
@@ -2379,6 +2541,7 @@ async function init() {
   renderLooks();
   renderCats();
   renderProductos();
+  renderVistosRecientes();
 }
 
 
@@ -2542,7 +2705,7 @@ function fotoCategoria_(cat) {
 function renderCats() {
   const usadas = [...new Set(todos.map(p=>p.categoria).filter(Boolean))];
   // Variante 5: 4 tarjetas principales + 4 compactas. Liquidación queda destacada arriba.
-  const principales = ['shorts','joggins','buzos','remeras','conjuntos','medias','boxers','bermudas']
+  const principales = ['shorts','bermudas','conjuntos','remeras','buzos','medias','boxers','joggins']
     .filter(c=>usadas.includes(c));
 
   document.getElementById('cats').innerHTML = principales.map((c, idx) => {
@@ -2594,26 +2757,214 @@ function filtrarExtra(tipo, btn) {
   renderProductos();
 }
 
+function normalizarBusquedaProducto(valor){
+  return String(valor || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'')
+    .trim();
+}
+
+function productoCoincideBusqueda(p, consulta){
+  const q = normalizarBusquedaProducto(consulta);
+  if(!q) return true;
+  const texto = normalizarBusquedaProducto([
+    p.nombre, p.categoria, CAT_LABELS[p.categoria] || '',
+    p.descripcion, p.color, p.marca, (p.talles || []).join(' ')
+  ].join(' '));
+  return q.split(/\s+/).every(token => texto.includes(token));
+}
+
+function buscarProductos(valor){
+  busquedaProducto = String(valor || '').trim();
+
+  const clear = document.getElementById('store-search-clear');
+  if(clear) clear.classList.toggle('show', !!busquedaProducto);
+
+  if(busquedaProducto){
+    catActual = 'todos';
+    extraFiltro = 'todos';
+    document.querySelectorAll('.cat').forEach(b=>b.classList.remove('active'));
+    const todosBtn = document.querySelector('.filters-compact .filter-btn');
+    document.querySelectorAll('.filters-compact .filter-btn').forEach(b=>b.classList.remove('active'));
+    if(todosBtn) todosBtn.classList.add('active');
+  }
+
+  renderProductos();
+  renderSugerenciasBusqueda();
+}
+
+function renderSugerenciasBusqueda(){
+  const box = document.getElementById('store-search-suggestions');
+  if(!box) return;
+
+  const q = busquedaProducto.trim();
+  if(!q){
+    box.classList.remove('show');
+    box.innerHTML = '';
+    return;
+  }
+
+  const matches = todos.filter(p=>productoCoincideBusqueda(p,q)).slice(0,6);
+  if(!matches.length){
+    box.innerHTML = '<div class="search-empty">No encontramos productos con esa búsqueda.</div>';
+    box.classList.add('show');
+    return;
+  }
+
+  box.innerHTML = matches.map(p=>{
+    const nombreEnc = encodeURIComponent(p.nombre);
+    const foto = p.foto
+      ? `<img src="${p.foto}" alt="" loading="lazy">`
+      : `<span>${p.emoji || '👕'}</span>`;
+    return `<button class="search-suggestion" type="button" onclick="elegirSugerenciaBusqueda(decodeURIComponent('${nombreEnc}'))">
+      <span class="search-suggestion-img">${foto}</span>
+      <span>
+        <span class="search-suggestion-name">${escHtml_(p.nombre)}</span>
+        <span class="search-suggestion-meta">${escHtml_(CAT_LABELS[p.categoria] || p.categoria || '')}</span>
+      </span>
+      <span class="search-suggestion-price">$${Number(p.precio||0).toLocaleString('es-AR')}</span>
+    </button>`;
+  }).join('');
+  box.classList.add('show');
+}
+
+function elegirSugerenciaBusqueda(nombre){
+  busquedaProducto = nombre;
+  const input = document.getElementById('store-search-input');
+  if(input) input.value = nombre;
+  const clear = document.getElementById('store-search-clear');
+  if(clear) clear.classList.add('show');
+  cerrarSugerenciasBusqueda();
+  renderProductos();
+  setTimeout(scrollToCatalogo, 30);
+}
+
+function cerrarSugerenciasBusqueda(){
+  const box = document.getElementById('store-search-suggestions');
+  if(box) box.classList.remove('show');
+}
+
+function limpiarBusqueda(){
+  busquedaProducto = '';
+  const input = document.getElementById('store-search-input');
+  if(input) input.value = '';
+  const clear = document.getElementById('store-search-clear');
+  if(clear) clear.classList.remove('show');
+  cerrarSugerenciasBusqueda();
+  renderProductos();
+}
+
+function seleccionarFiltroTalle(talle, btn){
+  const mismo = talleFiltro === talle;
+  talleFiltro = mismo ? '' : talle;
+  document.querySelectorAll('.size-filter-chip[data-size]').forEach(b=>b.classList.remove('active'));
+  if(!mismo && btn) btn.classList.add('active');
+  renderProductos();
+}
+
+function limpiarFiltroTalle(){
+  talleFiltro = '';
+  document.querySelectorAll('.size-filter-chip[data-size]').forEach(b=>b.classList.remove('active'));
+  renderProductos();
+}
+
+function leerVistosRecientes(){
+  try{
+    const arr = JSON.parse(localStorage.getItem(DSOK_RECENT_KEY) || '[]');
+    return Array.isArray(arr) ? arr : [];
+  }catch(e){ return []; }
+}
+
+function registrarVistoProducto(nombre){
+  if(!nombre) return;
+  const actual = leerVistosRecientes().filter(n=>n !== nombre);
+  actual.unshift(nombre);
+  try{ localStorage.setItem(DSOK_RECENT_KEY, JSON.stringify(actual.slice(0,DSOK_RECENT_MAX))); }catch(e){}
+  renderVistosRecientes();
+}
+
+function limpiarVistosRecientes(){
+  try{ localStorage.removeItem(DSOK_RECENT_KEY); }catch(e){}
+  renderVistosRecientes();
+}
+
+function abrirProductoReciente(nombre){
+  registrarVistoProducto(nombre);
+  busquedaProducto = nombre;
+  talleFiltro = '';
+  const input = document.getElementById('store-search-input');
+  if(input) input.value = nombre;
+  const clear = document.getElementById('store-search-clear');
+  if(clear) clear.classList.add('show');
+  document.querySelectorAll('.size-filter-chip[data-size]').forEach(b=>b.classList.remove('active'));
+  renderProductos();
+  setTimeout(scrollToCatalogo, 30);
+}
+
+function renderVistosRecientes(){
+  const section = document.getElementById('recent-section');
+  const track = document.getElementById('recent-track');
+  if(!section || !track || !todos.length) return;
+
+  const items = leerVistosRecientes()
+    .map(nombre=>todos.find(p=>p.nombre===nombre))
+    .filter(Boolean)
+    .slice(0,6);
+
+  if(!items.length){
+    section.style.display='none';
+    track.innerHTML='';
+    return;
+  }
+
+  track.innerHTML = items.map(p=>{
+    const nombreEnc = encodeURIComponent(p.nombre);
+    const foto = p.foto
+      ? `<img src="${p.foto}" alt="${escHtml_(p.nombre)}" loading="lazy">`
+      : `<span>${p.emoji || '👕'}</span>`;
+    return `<button type="button" class="recent-card" onclick="abrirProductoReciente(decodeURIComponent('${nombreEnc}'))">
+      <span class="recent-img">${foto}</span>
+      <span>
+        <span class="recent-name">${escHtml_(p.nombre)}</span>
+        <span class="recent-cat">${escHtml_(CAT_LABELS[p.categoria] || p.categoria || '')}</span>
+        <span class="recent-price">$${Number(p.precio||0).toLocaleString('es-AR')}</span>
+      </span>
+    </button>`;
+  }).join('');
+
+  section.style.display='block';
+}
+
 function getFiltrados() {
   let lista = catActual==='todos' ? todos : todos.filter(p=>p.categoria===catActual);
   if (extraFiltro==='destacado') lista = lista.filter(p=>p.destacado);
   if (extraFiltro==='novedad')   lista = lista.filter(p=>p.novedad);
+  if (busquedaProducto)          lista = lista.filter(p=>productoCoincideBusqueda(p,busquedaProducto));
+  if (talleFiltro)               lista = lista.filter(p=>(p.talles||[]).some(t=>String(t).trim().toUpperCase()===talleFiltro));
   return lista;
 }
 
 function renderProductos() {
   const filtrados = getFiltrados();
   const el = document.getElementById('contenido');
+  const titulo = busquedaProducto
+    ? `RESULTADOS: "${escHtml_(busquedaProducto)}"`
+    : (catActual==='todos'?'CATÁLOGO':(CAT_LABELS[catActual]||cap(catActual)));
+
   if (!filtrados.length) {
-    el.innerHTML = '<div class="grid"><div class="empty-grid">No hay productos en esta categoría 😕</div></div>';
+    el.innerHTML = `<div class="section-hdr"><span class="section-title">${titulo}</span><span class="section-count">0 productos</span></div>
+      <div class="grid"><div class="empty-grid">No encontramos productos con esos filtros 😕</div></div>`;
+    renderVistosRecientes();
     return;
   }
   el.innerHTML = `
     <div class="section-hdr">
-      <span class="section-title">${catActual==='todos'?'CATÁLOGO':(CAT_LABELS[catActual]||cap(catActual))}</span>
+      <span class="section-title">${titulo}</span>
       <span class="section-count">${filtrados.length} productos</span>
     </div>
     <div class="grid">${filtrados.map((p,i)=>cardHTML(p,i)).join('')}</div>`;
+  renderVistosRecientes();
 }
 
 function cardHTML(p, i) {
@@ -2625,7 +2976,7 @@ function cardHTML(p, i) {
   return `
     <div class="card">
       <div class="card-img">
-        ${p.foto?`<img src="${p.foto}" alt="${p.nombre}" loading="lazy" decoding="async" data-src="${p.foto}" data-alt="${p.nombre}" class="foto-clickeable" style="cursor:zoom-in" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:'' }
+        ${p.foto?`<img src="${p.foto}" alt="${p.nombre}" loading="lazy" decoding="async" data-src="${p.foto}" data-alt="${p.nombre}" data-product-name="${escHtml_(p.nombre)}" class="foto-clickeable" style="cursor:zoom-in" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:'' }
         <div class="emoji-ph" ${p.foto?'style="display:none"':''}>${p.emoji}</div>
         <div class="badge-wrap">
           ${p.novedad?'<span class="badge badge-new">Nuevo</span>':''}
@@ -3023,6 +3374,7 @@ function agregar(i, nombre, precio, foto, emoji, talleFixed, categoria) {
     return;
   }
   carrito.push({ nombre, precio, foto, emoji, talle, categoria: categoria || '', uid: Date.now()+Math.random() });
+  registrarVistoProducto(nombre);
   actualizarUI();
   mostrarFeedbackAgregado(nombre, categoria || '');
   const btn = document.querySelector('[data-add-idx="'+i+'"]');
@@ -3216,6 +3568,7 @@ function agregarDesdeUpsell(i) {
   const talle = sinTalle ? 'Único' : (document.getElementById('us'+i)?.value || '');
   if(!talle){ toast('📏 Elegí un talle antes de agregar'); return; }
   carrito.push({ nombre: p.nombre, precio: p.precio, foto: p.foto, emoji: p.emoji, talle, categoria: p.categoria || '', uid: Date.now()+Math.random() });
+  registrarVistoProducto(p.nombre);
   actualizarUI();
   mostrarFeedbackAgregado(p.nombre, p.categoria || '');
   toast('✓ '+p.nombre+' agregado');
@@ -3281,18 +3634,16 @@ function renderConfirmacionPedido(){
   document.getElementById('review-name').textContent = nombre || '—';
   document.getElementById('review-address').textContent = [direccion, localidad].filter(Boolean).join(', ') + (zona ? ` · ${zona}` : '');
 
-  const check = document.getElementById('confirm-check');
-  if(check) check.checked = false;
   actualizarBotonConfirmacion();
 }
 
 function actualizarBotonConfirmacion(){
   const btn = document.getElementById('confirm-review-btn');
-  const check = document.getElementById('confirm-check');
   const calc = calcularTotalesCarrito();
-  if(!btn || !check) return;
-  btn.disabled = !check.checked;
-  document.getElementById('confirm-review-btn-text').textContent = 'CONFIRMAR PEDIDO — $'+calc.total.toLocaleString('es-AR');
+  if(!btn) return;
+  btn.disabled = !carrito.length || pedidoEnProceso;
+  const txt = document.getElementById('confirm-review-btn-text');
+  if(txt) txt.textContent = 'CONFIRMAR PEDIDO — $'+calc.total.toLocaleString('es-AR');
 }
 
 function irAConfirmacion(){
@@ -3316,7 +3667,9 @@ function irAConfirmacion(){
   document.getElementById('btn-volver').style.display = 'none';
   document.getElementById('btn-continuar').style.display = 'none';
   document.getElementById('btn-add-more').style.display = 'none';
-  document.getElementById('btn-seguir').style.display = 'none';
+  document.getElementById('btn-seguir').style.display = 'block';
+  const confirmFooterBtn = document.getElementById('confirm-review-btn');
+  if(confirmFooterBtn) confirmFooterBtn.classList.add('visible');
   document.getElementById('wsp-confianza').style.display = 'none';
   document.getElementById('nota-pago').style.display = 'none';
   const wspNote = document.getElementById('wsp-note');
@@ -3355,8 +3708,8 @@ function volverDatosDesdeConfirmacion(){
   const benefits = document.getElementById('checkout-benefits');
   if(benefits) benefits.style.display = 'grid';
 
-  const check = document.getElementById('confirm-check');
-  if(check) check.checked = false;
+  const confirmFooterBtn = document.getElementById('confirm-review-btn');
+  if(confirmFooterBtn) confirmFooterBtn.classList.remove('visible');
   actualizarBotonConfirmacion();
   setTimeout(()=>{
     const body = document.getElementById('drawer')?.querySelector('.drawer-body');
@@ -3372,6 +3725,8 @@ function volverCarrito() {
   document.getElementById('btn-continuar').style.display = 'block';
   document.getElementById('btn-volver').style.display = 'none';
   document.getElementById('btn-add-more').style.display = 'none';
+  const confirmFooterBtn = document.getElementById('confirm-review-btn');
+  if(confirmFooterBtn) confirmFooterBtn.classList.remove('visible');
   document.getElementById('wsp-btn').style.display = 'none';
   document.getElementById('wsp-confianza').style.display = 'none';
   const wspNote = document.getElementById('wsp-note');
@@ -3405,12 +3760,6 @@ function validarForm() {
 async function confirmarPedido() {
   if (!validarForm()) {
     toast('⚠️ Completá todos los campos obligatorios');
-    return;
-  }
-
-  const confirmCheck = document.getElementById('confirm-check');
-  if(!confirmCheck || !confirmCheck.checked){
-    toast('☑️ Marcá la confirmación para continuar');
     return;
   }
 
@@ -3459,6 +3808,8 @@ async function confirmarPedido() {
   document.getElementById('enviando').classList.add('visible');
   document.getElementById('btn-volver').style.display = 'none';
   document.getElementById('wsp-btn').style.display = 'none';
+  const confirmFooterBtn = document.getElementById('confirm-review-btn');
+  if(confirmFooterBtn) confirmFooterBtn.classList.remove('visible');
   const footerTotals = document.getElementById('footer-totales-row');
   if(footerTotals) footerTotals.style.display = 'none';
   const finalWspNote = document.getElementById('wsp-note');
@@ -3667,8 +4018,16 @@ document.addEventListener('click', function(e) {
   if (e.target.classList.contains('foto-clickeable')) {
     const src = e.target.getAttribute('data-src');
     const alt = e.target.getAttribute('data-alt');
+    const nombre = e.target.getAttribute('data-product-name') || alt;
+    if(nombre) registrarVistoProducto(nombre);
     if (src) openLightbox(src, alt);
   }
+});
+
+document.addEventListener('click', function(e){
+  const wrap = document.getElementById('store-search-wrap');
+  const box = document.getElementById('store-search-suggestions');
+  if(wrap && box && !wrap.contains(e.target)) box.classList.remove('show');
 });
 
 function abrirTalles(tipo) {
